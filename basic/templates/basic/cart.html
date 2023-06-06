@@ -1,0 +1,842 @@
+{% extends "basic/layout.html" %}
+
+{% block body %}
+<div class="back-button-div">
+    <button class="back-button phase-2" id="state-2-back" onclick="initial_cart_state()"><i
+            class="bi bi-arrow-left"></i></button>
+    <button class="back-button phase-3" id="state-3-back" onclick="proceedToCheckout()"><i
+            class="bi bi-arrow-left"></i></button>
+</div>
+
+<div class="cart-state-show">
+    <button class="state-button" id="state-1">Your Cart</button>
+    <hr id="state-hr-1">
+    <button class="state-button" id="state-2">Checkout</button>
+    <hr id="state-hr-2">
+    <button class="state-button" id="state-3">Payment</button>
+
+</div>
+
+
+
+
+<div class="cart-final-main-div">
+
+    <div class="checkout-form-div">
+        <div class="cart-heading-1 phase-3">
+            <h1 class="cart-h1">Select Payment Method</h1>
+            <hr class="cart-hr">
+        </div>
+        <div class="phase-3 payment-selection-div">
+            <div class="payment-type-cash selected" data-type="cash" onclick="changePaymentSelection(this)">
+                <h1>Cash On Delivery</h1>
+                <hr>
+                <p>Pay for your product at your doorstep.</p>
+                <p class="selected-p">Selected</p>
+            </div>
+            <div class="payment-type-online" data-type="online" onclick="changePaymentSelection(this)">
+                <h1>Online Payment</h1>
+                <hr>
+                <p>Pay through a wide range of secured payment system.</p>
+            </div>
+        </div>
+        <div class="cart-heading-1 phase-2">
+            <h1 class="cart-h1">Checkout Form</h1>
+            <hr class="cart-hr">
+        </div>
+        <form method="post" action="{% url 'take_order' %}" class="checkout-form">
+            {% csrf_token %}
+            <input type="hidden" name="itemsJSON" id="itemsJSON" required>
+            <input type="hidden" name="total_price" id="total_price" required>
+            <input type="hidden" name="delivery_charge" id="delivery_charge" required>
+            <input type="hidden" name="promo_discount" id="promo_discount" required>
+            <input type="hidden" name="payment_method" id="payment_method" value="Cash" required>
+
+            <div class="form-group phase-2" id="inp_div_name">
+                <input type="text" class="form-control login_inp-checkout based_inp" name="name" placeholder="Name"
+                    required>
+            </div>
+            <div class="form-group phase-2" id="inp_div_email">
+                <input type="email" class="form-control login_inp-checkout based_inp" name="email" placeholder="Email"
+                    required>
+            </div>
+
+            <div class="form-group phase-2" id="inp_div_address">
+                <input type="text" class="form-control login_inp-checkout based_inp" placeholder="Address: " required
+                    name="address">
+            </div>
+            <div class="form-group phase-2" id="inp_div_phone">
+
+                <input type="tel" class="form-control login_inp-checkout based_inp" placeholder="Contact No."
+                    name="phone" required>
+            </div>
+
+            <div class="form-group phase-2" id="inp_div_area">
+                <input type="text" class="form-control login_inp-checkout based_inp" name="area" placeholder="Area"
+                    required>
+            </div>
+            <div class="form-group phase-2" id="inp_div_town">
+                <input type="text" class="form-control login_inp-checkout based_inp" name="town" placeholder="Town"
+                    required>
+            </div>
+            <div class="form-group phase-2" id="inp_div_city">
+                <input type="text" class="form-control login_inp-checkout based_inp" name="city" placeholder="City"
+                    required>
+            </div>
+            <div class="form-group phase-2" id="inp_div_country">
+                <input type="text" class="form-control login_inp-checkout based_inp" name="country"
+                    placeholder="Country" required>
+            </div>
+            <div class="form-group phase-2" id="inp_div_zip">
+                <input type="text" class="form-control login_inp-checkout based_inp" id="inputZip" name="zip" required
+                    placeholder="Zip Code">
+            </div>
+
+            <button type="submit" class="btn btn-primary nice_btn phase-3 arrow-button" onclick="check(this)" disabled>
+                <span class="button-textd">CONFIRM ORDER</span>
+                <span class="arrow-icon"><i class="bi bi-arrow-right custom-icon"></i></span>
+            </button>
+        </form>
+    </div>
+
+    <div class="cart-main-div">
+
+        <div class="cart-main-div-1">
+
+
+            <div class="cart_list">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">Your Cart</h1>
+                    <hr class="cart-hr">
+                </div>
+                <div class="cart-box-spacer"></div>
+            </div>
+        </div>
+
+
+        <div class="cart-page-second-div">
+            <div class="delivery-charge-div phase-1">
+                <div class="delivery-charge-div-1 ">
+                    <h1>Delivery Location</h1>
+                    <hr>
+                    <div>
+                        <input type="radio" name="myRadioGroup" id="delivery-radioButton1" data-location="inside"
+                            checked value="0" onchange="changeDeliveryLocation()">
+                        <label for="myRadioGroup">Inside Chattogram (BDT 0)</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="myRadioGroup" id="delivery-radioButton2" data-location="outside"
+                            value="60" onchange="changeDeliveryLocation()">
+                        <label for="myRadioGroup">Outside Chattogram (BDT 60)</label>
+                    </div>
+                </div>
+
+                <div class="cart-promo-div phase-1">
+                    <h1>Apply Voucher</h1>
+                    <hr>
+                    <div class="cart-promo-div-1">
+
+                        <input type="text" class="form-control redeem-inp" name="promo_text_box">
+                        <button class="redeem-button" onclick="redeem_btn_clicked()">Redeem</button>
+                    </div>
+
+                    <div class="cart-promo-div-2">
+                        <p class="cart-promo-div-2-p"></p>
+                        <button class="redeem-button" onclick="remove_promo()">Remove Promo</button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="total-price-div-bounds">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">Payment Details</h1>
+                    <hr class="cart-hr">
+                </div>
+
+                <div class="total-price-div">
+
+                    <div class="total-price-div-3">
+                        <div class="total-price-div-1">
+                            <p>SUBTOTAL :</p>
+                            <p>DELIVERY CHARGE : </p>
+                            <p>DISCOUNT: </p>
+                            <p>TOTAL :</p>
+                        </div>
+
+                        <div class="total-price-div-2">
+                            <p id="subtotal_price_span">0</p>
+                            <p id="delivery-charge-price-span">0</p>
+                            <p id="discount-price-span">0</p>
+                            <p id="total_price_span">0</p>
+                        </div>
+
+                    </div>
+
+                    <div class="total-price-div-4">
+                        <button class="arrow-button button-phase-1 phase-1" onclick="proceedToCheckout()"
+                            id="checkout-btn">
+                            <span class="button-text">PROCEED TO CHECKOUT</span>
+                            <span class="arrow-icon"><i class="bi bi-arrow-right custom-icon"></i></span>
+                        </button>
+
+                        <button class="arrow-button  btn-disable button-phase-2 phase-2" onclick="checkAllInput()">
+                            <span class="button-textd">PROCEED TO PAYMENT</span>
+                            <span class="arrow-icon"><i class="bi bi-arrow-right custom-icon"></i></span>
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div id="message_div">
+
+</div>
+
+<script>
+
+
+    if (localStorage.getItem('cart') == "{}" || localStorage.getItem('cart') == null) {
+        document.querySelector(".cart_list").innerHTML = "<div class='cart-heading-1'><h1 class='cart-h1'>Your Cart</h1><hr class='cart-hr'></div><div class='cart-box-spacer'></div> <p> Your Cart is empty </p>";
+        document.getElementById("checkout-btn").disabled = true;
+        document.getElementById("checkout-btn").classList.add('btn-disable');
+    }
+    const jsConfetti = new JSConfetti();
+    var cart_state = JSON.parse(localStorage.getItem('cart_state'));
+
+
+
+
+
+    document.querySelector(".checkout-form-div").style.display = "none";
+    let sum = 0;
+
+    for (var item in cart) {
+        let name = cart[item][1];
+        let id = cart[item][2];
+        let qty = cart[item][0];
+        let amount = cart[item][3];
+        let amount_number = cart[item][4];
+        let list = document.createElement("div");
+        let list_img = document.createElement("div");
+        let img_url = cart[item][9];
+        let main_div = document.createElement("div");
+        let second_div1 = document.createElement("div");
+        let second_div2 = document.createElement("div");
+
+        let serial = 0;
+
+        for (var i = 0; i < amount_number; i++) {
+            if (parseFloat(amount) === cart[item][5][i]) {
+                serial = i;
+            }
+        }
+
+        let total_product_price = cart[item][7][serial] * qty;
+        sum += total_product_price;
+        list.classList.add("main-cart-page-div2");
+        list_img.classList.add("main-cart-page-div1");
+        list_img.id = `main-img-div-${item}`;
+        list.id = `main-content-div-${item}`;
+        second_div1.classList.add("cart-internal-div1");
+        second_div2.classList.add("cart-internal-div2");
+        let img = document.createElement("img");
+
+        list_img.appendChild(img);
+
+        img.src = img_url;
+        img.alt = "The image of this product doesn't exist.";
+
+
+        main_div.id = item;
+
+
+        let nice_name = document.createElement("h1");
+        nice_name.innerHTML = name;
+        let amount_div = document.createElement("div");
+        let amount_span = document.createElement("span");
+
+
+
+        second_div1.append(nice_name);
+
+        amount_div.id = `div_${item}`;
+        amount_span.innerHTML = "<p>Price: </p> <p>BDT " + total_product_price + "</p>";
+        amount_span.dataset.value = total_product_price;
+        amount_span.id = `price_${item}`;
+        amount_span.classList.add("display_flex");
+        amount_div.classList.add("display_flex");
+        if (qty === 1) {
+            amount_div.innerHTML = `<p>Quantity: </p><button id='minus_${item}'
+                                    class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>Remove</button> <span id='val_${item}'>${cart[item][0]}
+                                    </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
+
+        }
+        else {
+            amount_div.innerHTML = `<p>Quantity: </p><button id='minus_${item}'
+                                    class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
+                                    </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
+
+        }
+
+
+        let amount_selection_div = document.createElement("div");
+        let amount_selection_p = document.createElement("p");
+        amount_selection_p.id = `amount_selection_p_${item}`;
+
+        amount_selection_div.classList.add("display_flex");
+
+        amount_selection_div.appendChild(amount_selection_p);
+
+        let amount_selection = document.createElement("select");
+
+        amount_selection.id = `amount_selection_${item}`;
+
+        amount_selection_div.appendChild(amount_selection);
+        amount_selection_p.innerHTML = "Amount:  ";
+
+        amount_selection.setAttribute('onchange', `change_quantity(this, ${item})`);
+        for (var number in cart[item][5]) {
+            let amount_options = document.createElement("option");
+            amount_options.innerHTML = cart[item][5][number] + " gm";
+            if (cart[item][5][number] == cart[item][3]) {
+                amount_options.selected = true;
+            }
+            amount_options.setAttribute('value', cart[item][5][number]);
+            amount_selection.append(amount_options);
+
+        }
+
+
+
+
+
+
+
+
+        second_div1.append(amount_selection_div)
+        second_div2.append(amount_span);
+        second_div2.append(amount_div);
+
+
+        list.append(second_div1);
+        list.append(second_div2);
+
+
+
+        main_div.classList.add(`main-cart-page-div`);
+        main_div.appendChild(list_img);
+        main_div.appendChild(list);
+
+
+        document.querySelector(".cart_list").append(main_div);
+
+    }
+
+    cart_state["sum"] = sum;
+    let delivery_charge = cart_state["delivery_charge"];
+    let sub_total_price = sum - delivery_charge;
+    let promo_discount = cart_state["promo_discount"];
+
+
+
+    promo_discount = (sum * promo_discount / 100);
+
+
+
+
+    document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+    document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+
+    document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+    document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+
+    document.getElementById("subtotal_price_span").innerHTML = "BDT " + sum;
+
+
+    document.getElementById('delivery_charge').value = delivery_charge;
+    document.getElementById('promo_discount').value = promo_discount;
+
+
+
+
+    if (cart_state["delivery_charge"] != 0) {
+        document.getElementById("delivery-radioButton2").checked = true;
+    }
+    else {
+        document.getElementById("delivery-radioButton1").checked = true;
+    }
+
+    if (cart_state["promo_discount"] != 0) {
+        document.querySelector(`.redeem-inp`).value = cart_state["promo_name"];
+        redeem_btn_clicked();
+    }
+    else {
+        document.querySelector(`.redeem-inp`).value = "";
+    }
+
+    const btn1 = document.getElementById("state-1");
+    const btn2 = document.getElementById("state-2");
+    const btn3 = document.getElementById("state-3");
+    const btn4 = document.getElementById("state-2-back");
+    const btn5 = document.getElementById("state-3-back");
+    const hr1 = document.getElementById("state-hr-1");
+    const hr2 = document.getElementById("state-hr-2");
+
+    if (cart_state["cart"] === 1) {
+        document.querySelectorAll(".state-button").forEach(function (button) {
+            button.classList.remove('state-next');
+        });
+
+        btn1.classList.add('state-next');
+        initial_cart_state();
+        btn4.style.display = "none";
+        btn5.style.display = "none";
+        hr1.classList.remove('dark-hr');
+        hr2.classList.remove('dark-hr');
+
+    }
+    else if (cart_state["cart"] === 2) {
+        document.querySelectorAll(".state-button").forEach(function (button) {
+            button.classList.remove('state-next');
+        });
+        btn1.classList.add('state-next');
+        btn2.classList.add('state-next');
+        btn4.style.display = "block";
+        btn5.style.display = "none";
+        hr1.classList.add('dark-hr');
+        hr2.classList.remove('dark-hr');
+        proceedToCheckout();
+
+    }
+    else if (cart_state["cart"] === 3) {
+        document.querySelectorAll(".state-button").forEach(function (button) {
+            button.classList.add('state-next');
+        });
+        btn4.style.display = "none";
+        btn5.style.display = "block";
+        hr1.classList.add('dark-hr');
+        hr2.classList.add('dark-hr');
+        proceedToPayment();
+    }
+
+
+
+
+
+
+    localStorage.setItem('cart_state', JSON.stringify(cart_state));c
+    function clearCart() {
+        cart = JSON.parse(localStorage.getItem('cart'));
+        //localStorage.clear();
+
+        cart = {};
+        localStorage.removeItem('cart');
+        const bruh_div = document.querySelector(".cart-product-div");
+        bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
+        document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+        document.querySelector(".cart_list").innerHTML = "Your cart is empty";
+        document.querySelector(".nice_btn").disabled = true;
+        sum = 0;
+        var cart_state = JSON.parse(localStorage.getItem('cart_state'));
+
+        cart_state["discount_amount"] = 0;
+        cart_state["promo_discount"] = 0;
+        cart_state["sum"] = 0;
+
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+
+        document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+        document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+        document.getElementById('delivery_charge').value = delivery_charge;
+        document.getElementById('promo_discount').value = promo_discount;
+        document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+        document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+        document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+
+    }
+
+    function check(x) {
+        if (localStorage.getItem('cart') == {} || localStorage.getItem('cart') == null) {
+            document.querySelector('#message_div').innerHTML = "You cannot checkout without placing an order.";
+        }
+    }
+
+    let inp_val = document.querySelector('#itemsJSON');
+    inp_val.value = JSON.stringify(cart);
+    console.log(inp_val.value);
+    if (inp_val.value != "{}") {
+        document.querySelector(".nice_btn").disabled = false;
+    }
+    else {
+        document.querySelector(".nice_btn").disabled = true;
+    }
+
+    function add_func(x) {
+        console.log("adds");
+        id = x.dataset.id;
+
+        document.querySelector(`#minus_${id}`).innerHTML = "-";
+        cart[id][0] = cart[id][0] + 1;
+        let qty = cart[id][0];
+        let amount_number = parseInt(cart[id][4]);
+        let amount = cart[id][3];
+        document.getElementById(`val_${id}`).innerHTML = cart[id][0];
+        console.log(cart);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        let serial = 0;
+
+        for (var i = 0; i < amount_number; i++) {
+            if (parseFloat(amount) === cart[id][5][i]) {
+                serial = i;
+            }
+        }
+
+        let total_product_price = cart[id][7][serial] * qty;
+
+
+        let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+        var promo_discount = cart_state["promo_discount"];
+        var delivery_charge = cart_state["delivery_charge"];
+        var sum = cart_state["sum"];
+
+        sum += total_product_price / qty;
+        cart_state["sum"] = sum;
+
+        promo_discount = (sum * promo_discount / 100);
+
+
+
+
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+        document.getElementById(`price_${id}`).innerHTML = "<p>Price: </p> <p>BDT " + total_product_price + "</p>";
+        document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+        document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+        document.getElementById('delivery_charge').value = delivery_charge;
+        document.getElementById('promo_discount').value = promo_discount;
+        document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+        document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+
+        document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+    }
+
+    function subtract_func(x) {
+        id = x.dataset.id;
+        cart[id][0] = cart[id][0] - 1;
+        cart[id][0] = Math.max(0, cart[id][0]);
+        if (cart[id][0] == 0) {
+            let oud_id = x.dataset.oud;
+            let oud_name = x.dataset.name;
+            let qty = cart[id][0];
+            let amount_number = parseInt(cart[id][4]);
+            let amount = cart[id][3];
+
+            document.getElementById(`div_${id}`).innerHTML = `<button class="btn btn-outline-primary cart" id="${id}" data-id='${oud_id}' onclick="add_cart_func(this)" data-name='${oud_name}' data-amount="${amount}" 
+                                                                      data-amountnumber='${amount_number}''>Add to cart</button>`;
+
+
+            let serial = 0;
+
+            for (var i = 0; i < amount_number; i++) {
+                if (parseFloat(amount) === cart[id][5][i]) {
+                    serial = i;
+                }
+            }
+
+            let total_product_price = cart[id][7][serial] * 1;
+            let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+            var promo_discount = cart_state["promo_discount"];
+            var delivery_charge = cart_state["delivery_charge"];
+            var sum = cart_state["sum"];
+
+
+
+            sum -= total_product_price / qty;
+            cart_state["sum"] = sum;
+
+            promo_discount = (sum * promo_discount / 100);
+
+            cart_state["sum"] = sum;
+
+            delete cart[id];
+
+            localStorage.setItem('cart_state', JSON.stringify(cart_state));
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+            document.getElementById(`price_${id}`).innerHTML = "<p>Price: </p> <p>BDT " + total_product_price + "</p>";
+            document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+            document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+            document.getElementById('delivery_charge').value = delivery_charge;
+            document.getElementById('promo_discount').value = promo_discount;
+            document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+            document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+            document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+            document.getElementById(id).remove();
+
+        }
+        else {
+
+            let qty = cart[id][0];
+            let amount_number = parseInt(cart[id][4]);
+            let amount = cart[id][3];
+            document.getElementById(`val_${id}`).innerHTML = cart[id][0];
+            console.log(cart);
+            console.log("comes here");
+            if (qty === 1) {
+                console.log("comes here 1");
+                document.querySelector(`#minus_${id}`).innerHTML = "Remove";
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            let serial = 0;
+
+            for (var i = 0; i < amount_number; i++) {
+                if (parseFloat(amount) === cart[id][5][i]) {
+                    serial = i;
+                }
+            }
+
+            let total_product_price = cart[id][7][serial] * qty;
+            document.getElementById(`price_${id}`).innerHTML = "<p>Price: </p> <p>BDT " + total_product_price + "</p>";
+            let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+            var promo_discount = cart_state["promo_discount"];
+            var delivery_charge = cart_state["delivery_charge"];
+            var sum = cart_state["sum"];
+
+            sum -= total_product_price / qty;
+            cart_state["sum"] = sum;
+
+            promo_discount = (sum * promo_discount / 100);
+
+
+
+
+            localStorage.setItem('cart_state', JSON.stringify(cart_state));
+            document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+            document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+            document.getElementById('delivery_charge').value = delivery_charge;
+            document.getElementById('promo_discount').value = promo_discount;
+            document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+            document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+            document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+        }
+
+
+    }
+
+    function change_quantity(x, id) {
+        let new_amount = parseFloat(x.value).toFixed(2);
+        id = id.id
+        console.log(cart[id]);
+        let serial = 0;
+        let amount_number = cart[id][4];
+        let amount = cart[id][3];
+
+        for (var i = 0; i < amount_number; i++) {
+            if (parseFloat(amount) === cart[id][5][i]) {
+                serial = i;
+            }
+        }
+
+        let qty = parseInt(cart[id][0]);
+
+        let product_price_before = cart[id][7][serial] * qty;
+        let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+        var promo_discount = cart_state["promo_discount"];
+        var delivery_charge = cart_state["delivery_charge"];
+        var sum = cart_state["sum"];
+        sum -= product_price_before;
+
+
+        serial = 0;
+        for (var i = 0; i < amount_number; i++) {
+            if (parseFloat(new_amount) === cart[id][5][i]) {
+                serial = i;
+            }
+        }
+
+
+
+
+
+
+        product_price_before = cart[id][7][serial] * qty;
+        sum += product_price_before;
+
+        promo_discount = (sum * promo_discount / 100);
+        cart[id][3] = new_amount;
+
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+        document.getElementById(`minus_${id}`).dataset.amount = new_amount;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        document.getElementById(`price_${id}`).innerHTML = "<p>Price: </p> <p>BDT " + product_price_before + "</p>";
+        document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+        document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+        document.getElementById('delivery_charge').value = delivery_charge;
+        document.getElementById('promo_discount').value = promo_discount;
+        document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+        document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+
+        document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+
+    }
+
+    function changeDeliveryLocation() {
+        var selectedVal = document.querySelector('input[name="myRadioGroup"]:checked').value;
+        var outsideVal = parseInt(document.querySelector("#delivery-radioButton2").value);
+        var cart_state = JSON.parse(localStorage.getItem('cart_state'));
+
+        var sum = cart_state["sum"];
+        var promo_discount = cart_state["promo_discount"];
+        console.log(outsideVal);
+        if (parseInt(selectedVal) === 0) {
+            delivery_charge = 0;
+        }
+        else {
+            delivery_charge = parseInt(outsideVal);
+        }
+        console.log(sum);
+        promo_discount = (sum * promo_discount / 100);
+
+
+
+        document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+        document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+
+        document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+
+
+
+
+        cart_state["delivery_charge"] = delivery_charge;
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+        document.getElementById(`delivery-charge-price-span`).innerHTML = "BDT " + delivery_charge;
+
+
+        document.getElementById('delivery_charge').value = delivery_charge;
+        document.getElementById('promo_discount').value = promo_discount;
+        document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
+        document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+        document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+
+    }
+
+    function redeem_btn_clicked() {
+        const inp = document.querySelector(".redeem-inp");
+        const promo_code = inp.value;
+        var cart_state = JSON.parse(localStorage.getItem('cart_state'));
+        var sum = cart_state["sum"];
+        console.log("comes here");
+        var promo_discount;
+
+        fetch(`promo_check/${promo_code}`, {
+            method: 'GET',
+        })
+            .then((response) => response.json())
+            .then(promo => {
+                console.log("comes here 1");
+                if (promo.name == "Fake") {
+                    alert("Please provide a valid promo code");
+                    cart_state["promo_discount"] = 0;
+                    promo_discount = 0;
+
+
+                }
+                else {
+                    cart_state["promo_discount"] = parseFloat(promo.discount);
+                    promo_discount = (sum * promo.discount / 100);
+                    cart_state["promo_name"] = promo.name;
+                    document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
+                    document.getElementById('total_price').value = (sum - promo_discount + delivery_charge);
+                    document.getElementById('delivery_charge').value = delivery_charge;
+                    document.getElementById('promo_discount').value = promo_discount;
+                    document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+                    document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+                    showAlert('This is a success message.', 'success');
+                    document.querySelector(".cart-promo-div-1").style.display = "none";
+
+                    document.querySelector(".cart-promo-div-2").style.display = "flex";
+
+                    document.querySelector(".cart-promo-div-2-p").innerHTML = `Congratulations! ${promo.name} promo has been successfully added. You are getting ${promo.discount}% discount.`
+                }
+
+
+
+
+
+                localStorage.setItem('cart_state', JSON.stringify(cart_state));
+
+
+
+
+            });
+    }
+
+
+    function remove_promo() {
+        document.querySelector(".cart-promo-div-1").style.display = "flex";
+
+        document.querySelector(".cart-promo-div-2").style.display = "none";
+
+        var cart_state = JSON.parse(localStorage.getItem('cart_state'));
+        var sum = cart_state["sum"];
+        var delivery_charge = cart_state["delivery_charge"];
+        cart_state["promo_discount"] = 0;
+        cart_state["promo_name"] = "none";
+
+        document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
+        document.querySelector("#discount-price-span").innerHTML = "BDT -" + 0;
+        document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum + delivery_charge);
+        document.getElementById('total_price').value = (sum + delivery_charge);
+
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+
+    }
+
+    function showAlert(message, type) {
+        var alertClass = 'alert-' + type;
+        var alertHTML = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">';
+        alertHTML += message;
+        alertHTML += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>';
+        alertHTML += '</div>';
+        //document.getElementById('customAlert').innerHTML = alertHTML;
+    }
+
+    
+
+
+
+
+    {% if validation %}
+
+    jsConfetti.addConfetti({
+                    confettiNumber: 1000,
+                    confettiColors: [
+                        '#cd0a54', '#0647ff', '#ff70ff', '#7885ff', '#fbb1bd', '#f9bec7',
+                      ],
+    });
+    alert('Thanks for ordering. You can keep a track of your order by using your order id which is: {{id}}.');
+    document.location = "/";
+    localStorage.removeItem('cart');
+    cart_state = JSON.parse(localStorage.getItem('cart_state'));
+    cart_state['cart'] = 1;
+    cart_state['promo_discount'] = 0;
+    cart_state['delivery_charge'] = 0;
+    cart_state['promo_name'] = "none";
+    {% endif %}
+
+    document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="oud-page-main-div">
+    <div class="hola">
+        <div class="oud-page-img">
+            {% if oud.img %}
+            <img src="{{ oud.img.url }}" alt="This doesn't have an image">
+            {% else %}
+            <p>The image for this product doesn't exist</p>
+            {% endif %}
+        </div>
+        <div class="oud-page-details">
+            <h1 class="display-1">{{ oud.title }}</h1>
+
+            <div class="m-4">
+
+            </div>
+
+
+
+            <p class="price-p"><b>Current Price: Tk</b><span class="updated_price_{{oud.id}}">{{oud.base_price}}</span>
+            </p>
+
+            {% if oud.type == 'close' %}
+            <h1 class="prod-status">Product is out of stock ;-;</h1>
+            {% else %}
+            <h1 class="prod-status">Product in stock</h1>
+            {% endif %}
+
+            <p class="amount-desc">Choose Your Desired Amount</p>
+            {% for amount in oud.amount_type.all %}
+            <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart" onclick="change_price(this)"
+                data-amount="{{amount.amount}}" data-id="{{oud.id}}" data-serial="{{forloop.counter}}">{{amount.amount}}
+                gm</button>
+            <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden" value="{{amount.amount}}">
+            {% endfor %}
+            <div>
+                <span id="div_special_btn_{{oud.id}}">
+                    <button class="btn btn-outline-primary cart cart-btn" id="special_btn_{{oud.id}}"
+                        data-id="{{oud.id}}" onclick="add_cart_func(this)" data-name="{{oud.title}}"
+                        data-amount="{{oud.amount}}" data-baseamount="{{oud.base_amount}}"
+                        data-baseprice="{{oud.base_price}}" data-amountnumber="{{oud.amount_number}}"
+                        data-category="{{oud.category.name}}">
+                        <i class="bi bi-cart"></i> Add to Cart
+                    </button>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="oud-page-description">
+        <p>{{ oud.description }}</p>
+
+    </div>
+
+    <div class="oud_page-category-section">
+        <div class="text-with-lines special-text-with-lines">
+            <div>
+                <hr class="line-left">
+
+                <div class="product-slider-h1">Explore More</div>
+                <hr class="line-right">
+            </div>
+
+        </div>
+        <div class="product-slider">
+
+            <ul id="autoWidth" class="cs-hidden">
+                <!-----1-->
+                {% for oudi in ouds %}
+                <li class="item-a">
+                    <div class="slider-box">
+                        <div class="slide-img">
+                            {% if oudi.img %}
+                            <img src="{{ oudi.img.url }}" alt="nice">
+                            {% else %}
+                            <img src="{% static 'ibnmain/images/1.jpg' %}" alt="nice">
+                            {% endif %}
+                            <div class="slider-overlay">
+                                <a href="{% url 'oud_page' oudi.id %}" class="buy-btn">Show Details</a>
+                            </div>
+                        </div>
+    
+                        <div class="detail-box">
+                            <div class="slider-type">
+                                <a href="{% url 'oud_page' oudi.id %}">{{oudi.title}}</a>
+                                <span class="slider-text">{{oudi.category.name}}</span>
+                            </div>
+                            <a href="{% url 'oud_page' oudi.id %}" class="slider-price">{{oudi.base_price}}</a>
+                        </div>
+                    </div>
+                </li>
+    
+                {% endfor %}
+    
+                <!-----4-->
+            </ul>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#autoWidth').lightSlider({
+                    autoWidth: true,
+                    auto: true,
+                    loop: true,
+                    pauseOnHover: true,
+                    onSliderLoad: function () {
+                        $('autoWidth').removeClass('cs-hidden');
+                    }
+                });
+            });
+        </script>
+
+    </div>
+
+    <div class="review-section">
+
+        <form action="{% url 'review' oud.id %}" method="post">
+            {% csrf_token %}
+            <textarea rows="5" col="10" placeholder="Write Your Review." name="review"></textarea>
+            <input type="submit" class="btn btn-outline-primary m-3 product-review-btn"
+                style="margin-bottom:100px !important;">
+        </form>
+
+        <h1>All Reviews</h1>
+        {% if reviews %}
+        <div class="all-reviews">
+            {% for review in reviews %}
+
+
+            <p class="review-username">{{ review.user.username }}</p>
+            <hr>
+            <p class="main-review">"{{ review.review }}"</p>
+            <br><br><br>
+
+            {% endfor %}
+        </div>
+        {% else %}
+        <p> No Comments Yet For This Auction.</p>
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+    function clearCart() {
+        cart = JSON.parse(localStorage.getItem('cart'));
+        item = `special_btn_{{oud.id}}`;
+        let x = document.querySelector(`#minus_${item}`);
+        console.log(x);
+        let id = cart[item][2];
+        let name = cart[item][1];
+        let amount = cart[item][3];
+        let base_amount = cart[item][4];
+        let base_price = cart[item][5];
+        let amount_number = cart[item][6];
+        let category = cart[item][8];
+
+        document.getElementById(`div_${item}`).innerHTML = `<button class="btn btn-outline-primary cart cart-btn" id="${item}" data-id='${id}' onclick="add_cart_func(this)" data-name='${name}' data-amount="${amount}" 
+                                                    data-baseamount="${base_amount}" data-baseprice="${base_price}" data-amountnumber='${amount_number}' data-category='${category}'><i class="bi bi-cart"></i> Add to Cart</button>`;
+        localStorage.clear();
+        cart = {};
+        document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+    }
+
+    if (cart[`special_btn_{{oud.id}}`] != undefined) {
+        update_cart(cart, `special_btn_{{oud.id}}`);
+        console.log("comes here");
+    }
+
+</script>
+
+
+
+{% endblock %}

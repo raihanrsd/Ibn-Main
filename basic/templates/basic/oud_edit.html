@@ -1,0 +1,167 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="oud-edit-div">
+    <h1>Product Id: {{oud.id}}</h1>
+    <h1>Product Title: {{oud.title}}</h1>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'edit_oud' oud.id %}" class="checkout-form">
+        {% csrf_token %}
+
+        <div class="form-group ">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control login_inp-checkout" name="title" placeholder="Title" required
+                value="{{oud.title}}">
+        </div>
+
+        <div class="form-group">
+            <label for="offer-status-edit">Select Type:</label>
+            <select name="type" id="offer-status-edit" required>
+                <option value="open" selected>Open</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea name="description" id="edit_oud_textarea" class="login_txt-checkout" cols="30" rows="10"
+                placeholder="Write the Oud Description over here." required>{{oud.description}}</textarea>
+        </div>
+        <div class="form-group ">
+            <label for="exerpt">Exerpt:</label>
+            <input type="text" class="form-control login_inp-checkout" placeholder="Exerpt" name="exerpt"
+                value="{{oud.exerpt}}">
+        </div>
+        <div class="form-group">
+            <label for="base_price">Base Price:</label>
+            <input type="number" class="form-control login_inp-checkout" name="base_price" placeholder="Base Price"
+                value="{{oud.base_price}}">
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" class="form-control login_inp-checkout" name="amount" value="{{oud.amount}}"
+                placeholder="Amount">
+        </div>
+
+        <div class="form-group">
+            <label for="base_amount">Base Amount:</label>
+            <input type="number" class="form-control login_inp-checkout" name="base_amount" value="{{oud.base_amount}}"
+                placeholder="Base Amount">
+        </div>
+
+        <div class="form-group">
+
+            <label for="price_1">Price 1:</label>
+            <input type="number" class="form-control login_inp-checkout" name="price_1" value="{{oud.price_1}}" required
+                placeholder="Price 1">
+        </div>
+
+        <div class="form-group">
+            <label for="price_2">Price 2:</label>
+            <input type="number" class="form-control login_inp-checkout" name="price_2" value="{{oud.price_2}}"
+                placeholder="Price 2 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="price_3">Price 3:</label>
+            <input type="number" class="form-control login_inp-checkout" name="price_3" value="{{oud.price_3}}"
+                placeholder="Price 3 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="price_4">Price 4:</label>
+            <input type="number" class="form-control login_inp-checkout" name="price_4" value="{{oud.price_4}}"
+                placeholder="Price 4 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="prev_price_1">Previous Price 1:</label>
+            <input type="number" class="form-control login_inp-checkout" name="prev_price_1" required
+                value="{{oud.prev_price_1}}" placeholder="Previous Price 1 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="prev_price_2">Previous Price 2:</label>
+            <input type="number" class="form-control login_inp-checkout" name="prev_price_2"
+                value="{{oud.prev_price_2}}" placeholder="Previous Price 2 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="prev_price_3">Previous Price 3:</label>
+            <input type="number" class="form-control login_inp-checkout" name="prev_price_3"
+                value="{{oud.prev_price_3}}" placeholder="Previous Price 3 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="prev_price_4">Previous Price 4:</label>
+            <input type="number" class="form-control login_inp-checkout" name="prev_price_4"
+                value="{{oud.prev_price_4}}" placeholder="Previous Price 4 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="offer-status-edit" >Offer Status:</label>
+            <select name="offer_status" id="offer-status-edit" required>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="offer_amount">Offer Amount:</label>
+            <input type="number" class="form-control login_inp-checkout" name="offer_amount" required
+                value="{{oud.offer_amount}}" placeholder="Offer Amount (never give more than 100)">
+        </div>
+
+        <div class="form-group">
+            <label for="img">Main Image:</label>
+            <img src="{{oud.img.url}}" alt="The image doesn't exist">
+            <input type="file" class="form-control-file" name="img" value="{{oud.img}}">
+        </div>
+
+
+        <div class="form-group">
+            <label for="cover_image1">Cover Image(hover):</label>
+            <img src="{{oud.cover_image1.url}}" alt="The image doesn't exist">
+            <input type="file" class="form-control-file" name="cover_image1" value="{{oud.cover_image1}}">
+        </div>
+
+        <div class="form-group">
+            <label for="amount_type">Offer Status:</label>
+            <select name="amount_type" id="amount_type" required multiple>
+                {% for quantity in quantity_list %}
+                {% if quantity.amount in oud.amount_type.all %}
+                <option value="{{quantity.amount}}" selected>{{quantity.amount}} gm</option>
+                {% else %}
+                <option value="{{quantity.amount}}">{{quantity.amount}} gm</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category-update" >Offer Status:</label>
+            <select name="category" id="category-update" required>
+                {% for category in categories %}
+                <option value="{{category.name}}">{{category.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount_number">Amount Number:</label>
+            <input type="number" class="form-control login_inp-checkout" name="amount_number" required
+                value="{{oud.amount_number}}" placeholder="Amount Number (this field is really Important)">
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags:</label>
+            <input type="text" class="form-control login_inp-checkout" name="tags" value="{{oud.tags}}" required
+                placeholder="Tags (This if for user search queries)">
+        </div>
+
+        <input type="submit" class="btn btn-primary nice_btn" value="Submit">
+    </form>
+</div>
+{% endblock %}

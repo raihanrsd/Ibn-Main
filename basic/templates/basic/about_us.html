@@ -1,0 +1,59 @@
+{% extends "basic/layout.html" %}
+
+{% block body %}
+
+<div class="sidebar">
+    <a class="btn dropbtn" href="#AboutUs">About Us</a>
+    <a class="btn dropbtn" href="#PrivacyPolicy">Privacy Policy</a>
+    <a class="btn dropbtn" href="#PaymentPolicy">Payment Policy</a>
+    <a class="btn dropbtn" href="#ShippingPolicy">Shipping Policy</a>
+    <a class="btn dropbtn" href="#ExchangeAndReturn">Exchange And Return</a>
+    <a class="btn dropbtn" href="#TermsAndConditions">Terms And Conditions</a>
+</div>
+
+<div class="aboutus-page-main-div">
+    <div id="AboutUs">
+        <h1>About Us</h1>
+        <p class="aboutus-p">
+            {{web_contents.aboutus}}
+        </p>
+    </div>
+    <div id="PrivacyPolicy">
+        <h1>Privacy Policy</h1>
+        <p class="privacy-policy-p">
+            {{web_contents.privacy_policy}}
+        </p>
+    </div>
+    <div id="PaymentPolicy">
+        <h1>Payment Policy</h1>
+
+        <p class="payment-policy-p">
+            {{web_contents.payment_policy}}
+        </p>
+    </div>
+
+    <div id="ShippingPolicy">
+        <h1>Shipping Policy</h1>
+        <p class="shipping-policy-p">
+            {{web_contents.shipping_policy}}
+        </p>
+    </div>
+
+    <div id="ExchangeAndReturn">
+        <h1>Exchange and Return Policy</h1>
+        <p class="exchange-and-return-p">
+            {{web_contents.exchange_and_return}}
+        </p>
+    </div>
+
+    <div id="TermsAndConditions">
+        <h1>Terms and Conditions</h1>
+        <p class="terms-and-conditions-p">
+            {{web_contents.term_and_conditions}}
+        </p>
+    </div>
+</div>
+
+
+
+{% endblock %}

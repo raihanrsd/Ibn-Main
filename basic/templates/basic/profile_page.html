@@ -1,0 +1,114 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="main-profile-page-div">
+    <div class="user-page-button-div">
+
+        <button class="user-page-buttons" onclick="show_user_page_profile(this)" data-what="profile">Profile</button>
+        <button class="user-page-buttons" onclick="show_user_page_profile(this)" data-what="orders">Orders</button>
+
+
+
+        <button class="user-page-buttons" onclick="show_user_page_profile(this)" data-what="shipping-address">Shipping
+            Address</button>
+        <button class="user-page-buttons" onclick="show_user_page_profile(this)" data-what="wishlist">Wishlist</button>
+
+    </div>
+
+    <div class="user-page-profile user-div">
+        <form action="{% url 'change_profile' user.id %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control profile-page-inp" placeholder="raihanrsd" name="username" disabled
+                        value="{{ user_data.username }}">
+                </div>
+                <div class="col">
+                    <label for="email">email</label>
+                    <input type="email" class="form-control profile-page-inp" placeholder="example@gmail.com" name="email" disabled
+                        value="{{ user_data.email }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="fullname">Fullname</label>
+                    <input type="text" class="form-control profile-page-inp" placeholder="Mohammad Raihan Rashid" name="fullname" disabled
+                        value="{{ user_data.full_name }}">
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for="gender">Gender</label>
+                    <select class="custom-select profile-page-inp" id="inputGroupSelect01" name="gender" disabled>
+                        
+                        {% if user_data.gender == "male" %}
+                        <option selected value="male">Male</option>
+                        <option value="female">Female</option>
+                        {% else %}
+                        <option value="male">Male</option>
+                        <option selected value="female">Female</option>
+                        {% endif %}
+                        
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="contact_no">Contact No.</label>
+                    <input type="text" class="form-control profile-page-inp" placeholder="0174*******" name="contact_no" disabled
+                        value="{{ user_data.contact_no }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="display_flex_center">
+                        <input type="submit" class="profile-page-btn submit-form-btn">
+
+                    </div>
+                    
+
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+    <div class="user-page-orders user-div">
+        nigga nigga niggga
+    </div>
+
+    <div class="user-page-shipping-address uder-div">
+        <a href="{% url 'add_shipping' %}" class="btn btn-outline-primary main-oud-add-btn">Add Shipping +</a>
+    </div>
+
+    <div class="user-page-wishlist user-div">
+        nice nice nice
+    </div>
+
+
+</div>
+
+<script>
+    cart_state = JSON.parse(localStorage.getItem('cart_state'));
+
+    if (cart_state["user_state"] == 1) {
+        show_user_page_div("profile");
+    }
+    else if (cart_state["user_state"] == 2) {
+        show_user_page_div("orders");
+    }
+    else if (cart_state["user_state"] == 3) {
+        show_user_page_div("shipping-address");
+    }
+    else if (cart_state["user_state"] == 4) {
+        show_user_page_div("wishlist");
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="all-product-page-heading">
+    <h1>{{category.name}}</h1>
+ </div>
+ {% for oud in ouds %}
+    
+ <div class="all-perfume">
+     <div class="all-perfume-img-div">
+         {% if oud.img %}
+         <img src="{{ oud.img.url }}" alt="Product Image" class="main_image">
+         {% else %}
+         <p>The image for this product doesn't exist.</p>
+         {% endif %}
+
+         {% if oud.cover_image1 %}
+         <img src="{{ oud.cover_image1.url }}" alt="" class="cover_image">
+         {% else %}
+         <img src="{% static 'ibnmain/images/2.jpg' %}" alt="" class="cover_image" >
+         {% endif %}
+
+         {% if oud.offer_status != "closed" %}
+         <p class="oud-offer-amount">-{{oud.offer_amount}}%</p>
+         {% else %}
+         {% endif %}
+     </div>
+     <div class="all-perfume-details-div">
+         
+         <h1>{{ oud.title }}</h1>
+         {% if oud.offer_status != "closed" %}
+         <p class="price-p"><b>Price:  </b><span class="prev_price prev_price_{{oud.id}}">Tk {{oud.prev_price_1}}</span> Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+         {% else %}
+         <p class="price-p"><b>Price:  </b>Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+         {% endif %}
+         {% if oud.type == 'close' %}
+             <h1 class="prod-status">Product is out of stock</h1>
+         {% else %}
+             <h1 class="prod-status">Product in stock</h1>
+         {% endif %}
+         <input id="hidden_inp1_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_1}}">
+         <input id="hidden_inp1_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_2}}">
+         <input id="hidden_inp1_3_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_3}}">
+         <input id="hidden_inp1_4_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_4}}">
+
+
+         <input id="hidden_inp2_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_1}}">
+         <input id="hidden_inp2_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_2}}">
+         <input id="hidden_inp2_3_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_3}}">
+         <input id="hidden_inp2_4_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_4}}">
+         {% for amount in oud.amount_type.all %}
+             <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart" onclick="change_price(this)" data-amount="{{amount.amount}}" data-id="{{oud.id}}" data-serial="{{forloop.counter}}" data-status="{{oud.offer_status}}">{{amount.amount}} gm</button>
+             <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden" value="{{amount.amount}}">
+         {% endfor %}
+
+
+         
+         
+         
+
+
+         
+             <p class="description">
+                 {% if oud.description|length > 150 %}
+                 {{ oud.description | slice:":150" }}...<a href="{% url 'oud_page' oud.id %}" class="see_more">see more</a>
+                 {% else %}
+                 {{oud.description }}
+                 {% endif %}
+             </p>
+             
+         
+
+     
+         <a href="{% url 'category' oud.category.name %}" class="oud-category"><p>{{ oud.category.name }}</p></a>
+         <div class="test-div">
+             <a href="{% url 'oud_page' oud.id %}" class="special">Show details</a>
+             <span id="div_special_btn_{{oud.id}}">
+                 <button class="btn btn-outline-primary cart cart-btn" id="special_btn_{{oud.id}}" data-id="{{oud.id}}" onclick="add_cart_func(this)" data-name="{{oud.title}}" data-amount="{{oud.amount}}" data-baseamount="{{oud.base_amount}}" data-baseprice="{{oud.base_price}}" data-amountnumber="{{oud.amount_number}}" data-category="{{oud.category.name}}" data-imgurl="{{oud.img.url}}">
+                     <i class="bi bi-cart"></i> Add to Cart
+                 </button>
+             </span>
+             </div>
+         <div id="button_div_{{oud.id}}"></div>
+         
+     </div>
+ </div>
+
+ 
+ 
+ {% endfor %}
+
+ <nav aria-label="Page navigation example">
+     <ul class="pagination justify-content-center">
+         {% if ouds.has_previous %}
+             <li class="page-item">
+                 <a class="page-link" href="?page=1">&laquo; First Page</a>
+             </li>
+             <li class="page-item">
+                 <a class="page-link" href="?page={{ posts.previous_page_number }}">previous</a>
+             </li>
+             
+         {% else %}
+             <li class="page-item disabled">
+                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+             </li>
+         {% endif %}
+ 
+         
+             
+             
+         
+         
+         {% for page in ouds.paginator %}
+             {% if posts.number == page.number %}
+                 <li class="page-item active" aria-current="page">
+                     <span class="page-link">
+                         {{page.number}}
+                     <span class="sr-only">(current)</span>
+                     </span>
+                 </li>
+
+             {% else %}
+                 <li class="page-item">
+                     <a class="page-link" href="?page={{page.number}}">{{page.number}}</a>
+                 </li>
+             {% endif %}
+         {% endfor %}
+             
+ 
+         {% if ouds.has_next %}
+         
+             <li class="page-item">
+                 <a href="?page={{ posts.next_page_number }}" class="page-link">Next</a>
+             </li>
+             <li class="page-item">
+                 <a href="?page={{ posts.paginator.num_pages }}" class="page-link">last &raquo;</a>
+             </li>
+         {% else %}
+             <li class="page-item disabled">
+                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+             </li>
+             
+         {% endif %}
+     </ul>
+ </nav>
+
+   
+
+ 
+ <script>
+     update_all_cart()
+
+     function update_all_cart(){
+         for(var item in cart){
+             const btn = document.getElementById(item);
+             let id = btn.dataset.id;
+             let name = btn.dataset.name;
+             let amount = btn.dataset.amount;
+             let amount_number = btn.dataset.amountnumber;
+             let category = btn.dataset.category;
+             let img_url = btn.dataset.imgurl;
+             document.getElementById(`div_${item}`).innerHTML = `<button id='minus_${item}'
+             class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}' data-amountnumber='${amount_number}' data-category='${category}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
+             </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amount='${amount}' data-amountnumber='${amount_number}'>+</button>`;
+
+
+             document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+         }
+     }
+
+     function clearCart(){
+         cart = JSON.parse(localStorage.getItem('cart'));
+         for (var item in cart){
+             let x = document.querySelector(`#minus_${item}`);
+             console.log(x);
+             let id = cart[item][2];
+             let name = cart[item][1];
+             let amount = cart[item][3];
+             let amount_number = cart[item][4];
+             let category = cart[item][6];
+             let img_url = cart[item][9];
+             document.getElementById(`div_${item}`).innerHTML = `<button class="btn btn-outline-primary cart cart-btn" id="${item}" data-id='${id}' onclick="add_cart_func(this)" data-name='${name}' data-amount="${amount}" 
+                                                 data-amountnumber='${amount_number}' data-category='${category}' data-imgurl='${img_url}'><i class="bi bi-cart"></i> Add to Cart</button>`;
+         }
+         localStorage.clear();
+         cart = {};
+         document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+     }
+     //document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+
+     
+
+ </script>
+    
+{% endblock %}

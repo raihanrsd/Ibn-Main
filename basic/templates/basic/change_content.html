@@ -1,0 +1,93 @@
+{% extends "basic/layout.html" %}
+
+{% block body %}
+<div class="oud-edit-div">
+
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'change_content' %}" class="checkout-form">
+        {% csrf_token %}
+
+
+        <div class="form-group">
+            <label for="aboutus">About us:</label>
+            <textarea name="aboutus" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the About Us over here." required>{{web_content.aboutus}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="privacy_policy">Privacy Policy:</label>
+            <textarea name="privacy_policy" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the Privacy Policy over here." required>{{web_content.privacy_policy}}</textarea>
+        </div>
+
+
+        <div class="form-group">
+            <label for="payment_policy">Payment Policy:</label>
+            <textarea name="payment_policy" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the Payment Policy over here." required>{{web_content.payment_policy}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="ahipping_policy">Shipping Policy:</label>
+            <textarea name="shipping_policy" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the shipping_policy over here." required>{{web_content.shipping_policy}}</textarea>
+        </div>
+
+
+        <div class="form-group">
+            <label for="terms_and_conditions">Terms and Conditions:</label>
+            <textarea name="terms_and_conditions" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the Terms and Conditions over here." required>{{web_content.term_and_conditions}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="exchange_and_return">Exchange and Return:</label>
+            <textarea name="exchange_and_return" id="edit_oud_textarea" class="login_txt" cols="30" rows="10"
+                placeholder="Write the Exchange And Return Policy over here." required>{{web_content.exchange_and_return}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="delivery_charge">Delivery Charge:</label>
+            <input type="number" class="form-control login_inp-checkout" name="delivery_charge" value="{{web_content.delivery_charge}}" required
+                placeholder="Delivery Charge">
+        </div>
+
+
+        <div class="form-group">
+            <label for="contact_no">Contact No:</label>
+            <input type="number" class="form-control login_inp-checkout" name="contact_no" value="{{web_content.contact_no}}" required
+                placeholder="Contact No.">
+        </div>
+
+        <div class="form-group">
+            <label for="contact_no_2">Contact No. (extra):</label>
+            <input type="number" class="form-control login_inp-checkout" name="contact_no_2" value="{{web_content.contact_no_2}}"
+                placeholder="Contact No. (extra)">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control login_inp-checkout" name="email" value="{{web_content.email}}"
+                placeholder="Email">
+        </div>
+
+        <div class="form-group">
+            <label for="featured_product_id_1">Featured Product id (first):</label>
+            <input type="text" class="form-control login_inp-checkout" name="featured_1" value="{{web_content.featured_product_id_1}}"
+                placeholder="Featured Product Id. 1">
+        </div>
+        <div class="form-group">
+            <label for="featured_product_id_2">Featured Product id (second):</label>
+            <input type="text" class="form-control login_inp-checkout" name="featured_2" value="{{web_content.featured_product_id_2}}"
+                placeholder="Featured Product Id. 2">
+        </div>
+        <div class="form-group">
+            <label for="featured_product_id_3">Featured Product id (third):</label>
+            <input type="text" class="form-control login_inp-checkout" name="featured_3" value="{{web_content.featured_product_id_3}}"
+                placeholder="Featured Product Id. 3">
+        </div>
+
+        <button type="submit" class="btn btn-primary nice_btn">Save</button>
+    </form>
+</div>
+{% endblock %}

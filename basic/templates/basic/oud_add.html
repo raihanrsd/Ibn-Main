@@ -1,0 +1,138 @@
+{% extends "basic/layout.html" %}
+
+{% block body %}
+<div class="oud-edit-div">
+    <h1>Add Products</h1>
+   
+    
+    <form method="post" enctype="multipart/form-data" action="{% url 'add_oud' %}" class="checkout-form">
+        {% csrf_token %}
+
+        <div class="form-group ">
+            <input type="text" class="form-control login_inp-checkout" name="title" placeholder="Title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="offer-status-edit">Select Type:</label>
+            <select name="type" id="offer-status-edit" required>
+                <option value="open" selected>Open</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <textarea name="description" id="edit_oud_textarea" class="login_txt" cols="30" rows="10" placeholder="Write the Oud Description over here." required></textarea>
+        </div>
+        <div class="form-group ">
+
+            <input type="text" class="form-control login_inp-checkout" placeholder="Exerpt" name="exerpt" required>
+        </div>
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout" name="base_price" placeholder="Base Price">
+        </div>
+        <div class="form-group">
+            <input type="number" step="0.01" class="form-control login_inp-checkout"  name="amount" required
+                placeholder="Amount">
+        </div>
+
+        <div class="form-group">
+            <input type="number" step="0.01" class="form-control login_inp-checkout"  name="base_amount" 
+                placeholder="Base Amount">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="price_1" required
+                placeholder="Price 1">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="price_2" 
+                placeholder="Price 2 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="price_3" 
+                placeholder="Price 3 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="price_4" 
+                placeholder="Price 4 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="prev_price_1" required
+                placeholder="Previous Price 1 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="prev_price_2" 
+                placeholder="Previous Price 2 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="prev_price_3" 
+                placeholder="Previous Price 3 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="prev_price_4" 
+                placeholder="Previous Price 4 (write 0 if you want it to be empty)">
+        </div>
+
+        <div class="form-group">
+            <label for="offer-status-edit">Offer Status:</label>
+            <select name="offer_status" id="offer-status-edit" required>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="offer_amount" required 
+                placeholder="Offer Amount (never give more than 100)">
+        </div>
+
+        <div class="form-group">
+            <label for="img">Select a Product main Image:</label>
+            <input type="file" class="form-control-file"  name="img" required>
+        </div>
+
+
+        <div class="form-group">
+            <label for="cover_image1">Select a product secondary image:</label>
+            <input type="file" class="form-control-file"  name="cover_image1" >
+        </div>
+
+        <div class="form-group">
+            <label for="amount_type">Offer Status:</label>
+            <select name="amount_type" id="amount_type" required multiple>
+                {% for quantity in quantity_list %}
+                <option value="{{quantity.amount}}">{{quantity.amount}} gm</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category-update" >Offer Status:</label>
+            <select name="category" id="category-update" required>
+                {% for category in categories %}
+                <option value="{{category.name}}">{{category.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="number" class="form-control login_inp-checkout"  name="amount_number" required
+                placeholder="Amount Number (this field is really Important)">
+        </div>
+
+        <div class="form-group">
+            <input type="text" class="form-control login_inp-checkout"  name="tags" required
+                placeholder="Tags (This if for user search queries)">
+        </div>
+
+        <button type="submit" class="btn btn-primary nice_btn">Add</button>
+    </form>
+</div>
+{% endblock %}

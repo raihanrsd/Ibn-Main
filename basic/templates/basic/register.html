@@ -1,0 +1,46 @@
+{% extends "basic/layout.html" %}
+
+{% block body %}
+    
+
+    <h1>Register !</h1>
+    {% if message %}
+        <div style="color:white;">{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" class="m-3 p-3" style="margin-top: 100px;">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control login_inp" autofocus type="text" name="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input class="form-control login_inp" type="email" name="email" placeholder="Email Address">
+        </div>
+        <div class="form-group">
+            <input class="form-control login_inp" type="password" name="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <input class="form-control login_inp"type="password" name="confirmation" placeholder="Confirm Password">
+        </div>
+        <div class="form-group">
+            <label style="color:white;">Upload a Profile Picture (optional)</label>
+            <input class="form-control-file" style="color:white;" type="file" name="profile_pic" id="profile_pic">
+        </div>
+        <div class="form-group">
+            <label for="cover_pic" style="color:white;">Upload a Cover Picture (optional)</label>
+            <input class="form-control-file" type="file" style="color:white;" name="cover_pic" placeholder="Cover Photo" id="cover_pic">
+        </div>
+        <div class="form-group">
+            
+            <input class="form-control login_inp" type="text" name="bio" placeholder="Bio (optional)">
+        </div>
+
+        <input class="btn btn-outline-light" type="submit" value="Register">
+    </form>
+
+    <span style="color:white;">Already have an account?</span> <a href="{% url 'login' %}">Log In here.</a><br>
+    
+   
+
+
+{% endblock %}

@@ -1,0 +1,548 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<nav class="admin-page-nav">
+    <div class="admin-page-company-logo">
+        <img src="{% static '' %}" alt="">
+
+    </div>
+
+</nav>
+
+<div class="sidebar">
+    <h1>Ibn' Main</h1>
+    <button class="dropbtn" onclick="show_admin_page_dashboard()">Dashboard</button>
+    <div class="dropdown">
+        <button class="arrow" data-id="1" onclick="show_dropdown(this)">Products</button>
+        <div class="dropdown-content" id="dropdown_1">
+            <a onclick="show_admin_page_allProducts()">All Products</a>
+            <a onclick="show_admin_page_category()">Categories</a>
+            <a onclick="show_admin_page_promos()">Promos</a>
+            <a onclick="show_admin_page_quantity()">Quantity</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <button class="arrow" data-id="2" onclick="show_dropdown(this)">User</button>
+        <div class="dropdown-content" id="dropdown_2">
+            <a onclick="show_admin_page_admin()">Admin</a>
+            <a onclick="show_admin_page_moderator()">Moderator</a>
+            <a onclick="show_admin_page_user()">All Users</a>
+            <a onclick="show_admin_page_reviews()">Reviews</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <button class="arrow" data-id="3" onclick="show_dropdown(this)">Order</button>
+        <div class="dropdown-content" id="dropdown_3">
+            <a onclick="show_admin_page_new_orders()">New Orders</a>
+            <a onclick="show_admin_page_delivered_orders()">Delivered Orders</a>
+            <a onclick="show_admin_page_cancel_orders()">Cancelled Orders</a>
+            <a onclick="show_admin_page_tracker()">Tracker</a>
+        </div>
+    </div>
+    <button class="dropbtn" onclick="show_admin_page_contents()">Content</button>
+    <button class="dropbtn" onclick="show_admin_page_contact_us()">Contact Us Queries</button>
+</div>
+
+
+
+<div class="admin-page-main-div">
+
+
+
+    <div class="admin-page-button-div">
+        <button class="admin-page-buttons" onclick="show_admin_page_dashboard()">Dashboard</button>
+        <button class="admin-page-buttons" onclick="show_admin_page_products()">Products</button>
+        <button class="admin-page-buttons" onclick="show_admin_page_users()">Users</button>
+        <button class="admin-page-buttons" onclick="show_admin_page_orders()">Orders</button>
+        <button class="admin-page-buttons" onclick="show_admin_page_contents()">Contents</button>
+        <button class="admin-page-buttons" onclick="show_admin_page_contact_us()">Contact Us</button>
+    </div>
+
+    
+
+    <div class="admin-page-dashboard">
+
+    </div>
+    <div class="admin-page-products">
+        <!--
+        <div class="admin-page-button-div">
+            <button class="admin-page-buttons" >All Products</button>
+            <button class="admin-page-buttons" >Category</button>
+            <button class="admin-page-buttons" >Promos</button>
+            <button class="admin-page-buttons" >Quantity</button>
+        </div> -->
+        <div class="admin-page-edit-product">
+            <a href="{% url 'add_oud' %}" class="btn btn-outline-primary main-oud-add-btn">Add Oud +</a>
+            {% for oud in ouds %}
+
+            <div class="all-perfume">
+                <div class="all-perfume-img-div">
+                    {% if oud.img %}
+                    <img src="{{ oud.img.url }}" alt="Product Image" class="main_image">
+                    {% else %}
+                    <p>The image for this product doesn't exist.</p>
+                    {% endif %}
+
+                    {% if oud.cover_image1 %}
+                    <img src="{{ oud.cover_image1.url }}" alt="" class="cover_image">
+                    {% else %}
+                    <img src="{% static 'ibnmain/images/2.jpg' %}" alt="" class="cover_image">
+                    {% endif %}
+
+                    {% if oud.offer_status != "closed" %}
+                    <p class="oud-offer-amount">-{{oud.offer_amount}}%</p>
+                    {% else %}
+                    {% endif %}
+                </div>
+                <div class="all-perfume-details-div">
+
+                    <h1>{{ oud.title }}</h1>
+                    {% if oud.offer_status != "closed" %}
+                    <p class="price-p"><b>Price: </b><span class="prev_price prev_price_{{oud.id}}">Tk
+                            {{oud.prev_price_1}}</span> Tk <span
+                            class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+                    {% else %}
+                    <p class="price-p"><b>Price: </b>Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span>
+                    </p>
+                    {% endif %}
+                    {% if oud.type == 'close' %}
+                    <h1 class="prod-status">Product is out of stock</h1>
+                    {% else %}
+                    <h1 class="prod-status">Product in stock</h1>
+                    {% endif %}
+                    {% for amount in oud.amount_type.all %}
+                    <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart" onclick="change_price(this)"
+                        data-amount="{{amount.amount}}" data-id="{{oud.id}}" data-serial="{{forloop.counter}}"
+                        data-status="{{oud.offer_status}}">{{amount.amount}} gm</button>
+                    <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden"
+                        value="{{amount.amount}}">
+                    {% endfor %}
+
+
+
+                    <p class="description">
+                        {% if oud.description|length > 150 %}
+                        {{ oud.description | slice:":150" }}...<a href="{% url 'oud_page' oud.id %}"
+                            class="see_more">see more</a>
+                        {% else %}
+                        {{oud.description }}
+                        {% endif %}
+                    </p>
+
+
+
+
+                    <a href="{% url 'category' oud.category.name %}" class="oud-category">
+                        <p>{{ oud.category.name }}</p>
+                    </a>
+                    <div class="test-div">
+                        <details>
+                            <summary>More Info</summary>
+                            <p>stored:{{ oud.inventory }} gm</p>
+                            <p>Sales: {{ oud.total_sold }}</p>
+                        </details>
+                        <div class="display_flex">
+                            {% if oud.visibility %}
+                            <a class="visible-btn" onclick="change_visibility(this)" data-id="{{oud.id}}"><i
+                                    class="bi bi-eye" id="admin_page_visible_{{oud.id}}"></i></a>
+                            {% else %}
+                            <a class="invisibled" onclick="change_visibility(this)" data-id="{{oud.id}}"><i
+                                    class="bi bi-eye-slash" id="admin_page_visible_{{oud.id}}"></i></a>
+                            {% endif %}
+                            <a href="{% url 'edit_oud' oud.id %}" class="edit-btn"><i class="bi bi-pencil"></i></a>
+                            <a class="delete-btn" onclick="show_delete_box(this)" data-id="{{oud.id}}"><i
+                                    class="bi bi-trash3"></i></a>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div id="delete_box_{{oud.id}}" class="delete-confirmation-box">
+                    <p>Are You sure that You want to delete this record?</p>
+                    <div class="delete-box-buttons">
+                        <a class="btn btn-danger"
+                            href="{% url 'delete_record' what='product' nice_id=oud.id %}">Delete</a>
+                        <button class="btn btn-dark" onclick="hide_delete_box(this)" data-id="{{oud.id}}">Close</button>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            {% endfor %}
+        </div>
+        <div class="admin-page-categories">
+            
+            <div class="item-add-form">
+                <form action="{% url 'add_category' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="name" class="form-control login_inp-item" placeholder="Category Name" required>
+                    <input type="submit" class="btn btn-success nice_btn" value="Add Category">
+                </form>
+            </div>
+            
+            {% for category in categories %}
+            <div class="individual-item">
+
+            
+            <p class="category_name_{{category.id}}" id="category_p_{{category.id}}">{{category.name}}</p>
+            
+            <div class="input-control-div not_visible" id="category_div_{{category.id}}" >
+                <input type="text" class="form-control" name="category" id="category_input_{{category.id}}" value="{{category.name}}">
+                <a class="btn btn-dark" data-id="{{category.id}}" onclick="edit_category(this, 'category')">Close</a>
+            </div>
+            
+            <a class="btn btn-primary" data-id="{{category.id}}" onclick="edit_category(this, 'category')" id="category_edit_1_{{category.id}}">Edit</a>
+            <a class="btn btn-success not_visible" data-id="{{category.id}}" onclick="edit_category_nice(this, 'category')" id="category_edit_2_{{category.id}}">Enter</a>
+            <a class="btn btn-danger" onclick="show_category_delete_box(this, 'category')" data-id="{{category.id}}" id="category_delete_btn_{{category.id}}">Delete</a>
+            </div>
+            <div id="category_delete_{{category.id}}" class="delete-confirmation-box">
+                <p>Are You sure that You want to delete this record?</p>
+                <div class="delete-box-buttons">
+                    <a href="{% url 'delete_record' what='category' nice_id=category.id %}" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-dark" onclick="hide_category_delete_box(this, 'category')" data-id="{{category.id}}">Close</button>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        <div class="admin-page-promos">
+            
+            <div class="item-add-form">
+                <form action="{% url 'add_promo' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="name" class="form-control" placeholder="Promo Name" required>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" placeholder="Discount Amount" name="discount_amount" required>
+                        </div>
+                        <div class="col">
+                            <input type="submit" class="btn btn-success nice_btn" value="Submit">
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            {% for promo in promos %}
+            <div class="individual-item">
+                <p class="promo_name_{{promo.id}}" id="promo_p_{{promo.id}}">{{promo.name}}</p>
+                <p class="promo_name_{{promo.id}}" id="promo_disc_{{promo.id}}">{{promo.discount_amount}}</p>
+                <div class="input-control-div not_visible" id="promo_div_{{promo.id}}" >
+                    <input type="text" class="form-control" name="name" id="promo_input_{{promo.id}}" value="{{promo.name}}">
+                    <input type="number" class="form-control" name="discount_amount" id="promo_inp_disc_{{promo.id}}" value="{{promo.discount_amount}}">
+                    <a class="btn btn-dark" data-id="{{promo.id}}" onclick="edit_category(this, 'promo')">Close</a>
+                </div>
+            <a class="btn btn-primary" data-id="{{promo.id}}" onclick="edit_category(this, 'promo')" id="promo_edit_1_{{promo.id}}">Edit</a>
+            <a class="btn btn-success not_visible" data-id="{{promo.id}}" onclick="edit_category_nice(this, 'promo')" id="promo_edit_2_{{promo.id}}">Enter</a>
+            <a class="btn btn-danger" onclick="show_category_delete_box(this, 'promo')" data-id="{{promo.id}}" id="promo_delete_btn_{{promo.id}}">Delete</a>
+            </div>
+            <div id="promo_delete_{{promo.id}}" class="delete-confirmation-box">
+                <p>Are You sure that You want to delete this record?</p>
+                <div class="delete-box-buttons">
+                    <a href="{% url 'delete_record' what='promo' nice_id=promo.id %}" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-dark" onclick="hide_category_delete_box(this, 'promo')" data-id="{{promo.id}}">Close</button>
+                </div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+        <div class="admin-page-quantity_management">
+            <div class="item-add-form">
+                <form action="{% url 'add_quantity' %}" method="post">
+                    {% csrf_token %}
+                    <input type="number" name="amount" class="form-control login_inp-item" placeholder="Amount" required>
+                    <input type="submit" class="btn btn-success nice_btn" value="Submit">
+                </form>
+            </div>
+            {% for quantity in quantity_data %}
+            <div class="individual-item">
+
+            
+                <p class="quantity_name_{{quantity.id}}" id="quantity_p_{{quantity.id}}">{{quantity.amount}} gm</p>
+            
+                <div class="input-control-div not_visible" id="quantity_div_{{quantity.id}}" >
+                    <input type="text" class="form-control" name="quantity" id="quantity_input_{{quantity.id}}" value="{{quantity.amount}}">
+                    <a class="btn btn-dark" data-id="{{quantity.id}}" onclick="edit_category(this, 'quantity')">Close</a>
+                </div>
+                
+                <a class="btn btn-primary" data-id="{{quantity.id}}" onclick="edit_category(this, 'quantity')" id="quantity_edit_1_{{quantity.id}}">Edit</a>
+                <a class="btn btn-success not_visible" data-id="{{quantity.id}}" onclick="edit_category_nice(this, 'quantity')" id="quantity_edit_2_{{quantity.id}}">Enter</a>
+                <a class="btn btn-danger" onclick="show_category_delete_div(this, 'quantity')" data-id="{{quantity.id}}" id="quantity_delete_btn_{{quantity.id}}">Delete</a>
+        
+            </div>
+            <div id="quantity_delete_{{quantity.id}}" class="delete-confirmation-box">
+                <p>Are You sure that You want to delete this record?</p>
+                <div class="delete-box-buttons">
+                    <a href="{% url 'delete_record' what='quantity' nice_id=quantity.id %}" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-dark" onclick="hide_category_delete_box(this, 'quantity')" data-id="{{quantity.id}}">Close</button>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="admin-page-users">
+        <div class="admin-page-admins">
+            {% for user in user_data %}
+            {% if user.status == "admin" %}
+            <div class="admin-page-individual-users">
+                <p>{{user.username}}</p>
+                <p>{{user.status}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="admin-page-moderators">
+            {% for moderator in moderators %}
+            <div class="admin-page-individual-users">
+                <p>{{moderator.user.username}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="admin-page-all_users">
+            {% for user in user_data %}
+            {% if user.status == "user" %}
+            <div class="admin-page-individual-users">
+                <p>{{user.username}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="admin-page-view-reviews">
+            {% for review in reviews %}
+            <div class="admin-page-single-reviews">
+                <p>{{review.user.username}}</p>
+                <p>{{review.oud.title}}</p>
+                <p>{{review.review}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="admin_page_orders">
+        <div class="admin-page-pending-orders">
+            {% for order in orders %}
+            {% if order.status == "not delivered" %}
+            <div class="individual-order-pending">
+                <p>{{order.id}}</p>
+                <p>{{order.name}}</p>
+                <p>{{order.total_price}}</p>
+                <p>{{order.address}}</p>
+                <a href="{% url 'show_order_admin' order.id %}" class="show-order-details">Show Order Details</a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="admin-page-delivered-orders">
+            {% for order in orders %}
+            {% if order.status == "delivered" %}
+            <div class="individual-order-delivered">
+                <p>{{order.id}}</p>
+                <p>{{order.name}}</p>
+                <p>{{order.total_price}}</p>
+                <p>{{order.address}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="admin-page-cancelled-orders">
+            {% for order in orders %}
+            {% if order.status == "cancelled" %}
+            <div class="individual-order-cancelled">
+                <p>{{order.id}}</p>
+                <p>{{order.name}}</p>
+                <p>{{order.total_price}}</p>
+                <p>{{order.address}}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="admin-page-content-management">
+        <a href="{% url 'change_content' %}" class="btn btn-outline-primary main-oud-add-btn">Change Contents</a>
+        <h1>ABOUT US</h1>
+        <hr>
+        <p>{{contents.aboutus}}</p>
+
+        <h1>Privacy Policy</h1>
+        <hr>
+        <p>{{contents.privacy_policy}}</p>
+
+        <h1>Payment Policy</h1>
+        <hr>
+        <p>{{contents.payment_policy}}</p>
+
+        <h1>Terms and Conditions</h1>
+        <hr>
+        <p>{{contents.term_and_conditions}}</p>
+
+        <h1>Exchange and Return Policy</h1>
+        <hr>
+        <p>{{contents.exchange_and_return}}</p>
+
+        <h1>Contact NO.</h1>
+        <hr>
+        <p>{{contents.contact_no}}</p>
+
+        <h1>Contact NO. (extra)</h1>
+        <hr>
+        <p>{{contents.contact_no_2}}</p>
+
+        <h1>Email</h1>
+        <hr>
+        <p>{{contents.email}}</p>
+
+        <h1>Featured Product Id. 1</h1>
+        <hr>
+        <p>{{contents.featured_product_id_1}}</p>
+
+        <h1>Featured Product Id. 2</h1>
+        <hr>
+        <p>{{contents.featured_product_id_2}}</p>
+
+        <h1>Featured Product Id. 3</h1>
+        <hr>
+        <p>{{contents.featured_product_id_3}}</p>
+    </div>
+
+
+    <div class="admin-page-contact-us">
+
+    </div>
+</div>
+
+<script>
+
+    if(localStorage.getItem('admin_state') == null){
+        var admin_state = {};
+        admin_state["admin"] = "dashboard";
+        localStorage.setItem('admin_state', JSON.stringify(admin_state));
+        show_admin_page_dashboard();
+    }
+    else{
+        var admin_state = JSON.parse(localStorage.getItem('admin_state'));
+        if(admin_state["admin"] === "dashboard"){
+            show_admin_page_dashboard();
+        }
+        else if(admin_state["admin"] === "allProducts"){
+            show_admin_page_allProducts();
+        }
+        else if(admin_state["admin"] === "Categories" ){
+            show_admin_page_category();
+        }
+        else if(admin_state["admin"] === "Promos" ){
+            show_admin_page_promos();
+        }
+        else if(admin_state["admin"] === "Quantity" ){
+            show_admin_page_quantity();
+        }
+        else if(admin_state["admin"] === "Reviews" ){
+            show_admin_page_reviews();
+        }
+        else if(admin_state["admin"] === "Admin" ){
+            show_admin_page_admin();
+        }
+        else if(admin_state["admin"] === "Moderator" ){
+            show_admin_page_moderator();
+        }
+        else if(admin_state["admin"] === "User" ){
+            show_admin_page_user();
+        }
+        else if(admin_state["admin"] === "New Orders" ){
+            show_admin_page_new_orders();
+        }
+        else if(admin_state["admin"] === "Delivered Orders" ){
+            show_admin_page_delivered_orders();
+        }
+        else if(admin_state["admin"] === "Cancelled Orders" ){
+            show_admin_page_cancel_orders();
+        }
+        else if(admin_state["admin"] === "Contents" ){
+            show_admin_page_contents();
+        }
+        else if(admin_state["admin"] === "contact_us"){
+            show_admin_page_contact_us();
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const dashboard = document.querySelector(".admin-page-dashboard");
+        
+        const header = document.querySelector(".main_header");
+        const nav = document.querySelector(".my_nav");
+        const noice = document.querySelector(".my-footer");
+        const credit = document.querySelector(".ending");
+        const spacer = document.querySelector(".spacer");
+
+
+        
+        header.style.display = "none";
+        nav.style.display = "none";
+        noice.style.display = "none";
+        credit.style.display = "none";
+        spacer.style.display = "none";
+    })
+
+
+
+
+    function change_visibility(x) {
+        const oud_id = x.dataset.id;
+        const icon = document.getElementById(`admin_page_visible_${oud_id}`);
+        fetch(`change_visibility/${oud_id}`, {
+            method: 'GET'
+        })
+            .then((response) => response.json())
+            .then(oud => {
+                console.log(oud.visibility);
+                if (oud.visibility) {
+                    icon.classList.add("bi-eye");
+                    icon.classList.remove("bi-eye-slash");
+                    x.classList.remove("invisibled");
+                    x.classList.add("visible-btn");
+                    console.log("comes here");
+                }
+                else {
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+                    x.classList.add("invisibled");
+                    x.classList.remove("visible-btn");
+                    console.log("comes here nice");
+                }
+            });
+    }
+
+    function show_dropdown(x) {
+        var id = x.dataset.id;
+        var div = document.querySelector(`#dropdown_${id}`);
+        x.classList.toggle("clicked");
+        div.classList.toggle("show");
+    }
+
+
+    function show_category_delete_box(x, name){
+        var category_id = x.dataset.id;
+
+        var div = document.querySelector(`#${name}_delete_${category_id}`);
+        div.style.display = "flex";
+    }
+
+    function hide_category_delete_box(x, name){
+        var category_id = x.dataset.id;
+        var div = document.querySelector(`#${name}_delete_${category_id}`);
+        div.style.display = "none";
+    }
+
+
+</script>
+{% endblock %}

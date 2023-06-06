@@ -1,0 +1,481 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="slider">
+    <div class="slides">
+
+        <input type="radio" name="radio-btn" id="radio1">
+        <input type="radio" name="radio-btn" id="radio2">
+        <input type="radio" name="radio-btn" id="radio3">
+        <input type="radio" name="radio-btn" id="radio4">
+
+
+        <div class="slide first" id="slide1">
+            <img src="{% static 'ibnmain/images/1.jpg' %}">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            
+        </div>
+        <div class="slide" id="slide2">
+            <img src="{% static 'ibnmain/images/2.jpg' %}">
+            <p>consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class="slide" id="slide3">
+            <img src="{% static 'ibnmain/images/3.jpg' %}">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class="slide" id="slide4">
+            <img src="{% static 'ibnmain/images/4.jpg' %}" style="object-fit:cover">
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt
+            </p>
+        </div>
+    </div>
+    <!--
+        <div class="navigation-auto">
+            <div class="auto-btn1"></div>
+            <div class="auto-btn2"></div>
+            <div class="auto-btn3"></div>
+            <div class="auto-btn4"></div>
+        </div>
+    -->
+
+    <div class="navigation-manual">
+        <label for="radio1" class="manual-btn first_label_g" id="manual-btn-1" data-id="1"
+            onclick="change_first(this)"></label>
+        <label for="radio2" class="manual-btn" id="manual-btn-2" data-id="2" onclick="change_first(this)"></label>
+        <label for="radio3" class="manual-btn" id="manual-btn-3" data-id="3" onclick="change_first(this)"></label>
+        <label for="radio4" class="manual-btn" id="manual-btn-4" data-id="4" onclick="change_first(this)"></label>
+    </div>
+</div>
+
+
+<div class="featured-fragrances">
+    <div class="text-with-lines">
+        <div>
+            <hr class="line-left">
+
+            <div class="product-slider-h1">Our Featured Fragrances</div>
+            <hr class="line-right">
+        </div>
+
+    </div>
+    <div class="featured-fragrances-box-div">
+        <div class="featured-box">
+            <div class="featured-img">
+                <img src="{% static 'ibnmain/images/1.jpg' %}" alt="">
+            </div>
+
+            <div class="featured-details">
+                <h3>Mongolian Oud</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur
+                    adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit in voluptate
+                    velit esse cillum dolore eu fugiat nulla pariatur.
+                </p>
+                <a href="#">see more.....</a>
+            </div>
+        </div>
+
+        <div class="featured-box">
+            <div class="featured-img">
+                <img src="{% static 'ibnmain/images/2.jpg' %}" alt="">
+            </div>
+
+            <div class="featured-details">
+                <h3>Nice Oud</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur
+                    adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation
+
+                </p>
+                <a href="#">see more.....</a>
+            </div>
+        </div>
+
+        <div class="featured-box">
+            <div class="featured-img">
+                <img src="{% static 'ibnmain/images/3.jpg' %}" alt="">
+            </div>
+
+            <div class="featured-details">
+                <h3>Persian Oud</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur
+                    adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit in voluptate
+                    velit esse cillum dolore eu fugiat nulla pariatur. </p>
+                <a href="#">see more.....</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="second_body">
+
+
+    <div class="text-with-lines">
+        <div>
+            <hr class="line-left">
+
+            <div class="product-slider-h1">Our Exclusive Collection</div>
+            <hr class="line-right">
+        </div>
+
+    </div>
+
+    <div class="product-slider">
+
+        <ul id="autoWidth" class="cs-hidden">
+            <!-----1-->
+            {% for oud in ouds %}
+            <li class="item-a">
+                <div class="slider-box">
+                    <div class="slide-img">
+                        {% if oud.img %}
+                        <img src="{{ oud.img.url }}" alt="nice">
+                        {% else %}
+                        <img src="{% static 'ibnmain/images/1.jpg' %}" alt="nice">
+                        {% endif %}
+                        <div class="slider-overlay">
+                            <a href="{% url 'oud_page' oud.id %}" class="buy-btn">Show Details</a>
+                        </div>
+                    </div>
+
+                    <div class="detail-box">
+                        <div class="slider-type">
+                            <a href="{% url 'oud_page' oud.id %}">{{oud.title}}</a>
+                            <span class="slider-text">{{oud.category.name}}</span>
+                        </div>
+                        <a href="{% url 'oud_page' oud.id %}" class="slider-price">{{oud.base_price}}</a>
+                    </div>
+                </div>
+            </li>
+
+            {% endfor %}
+
+            <!-----4-->
+        </ul>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#autoWidth').lightSlider({
+                autoWidth: true,
+                auto: true,
+                loop: true,
+                pauseOnHover: true,
+                onSliderLoad: function () {
+                    $('autoWidth').removeClass('cs-hidden');
+                }
+            });
+        });
+    </script>
+
+</div>
+
+<div class="why_ibn_main">
+    <div class="text-with-lines special-text-with-lines">
+        <div>
+            <hr class="line-left">
+
+            <div class="product-slider-h1">Why <b>IBNMAIN?</b></div>
+            <hr class="line-right">
+        </div>
+
+    </div>
+    <div class="why_ibn_main_div">
+
+        <div class="why_ibn_main_box">
+            <h3>Sustainable Sourcing</h3>
+            <p>We take a responsible approach to sourcing our
+                ingredients, ensuring that they are ethically
+                and sustainably harvested. Our ouds are made
+                with rare and precious materials that are carefully
+                selected to protect the environment and support local
+                communities.</p>
+        </div>
+        <div class="why_ibn_main_box">
+            <h3>Artisanal Blends</h3>
+            <p>Our ouds are created using traditional
+                methods and infused with exotic ingredients
+                from around the world. We work with skilled
+                artisans who blend and distill the oils
+                in small batches to ensure each bottle
+                of perfume is a work of art.</p>
+        </div>
+
+
+
+        <div class="why_ibn_main_box">
+            <h3>Personalized Experience</h3>
+            <p> We believe that scent is a deeply personal
+                experience, which is why we offer a range
+                of customization options to help our customers
+                find their perfect fragrance. From personalized
+                consultations with our expert perfumers to bespoke
+                bottle designs, we strive to create a one-of-a-kind
+                experience for each and every customer.</p>
+        </div>
+    </div>
+
+
+</div>
+
+<!--
+<div class="story_of_shahjahan">
+    <div class="text-with-lines special-text-with-lines">
+        <div>
+            <hr class="line-left">
+
+            <div class="product-slider-h1">Story of ShahJahan</b></div>
+            <hr class="line-right">
+        </div>
+
+    </div>
+    <div class="the-story">
+        <div class="shahjahan-writeup">
+            <p>In the bustling bazaar of Old Delhi,
+                a small perfumery stood unassumingly in
+                the corner. It was owned by a man
+                named Riaz, who was a master perfumer,
+                and his family had been making perfumes
+                for generations. The perfumery was not
+                very popular, but those who knew of it,
+                knew it was a hidden gem. Riaz was a master of
+                his craft and was always experimenting with
+                new scents and concoctions. But there was one
+                scent that he had been perfecting for years,
+                a scent that was made with the essence of the
+                great Emperor Shah Jahan.</p>
+
+            <p>
+                Shah Jahan
+                was one of the
+                greatest emperors of India,
+                and he was known for his love for his
+                queen, Mumtaz Mahal. It was said that Shah
+                Jahan would pick flowers for his beloved queen,
+                and the scent of these flowers was captured in
+                a perfume that was made for her. This perfume
+                became known as the "Perfume of Love," and it
+                was said that it was the most beautiful scent in
+                the world............</p>
+
+            <a href="#">Read more</a>
+        </div>
+        <div class="shahjahan-image">
+            <div class="shahjahan-div-1">
+                <img src="{% static 'ibnmain/images/shah_1st.png' %}" alt="" class="shah-1st-image">
+                <img src="{% static 'ibnmain/images/shah_2nd.png' %}" alt="" class="shah-2nd-image">
+            </div>
+            <div class="shahjahan-div-2">
+                <img src="{% static 'ibnmain/images/shah_3rd.png' %}" alt="" class="shah-3rd-image">
+                <img src="{% static 'ibnmain/images/shah_4th.png' %}" alt="" class="shah-4th-image">
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+
+<div class="about_ibnmain">
+    <div class="text-with-lines special-text-with-lines">
+        <div>
+            <hr class="line-left">
+
+            <div class="product-slider-h1">About Ibn Main</b></div>
+            <hr class="line-right">
+        </div>
+
+    </div>
+
+    <div class="the-start">
+        <div class="the-start-image">
+            <img src="{% static 'ibnmain/images/brothers.png' %}" alt="">
+        </div>
+        <div class="shahjahan-writeup">
+            <p>
+                The start of the Oud business founded
+                by two siblings recently is a story of
+                hope and determination. As they embarked
+                on this journey, the siblings were filled
+                with excitement, yet nervousness about what
+                was to come. The idea of building a business
+                from scratch seemed daunting, but they were
+                ready to face the challenges ahead
+            </p>
+
+            <p>Starting a business is never an easy task,
+                but for these siblings, it was more than
+                just a business. It was a dream that they
+                had nurtured for years, a passion that they
+                had shared since childhood. They had always
+                been fascinated by the sweet aroma of Oud,
+                and the idea of sharing that with the world
+                was something that gave them immense joy.</p>
+
+            <a href="#">Read more...</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="testimonials">
+
+</div>
+
+
+<div class="granite_bg" style="background-image: url({% static 'ibnmain/images/granite.png'%})">
+
+    <div class="granite_slider">
+        <div class="granite_content">
+            <input type="radio" name="radio_btn_g" id="radio_g_1">
+            <input type="radio" name="radio_btn_g" id="radio_g_2">
+            <input type="radio" name="radio_btn_g" id="radio_g_3">
+            <div class="granite_slide" id="slide_g_0">
+                <div class="granite_slide_content1">
+                </div>
+            </div>
+            <div class="granite_slide first_g" id="slide_g_1">
+                <div class="granite_slide_content1">
+                    <img src="{% static 'ibnmain/images/logo.png' %}" width="500px">
+                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris
+                        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                        in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                        occaecat
+                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                </div>
+            </div>
+            <div class="granite_slide" id="slide_g_2">
+                <div class="granite_slide_content1">
+                    <h3>Our Mission</h3>
+                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris
+                        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                        in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                        occaecat
+                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                </div>
+            </div>
+            <div class="granite_slide" id="slide_g_3">
+                <div class="granite_slide_content1">
+                    <h3>Our Vision!</h3>
+                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris
+                        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                        in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                        occaecat
+                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="navigation-manual-g">
+        <form action="">
+            <label for="radio_g_1" id="manual-btn-g-1" class="manual-btn-g first_label_g" data-id="1"
+                onclick="change_first_g(this)" checked></label>
+            <label for="radio_g_2" id="manual-btn-g-2" class="manual-btn-g" data-id="2"
+                onclick="change_first_g(this)"></label>
+            <label for="radio_g_3" id="manual-btn-g-3" class="manual-btn-g" data-id="3"
+                onclick="change_first_g(this)"></label>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    var counter = 1;
+    var second_counter = 1;
+    setInterval(function () {
+        const elem = document.getElementById('manual-btn-' + counter);
+        change_first(elem);
+        counter++;
+        if (counter > 4) counter = 1;
+    }, 5000);
+
+    setInterval(function () {
+        const elem = document.getElementById('manual-btn-g-' + second_counter);
+        change_first_g(elem);
+        second_counter++;
+        if (second_counter > 3) second_counter = 1;
+    }, 5000);
+
+
+
+
+
+
+    function change_first(x) {
+        let id = parseInt(x.dataset.id);
+        document.querySelectorAll(".manual-btn").forEach(function (btn) {
+
+            btn.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+            btn.style.paddingLeft = "20px";
+            btn.style.paddingRight = "20px";
+        });
+        x.style.backgroundColor = "white";
+        x.style.paddingRight = "50px";
+        x.style.paddingLeft = "50px";
+        counter = id;
+        document.querySelectorAll(".slide").forEach(function (slide) {
+            slide.classList.remove("first");
+        })
+        const element_special = document.getElementById('radio' + counter);
+        element_special.checked = true;
+        document.getElementById('slide' + counter).classList.toggle("first");
+    }
+
+    function change_first_g(x) {
+        let id = parseInt(x.dataset.id);
+        document.querySelectorAll(".manual-btn-g").forEach(function (btn) {
+
+            btn.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+            btn.style.paddingLeft = "20px";
+            btn.style.paddingRight = "20px";
+        });
+        x.style.backgroundColor = "white";
+        x.style.paddingRight = "50px";
+        x.style.paddingLeft = "50px";
+        second_counter = id;
+        document.querySelectorAll(".granite_slide").forEach(function (slide) {
+            slide.classList.remove("first_g");
+        })
+        document.getElementById('radio_g_' + second_counter).checked = true;
+        document.getElementById('slide_g_' + second_counter).classList.toggle("first_g");
+    }
+
+
+
+
+
+
+</script>
+
+{% endblock %}

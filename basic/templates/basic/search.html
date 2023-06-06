@@ -1,0 +1,100 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+     <h1>All Ouds</h1>
+    {% for oud in ouds %}
+    
+    <div class="container border fluid m-5 row div-1" style="background-color: rgb(7, 255, 210);">
+        <div class="col" style="margin-top:30px !important; margin-bottom: 30px !important;">
+            {% if oud.img %}
+            <img src="{{ oud.img.url }}" alt="Product Image" width="300px">
+            {% else %}
+            <p>The image for this product doesn't exist.</p>
+            {% endif %}
+        </div>
+        <div class="col">
+            
+            <h1 class="display-3">{{ oud.title }}</h1>
+            {% if oud.type == 'close' %}
+                <h1 class="display-6 text-danger" style="font-size: 30px !important;">[This Auction is closed]</h1>
+            {% endif %}
+            <p><b>Price: Tk </b><span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+            {% for amount in oud.amount_type.all %}
+                <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}}" onclick="change_price(this)" data-amount="{{amount.amount}}" data-id="{{oud.id}}">{{amount.amount}} gm</button>
+                <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden" value="{{amount.amount}}">
+            {% endfor %}
+
+
+            <p>{{ oud.description }}</p>
+
+        
+            <a href="{% url 'category' oud.category.name %}"><p>{{ oud.category.name }}</p></a>
+            <a href="{% url 'oud_page' oud.id %}" class="special" style="color:black">Show details</a>
+            <span id="div_special_btn_{{oud.id}}">
+                <button class="btn btn-outline-primary cart" id="special_btn_{{oud.id}}" data-id="{{oud.id}}" onclick="add_cart_func(this)" data-name="{{oud.title}}" data-amount="{{oud.amount}}" data-baseamount="{{oud.base_amount}}" data-baseprice="{{oud.base_price}}" data-amountnumber="{{oud.amount_number}}" data-category="{{oud.category.name}}">
+                    Add to cart
+                </button>
+            </span>
+            <div id="button_div_{{oud.id}}"></div>
+            
+        </div>
+    </div>
+    
+    {% endfor %}
+    
+    <script>
+        
+        const cat_arr = [];
+        {% for item in category_list %}
+            cat_arr.push("{{item}}");
+        {% endfor %}
+
+        update_all_cart(cat_arr)
+        function update_all_cart(cat_arr){
+            for(var item in cart){
+                
+                
+
+                if(cat_arr.includes(cart[item][8])){
+                    const btn = document.getElementById(item);
+                    let id = btn.dataset.id;
+                    let name = btn.dataset.name;
+                    let amount = btn.dataset.amount;
+                    let base_amount = btn.dataset.baseamount;
+                    let base_price = btn.dataset.baseprice;
+                    let amount_number = btn.dataset.amountnumber;
+                    let category = btn.dataset.category;
+                    document.getElementById(`div_${item}`).innerHTML = `<button id='minus_${item}'
+                    class = 'btn btn-outline-primary' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}' data-baseprice='${base_price}' data-baseamount='${base_amount}' data-amountnumber='${amount_number}' data-category='${category}'>-</button> <span id='val_${item}'>${cart[item][0]}
+                    </span> <button id='plus_${item}'class = 'btn btn-outline-primary' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amount='${amount}' data-baseprice='${base_price}' data-baseamount='${base_amount}' data-amountnumber='${amount_number}'>+</button>`;
+                }
+            }
+        }
+
+        function clearCart(){
+            cart = JSON.parse(localStorage.getItem('cart'));
+            for (var item in cart){
+                if(console.log(cat_arr)){
+                    let x = document.querySelector(`#minus_${item}`);
+                    console.log(x);
+                    let id = cart[item][2];
+                    let name = cart[item][1];
+                    let amount = cart[item][3];
+                    let base_amount = cart[item][4];
+                    let base_price = cart[item][5];
+                    let amount_number = cart[item][6];
+                    let category = cart[item][8];
+                    document.getElementById(`div_${item}`).innerHTML = `<button class="btn btn-outline-primary cart" id="${item}" data-id='${id}' onclick="add_cart_func(this)" data-name='${name}' data-amount="${amount}" 
+                                                                data-baseamount="${base_amount}" data-baseprice="${base_price}" data-amountnumber='${amount_number}' data-category='${category}'>Add to cart</button>`;
+                }
+            }
+            localStorage.clear();
+            cart = {};
+            document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+        }
+
+    </script>
+    
+{% endblock %}

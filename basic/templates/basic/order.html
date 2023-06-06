@@ -1,0 +1,181 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="order-heading-div">
+    <div class="order-h1">
+        <h1 class="order-heading">Order <span class="order-heading-id">#{{ main_order.id }}</span></h1>
+    </div>
+
+    <div class="order-buttons-div">
+        <button class="btn btn-outline-primary">Invoice</button>
+        <button class="btn btn-outline-success">Tracker</button>
+        <a href="{% url 'cancel_order' main_order.id %}"><button class="btn btn-outline-danger" >Cancel</button></a>
+    </div>
+</div>
+
+<div class="order-page-main-div">
+
+    <div class="order-page-secondary-div">
+
+
+        <div class="order-details">
+            <div class="cart-heading-1">
+                <h1 class="cart-h1">Product Details</h1>
+                <hr class="cart-hr">
+            </div>
+            {% for key, value in orders.items %}
+            <div class="individual-order">
+                <div class="individual-order-div-1">
+                    <div class="individual-order-div-img">
+                        <img src="{{ value.9 }}" alt="The image doesn't exist">
+                    </div>
+
+                    <div class="individual-order-div-content">
+                        <h3 class="inside-div-h3">{{ value.1 }}</h3>
+                        <p>Amount: {{ value.3 }}</p>
+                    </div>
+
+                </div>
+
+
+                <div class="individual-order-div-2">
+                    <h3 class="inside-div-h3">BDT{{ value.10 }}</h3>
+                    <p>Qty: {{ value.0 }}</p>
+                </div>
+
+
+
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="order-page-another-div">
+            <div class="user-details">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">User Details</h1>
+                    <hr class="cart-hr">
+                </div>
+
+                <div class="user-details-inner-div">
+                    <div class="inner-div-1">
+                        <p><b>Full Name:</b></p>
+                        <p><b>Username:</b></p>
+                        <p><b>Email:</b></p>
+                        <p><b>Contact No.:</b></p>
+                    </div>
+                    <div class="inner-div-2">
+                        <p>{{user_of_order.full_name}}</p>
+                        <p>{{user_of_order.username}}</p>
+                        <p>{{user_of_order.email}}</p>
+                        <p>{{user_of_order.contact_no}}</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="total-price-div-bounds">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">Payment Details</h1>
+                    <hr class="cart-hr">
+                </div>
+
+                <div class="total-price-div">
+
+                    <div class="total-price-div-3">
+                        <div class="total-price-div-1">
+                            <p>SUBTOTAL :</p>
+                            <p>DELIVERY CHARGE : </p>
+                            <p>DISCOUNT: </p>
+                            <p>TOTAL :</p>
+                        </div>
+
+                        <div class="total-price-div-2">
+                            <p id="subtotal_price_span">BDT {{ product_price }}</p>
+                            <p id="delivery-charge-price-span">BDT {{ main_order.delivery_charge }}</p>
+                            <p id="discount-price-span">BDT {{ main_order.promo_discount }}</p>
+                            <p id="total_price_span">BDT {{ main_order.total_price }}</p>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="order-page-sub-main-div">
+        <div class="address-and-status">
+
+
+            <div class="shipping-address">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">Shipping Address</h1>
+                    <hr class="cart-hr">
+                </div>
+                <div class="shipping-address-contents">
+                    <div class="address-address"><p><b>Address:</b></p><p>{{ main_order.address }}</p></div>
+                    <div class="address-address"><p><b>Zip Code:</b></p><p>{{ main_order.zip }}</p></div>
+                    <div class="address-address"><p><b>Area:</b></p><p>{{ main_order.area }}</p></div>
+                    <div class="address-address"><p><b>Town:</b></p><p>{{ main_order.town }}</p></div>
+                    <div class="address-address"><p><b>City:</b></p><p>{{ main_order.city }}</p></div>
+                    <div class="address-address"><p><b>Country:</b></p><p>{{ main_order.country }}</p></div>
+                    
+                </div>
+            </div>
+
+            <div class="order-status">
+                <div class="cart-heading-1">
+                    <h1 class="cart-h1">Order Status</h1>
+                    <hr class="cart-hr">
+                </div>
+                {% if main_order.status == "not delivered" %}
+                <div class="address-address"><p><b>Delivery Status:</b></p><p class="custom-not-done">Pending</p></div>
+                
+                {% elif main_order.status == "delivered" %}
+                <div class="address-address"><p><b>Delivery Status:</b></p><p class="custom-done">Delivered</p></div>
+                
+                {% else %}
+                    <div class="address-address"><p><b>Delivery Status:</b></p><p class="custom-cancel">Cancelled</p></div>
+                {% endif %}
+
+                <div class="address-address"><p><b>Order Date:</b></p><p>{{ tracker.order_date }}</p></div>
+                <div class="address-address"><p><b>Delivery Date (estimated):</b></p><p>{{ tracker.delivary_date }}</p></div>
+
+            </div>
+
+        </div>
+
+        <div class="payment-nice-status">
+            <div class="cart-heading-1">
+                <h1 class="cart-h1">Payment Status</h1>
+                <hr class="cart-hr">
+            </div>
+
+
+            
+
+            {% if main_order.is_paid %}
+            <div class="address-address"><p><b>Payment Status:</b></p><p class="custom-done">Paid</p></div>
+            {% else %}
+            <div class="address-address"><p><b>Payment Status:</b></p><p class="custom-not-done">Not Paid</p></div>
+            {% endif %}
+
+            <div class="address-address"><p><b>Payment Method:</b></p><p class="custom-done">{{ main_order.payment_method }}</p></div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+{% endblock %}
