@@ -16,8 +16,6 @@ import os
 
 CLIENT_ID = '31889031476-0dhc7cpg32shmjhv7megtv0do7ndp1q2.apps.googleusercontent.com'
 
-
-
 def index(request):
     ouds = Ouds.objects.all().order_by("-id")
     paginator = Paginator(ouds, 5)
@@ -64,7 +62,14 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+        
+        else:
+            return render(request, "basic/login.html", {
+                "message": "Username and password, both are required."
+            })
 
         # Check if authentication successful
         if user is not None:
