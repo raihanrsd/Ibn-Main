@@ -25,7 +25,7 @@
 
 <body>
     <div class="alert-special-div">
-        
+
     </div>
     <header class="main_header">
         <div class="menu_search">
@@ -109,7 +109,7 @@
 
                 {% if user.is_authenticated %}
                 <li class="account-li">
-                <a href="{% url 'profile_page' user.id %}">My Profile</a>
+                    <a href="{% url 'profile_page' user.id %}">My Profile</a>
                 </li>
                 <li class="account-li">
                     <a href="#">My Orders</a>
@@ -192,8 +192,6 @@
     {% block body %}
     {% endblock %}
     <div class="my-footer">
-
-
         <footer>
             <div class="footer_div">
                 <h3>Legal</h3>
@@ -230,10 +228,11 @@
                     <div>
                         <a href=""><i class="bi bi-facebook"></i></a>
                         <a href=""><i class="bi bi-instagram"></i></a>
-                    </div>
-                    <div style="display: block;">
-                        <p style="opacity: 0.75; margin-left: 10px;">For any query, our chatbox is always open!</p>
                         <a href=""><i class="bi bi-messenger"></i></a>
+                    </div>
+                    <div style="display: flex;">
+                        <p style="opacity: 0.75; margin-left: 15px;">For any query, contact us in
+                            our facebook page.</p>
                     </div>
                 </div>
             </div>
