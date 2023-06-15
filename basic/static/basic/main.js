@@ -104,7 +104,7 @@ window.addEventListener('scroll', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-
+    /*
     let shah_img_1st = document.querySelector('.shah-1st-image');
     let story_of_shah = document.querySelector(".story_of_shahjahan");
     let posn = story_of_shah.offsetTop;
@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     });
+
+    */
 
     if (localStorage.getItem('cart') == null) {
         var cart = {};

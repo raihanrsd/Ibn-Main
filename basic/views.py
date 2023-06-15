@@ -265,7 +265,9 @@ def contact_us(request):
 
 
 def test_slider(request):
-    return render(request, "basic/slider.html")
+    return render(request, "basic/slider.html",{
+        "ouds" : Ouds.objects.all(),
+    })
         
 @login_required(login_url='login')
 def admin_page(request):

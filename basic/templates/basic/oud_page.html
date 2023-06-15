@@ -66,54 +66,90 @@
             </div>
 
         </div>
-        <div class="product-slider">
-
-            <ul id="autoWidth" class="cs-hidden">
-                <!-----1-->
-                {% for oudi in ouds %}
-                <li class="item-a">
-                    <div class="slider-box">
-                        <div class="slide-img">
-                            {% if oudi.img %}
-                            <img src="{{ oudi.img.url }}" alt="nice">
-                            {% else %}
-                            <img src="{% static 'ibnmain/images/1.jpg' %}" alt="nice">
-                            {% endif %}
-                            <div class="slider-overlay">
-                                <a href="{% url 'oud_page' oudi.id %}" class="buy-btn">Show Details</a>
-                            </div>
-                        </div>
-    
-                        <div class="detail-box">
-                            <div class="slider-type">
-                                <a href="{% url 'oud_page' oudi.id %}">{{oudi.title}}</a>
-                                <span class="slider-text">{{oudi.category.name}}</span>
-                            </div>
-                            <a href="{% url 'oud_page' oudi.id %}" class="slider-price">{{oudi.base_price}}</a>
-                        </div>
+       <!-- Slider main container -->
+<div class="swiper">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+      <!-- Slides -->
+      
+        {% for oud in ouds %}
+        <div class="swiper-slide">
+        
+            <div class="slider-box">
+                <div class="slide-img">
+                    {% if oud.img %}
+                    <img src="{{ oud.img.url }}" alt="nice">
+                    {% else %}
+                    <img src="{% static 'basic/images/1.jpg' %}" alt="nice">
+                    {% endif %}
+                    <div class="slider-overlay">
+                        <a href="{% url 'oud_page' oud.id %}" class="buy-btn">Show Details</a>
                     </div>
-                </li>
-    
-                {% endfor %}
-    
-                <!-----4-->
-            </ul>
+                </div>
+
+                <div class="detail-box">
+                    <div class="slider-type">
+                        <a href="{% url 'oud_page' oud.id %}">{{oud.title}}</a>
+                        <span class="slider-text">{{oud.category.name}}</span>
+                    </div>
+                    <a href="{% url 'oud_page' oud.id %}" class="slider-price">{{oud.base_price}}</a>
+                </div>
+            </div>
+       
+
         </div>
-        <script>
-            $(document).ready(function () {
-                $('#autoWidth').lightSlider({
-                    autoWidth: true,
-                    auto: true,
-                    loop: true,
-                    pauseOnHover: true,
-                    onSliderLoad: function () {
-                        $('autoWidth').removeClass('cs-hidden');
-                    }
-                });
-            });
-        </script>
+
+        {% endfor %}
+      
 
     </div>
+    <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+  
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  
+  </div>
+
+
+
+<script>
+const swiper = new Swiper('.swiper', {
+  // Optional parameters
+  slidesPerView: 1,
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+      1400: {
+        slidesPerView: 4,
+      }
+    },
+  direction: 'horizontal',
+  loop: true,         // Enable loop mode
+  autoplay: {
+    delay: 3000,      // Delay between slides in milliseconds
+    disableOnInteraction: false,  // Enable autoplay even when user interacts with swiper
+  },
+
+  // If we need pagination
+  pagination: {
+    el: '.swiper-pagination',
+  },
+
+  // Navigation arrows
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+
+  // And if we need scrollbar
+});
+</script>
 
     <div class="review-section">
 
