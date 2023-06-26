@@ -9,7 +9,9 @@
     {% for oud in ouds %}
     {% if oud.visibility %}
     <div class="all-perfume">
+        <a href="{% url 'oud_page' oud.id %}" class="special">
         <div class="all-perfume-img-div">
+            
             {% if oud.img %}
             <img src="{{ oud.img.url }}" alt="Product Image" class="main_image">
             {% else %}
@@ -27,6 +29,7 @@
             {% else %}
             {% endif %}
         </div>
+    </a>
         <div class="all-perfume-details-div">
             
             <h1>{{ oud.title }}</h1>
@@ -36,9 +39,9 @@
             <p class="price-p"><b>Price:  </b>Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
             {% endif %}
             {% if oud.type == 'closed' %}
-                <h1 class="prod-status">Product is out of stock</h1>
+                <p class="prod-status">Product is out of stock</p>
             {% else %}
-                <h1 class="prod-status">Product in stock</h1>
+                <p class="prod-status">Product in stock</p>
             {% endif %}
             <input id="hidden_inp1_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_1}}">
             <input id="hidden_inp1_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_2}}">

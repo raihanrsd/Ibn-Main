@@ -128,6 +128,12 @@
         </div>
 
         <div class="form-group">
+            <label for="cover_image2">Cover Image(hover) 2:</label>
+            <img src="{{oud.cover_image2.url}}" alt="The image doesn't exist">
+            <input type="file" class="form-control-file" name="cover_image2" value="{{oud.cover_image2}}">
+        </div>
+
+        <div class="form-group">
             <label for="amount_type">Offer Status:</label>
             <select name="amount_type" id="amount_type" required multiple>
                 {% for quantity in quantity_list %}

@@ -50,7 +50,7 @@
 
         </a>
         <div id="mobile_ibnmain_name_li">
-            <h3 class="ibnmain-writeup">I B N' M A I N</h3>
+            <h3 class="ibnmain-writeup">IBN MA'IN</h3>
             <img src="{% static 'basic/images/logo.png' %}" width="65" height="65"
                 class="align-top ibnmain-img-mobile" alt="">
         </div>
@@ -71,8 +71,8 @@
 
             <span>
                 {% if not user.is_authenticated %}
-                <i class="bi bi-person sign_in_icon"><a class="sign_in nav-writing account-nav-writeup"
-                        href="{% url 'login' %}"> Sign In</a></i>
+                <a class="sign_in"
+                        href="{% url 'login' %}"><i class="bi bi-person sign_in_icon"><span class="nav-writing account-nav-writeup">Sign In</span> </a></i>
                 {% else %}
                 <i class="bi bi-person sign_in_icon" onclick="show_account_div()"><span
                         class="sign_in nav-writing account-nav-writeup"> Account</span></i>
@@ -101,7 +101,7 @@
                 {% if user.img %}
                 <div class="img_div" style="background-image:url({{user.img.url}})"></div>
                 {% else %}
-                <div class="img_div"><img class="user-img" src="{% static 'ibnmain/images/user.png' %}"></div>
+                <div class="img_div"><img class="user-img" src="{% static 'basic/images/user.png' %}"></div>
                 {% endif %}
 
                 {% if user.status != "user" %}

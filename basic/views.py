@@ -10,7 +10,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
-from .models import User, Ouds, Review, Order, QuantityManagement, Tracker, Categories, ContactUs, UserOrder, Promos, WebContents, Moderators, ShippingAddress, Analytics
+from .models import User, Ouds, Review, Order, QuantityManagement, Tracker, Categories, ContactUs, UserOrder, Promos, WebContents, Moderators, ShippingAddress, Analytics, NoticeBoard
 import os
 
 
@@ -395,9 +395,12 @@ def edit_ouds(request, oud_id):
         if cover_image1:
             oud.cover_image1 = cover_image1
 
+        cover_image2 = request.FILES.get('cover_image2', None)
+        if cover_image2:
+            oud.cover_image2 = cover_image2
+
         amount_type = request.POST.getlist("amount_type")
         oud.amount_type.clear()
-        print(amount_type)
         
         for amount in amount_type:
             quantity = QuantityManagement.objects.get(amount=amount)
@@ -483,6 +486,10 @@ def add_oud(request):
         cover_image1 = request.FILES.get('cover_image1', None)
         if cover_image1:
             oud.cover_image1 = cover_image1
+        
+        cover_image2 = request.FILES.get('cover_image2', None)
+        if cover_image2:
+            oud.cover_image2 = cover_image2
 
         for amount in amount_type:
             quantity = QuantityManagement.objects.get(amount=amount)

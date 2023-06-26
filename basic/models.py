@@ -57,7 +57,8 @@ class Ouds(models.Model):
     offer_status = models.CharField(max_length=10, default="closed")
     offer_amount = models.IntegerField(default="50")
     img = models.ImageField(null=True, blank=True,upload_to="images/")
-    cover_image1 = models.ImageField(null=True, blank=True,upload_to="images/")
+    cover_image1 = models.ImageField(null=True, blank=True, upload_to="images/")
+    cover_image2 = models.ImageField(null=True, blank=True, upload_to="images/")
     category= models.ForeignKey(Categories, on_delete=models.PROTECT, null=True)
     amount_type = models.ManyToManyField(QuantityManagement)
     amount_number = models.IntegerField(default="3")
@@ -250,3 +251,10 @@ class Analytics(models.Model):
     total_deliveries = models.IntegerField()
 
 
+class NoticeBoard(models.Model):
+    notice = models.CharField(max_length=500)
+
+    def serialize(self):
+        return {
+            "notice" : self.notice,
+        }

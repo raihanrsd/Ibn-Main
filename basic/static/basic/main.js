@@ -78,10 +78,14 @@ function change_price(x) {
 window.addEventListener('scroll', function () {
     var main_header = document.querySelector('.main_header');
     var nav_bar = document.querySelector(".my_nav");
-    if (window.scrollY > (main_header.offsetHeight / 2)) {
+    if (window.scrollY > (main_header.offsetHeight / 2) ) {
         main_header.classList.add("main_header_scrolled");
         document.querySelector('.navbar_brand').style.opacity = "0";
-        nav_bar.classList.add("my_nav_scrolled");
+        var windowWidth = document.documentElement.clientWidth;
+        if(windowWidth > 900){
+            nav_bar.classList.add("my_nav_scrolled");
+        }
+        
         document.querySelector('.ibnmain_name_li').style.display = "block";
         document.querySelector('.ibnmain-writeup').style.display = "block";
         document.querySelector('.ibnmain-img-mobile').style.display = "none";
@@ -274,7 +278,7 @@ function add_cart_func(x) {
     img.alt = "This image doesn't exist";
     product_div1.appendChild(img);
     let h1 = document.createElement("h1");
-    h1.innerHTML = name;
+    h1.innerHTML = name_of_product;
 
     product_div.id = `this-cart-prod-div-${idstr}`;
 

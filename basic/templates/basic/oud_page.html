@@ -4,15 +4,54 @@
 {% block body %}
 <div class="oud-page-main-div">
     <div class="hola">
-        <div class="oud-page-img">
-            {% if oud.img %}
-            <img src="{{ oud.img.url }}" alt="This doesn't have an image">
-            {% else %}
-            <p>The image for this product doesn't exist</p>
-            {% endif %}
+        
+        <div class="swiper-2">
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper">
+              <!-- Slides -->
+            <div class="swiper-slide">
+              <div class="oud-page-img">
+                {% if oud.img %}
+                <img src="{{ oud.img.url }}" alt="This doesn't have an image">
+                {% else %}
+                <p>The image for this product doesn't exist</p>
+                {% endif %}
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+            <div class="oud-page-img">
+                {% if oud.cover_image1 %}
+                <img src="{{ oud.cover_image1.url }}" alt="This doesn't have an image">
+                {% else %}
+                <p>The image for this product doesn't exist</p>
+                {% endif %}
+            </div>
         </div>
+
+        <div class="swiper-slide">
+            <div class="oud-page-img">
+                {% if oud.cover_image1 %}
+                <img src="{{ oud.cover_image1.url }}" alt="This doesn't have an image">
+                {% else %}
+                <p>The image for this product doesn't exist</p>
+                {% endif %}
+            </div>
+        </div>
+              
+                
+              
+        
+            </div>
+            <!-- If we need pagination -->
+            <div class="swiper-pagination-1"></div>
+          
+            <!-- If we need navigation buttons -->
+
+          
+          </div>
         <div class="oud-page-details">
-            <h1 class="display-1">{{ oud.title }}</h1>
+            <h1 >{{ oud.title }}</h1>
 
             <div class="m-4">
 
@@ -24,18 +63,31 @@
             </p>
 
             {% if oud.type == 'close' %}
-            <h1 class="prod-status">Product is out of stock ;-;</h1>
+            <p class="prod-status">Product is out of stock ;-;</p>
             {% else %}
-            <h1 class="prod-status">Product in stock</h1>
+            <p class="prod-status">Product in stock</p>
             {% endif %}
+            <input id="hidden_inp1_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_1}}">
+            <input id="hidden_inp1_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_2}}">
+            <input id="hidden_inp1_3_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_3}}">
+            <input id="hidden_inp1_4_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_4}}">
+
+
+            <input id="hidden_inp2_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_1}}">
+            <input id="hidden_inp2_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_2}}">
+            <input id="hidden_inp2_3_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_3}}">
+            <input id="hidden_inp2_4_special_btn_{{oud.id}}" type="hidden" value="{{oud.prev_price_4}}">
 
             <p class="amount-desc">Choose Your Desired Amount</p>
+            <div>
             {% for amount in oud.amount_type.all %}
+
             <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart" onclick="change_price(this)"
                 data-amount="{{amount.amount}}" data-id="{{oud.id}}" data-serial="{{forloop.counter}}">{{amount.amount}}
                 gm</button>
             <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden" value="{{amount.amount}}">
             {% endfor %}
+        </div>
             <div>
                 <span id="div_special_btn_{{oud.id}}">
                     <button class="btn btn-outline-primary cart cart-btn" id="special_btn_{{oud.id}}"
@@ -149,6 +201,33 @@ const swiper = new Swiper('.swiper', {
 
   // And if we need scrollbar
 });
+
+
+const swiper_img = new Swiper('.swiper-2', {
+  // Optional parameters
+  slidesPerView: 1,
+   
+  direction: 'horizontal',
+  loop: true,         // Enable loop mode
+  autoplay: {
+    delay: 3000,      // Delay between slides in milliseconds
+    disableOnInteraction: false,  // Enable autoplay even when user interacts with swiper
+  },
+
+  // If we need pagination
+  pagination: {
+    el: '.swiper-pagination-1',
+  },
+
+  // Navigation arrows
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+
+  // And if we need scrollbar
+});
+
 </script>
 
     <div class="review-section">

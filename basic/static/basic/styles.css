@@ -47,6 +47,8 @@ i:hover {
 
 /* individual product page design */
 
+
+
 .hola {
     font-family: 'Crimson', serif;
     display: flex;
@@ -455,8 +457,9 @@ i:hover {
 }
 
 .oud-page-img {
-    padding: 30px;
+    width: 450px ;
     margin: 30px;
+    overflow: hidden;
 }
 
 
@@ -493,9 +496,10 @@ hr {
 }
 
 .oud-page-img img {
-    height: 650px;
-    width: 500px;
-    object-fit: cover;
+    height: 650px ;
+    width: 500px ;
+    margin: 0;
+    object-fit: cover ;
 }
 
 
@@ -1177,8 +1181,8 @@ hr {
 
 
 .account-nav-writeup {
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 16px ;
+    font-weight: 400 ;
     font-style: normal;
     margin-top: -50px !important;
     cursor: pointer;
@@ -1236,7 +1240,7 @@ hr {
 
 .all-perfume-img-div img {
     height: 350px;
-    width: 250px;
+    width: 90%;
     object-fit: cover;
     transition: opacity 0.3s ease-in-out;
 }
@@ -1262,13 +1266,14 @@ hr {
 
 .all-perfume-details-div {
     width: 37%;
-    font-family: 'Macondo', cursive;
 }
 
 .price-p {
-    color: rgba(0, 0, 0, 0.4);
-    font-family: 'Macondo', cursive;
+    color: black;
+    margin: 10px 0;
 }
+
+
 
 .prev_price {
     text-decoration: line-through;
@@ -1344,9 +1349,9 @@ hr {
 }
 
 .prod-status {
-    font-size: 20px !important;
-    color: rgba(f, f, f, 0.6) !important;
-    margin-bottom: 20px !important;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.4) !important;
+    margin-bottom: 10px !important;
     margin-top: -10px;
 }
 
@@ -1531,10 +1536,7 @@ hr {
 
 .slider {
     width: 100%;
-    height: 80%;
-
     z-index: 10;
-    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -1863,21 +1865,21 @@ footer .payment-div .img-div img {
 .swiper {
     width: 100%;
     height: 700px;
+    overflow: hidden;
 }
 
 
-.swiper-1 {
+.swiper-2 {
+    width: 50%;
+    overflow: hidden;
+}
+
+
+
+
+.swiper-slide-img{
     width: 100%;
-    height: 80vh;
-}
-
-.swiper-slide {
-    height: 700px;
-}
-
-.swiper-slide img {
-    width: 100%;
-    height: 100%;
+    aspect-ratio: 16/9;
     object-fit: cover;
 }
 
@@ -1889,6 +1891,12 @@ footer .payment-div .img-div img {
     left: 50%;
     transform: translateX(-50%);
 }
+
+.swiper-pagination-1 {
+    display: none;
+}
+
+
 
 .swiper-button-next,
 .swiper-button-prev {
@@ -3495,8 +3503,7 @@ footer .payment-div .img-div img {
     }
 
     .all-perfume-img-div {
-        max-width: 600px;
-        width: 80%;
+        width: 60%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -3508,7 +3515,7 @@ footer .payment-div .img-div img {
     }
 
     .all-product-page-heading {
-        margin-top: 60px;
+        margin-top: 0;
     }
 
 
@@ -3577,6 +3584,20 @@ footer .payment-div .img-div img {
         font-size: 13px;
     }
 
+    .oud-page-img img{
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+    }
+
+    .oud-page-img{
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+
+
 
 
 
@@ -3628,10 +3649,21 @@ footer .payment-div .img-div img {
         text-align: center;
     }
 
+    .all-perfume-img-div{
+        width: 100%;
+    }
+
     .all-perfume-img-div img {
-        height: 350px;
-        width: 250px;
-        max-width: 600px;
+        
+        width: 90%;
+        height: 500px;
+
+    }
+
+    .cover_image{
+        top: 0;
+        left: 5%;
+        
     }
 
     .review-section textarea {
@@ -3639,7 +3671,9 @@ footer .payment-div .img-div img {
     }
 
     .oud-offer-amount {
-        transform: translate(120px, -160px);
+        left:85%;
+        top: -5%;
+        transform: translate(0, 0);
     }
 
     .nav-writing {
@@ -3741,7 +3775,7 @@ footer .payment-div .img-div img {
     }
 
     .btn {
-        font-size: 10px;
+        font-size: 13px;
         padding: 3px;
     }
 
@@ -3842,11 +3876,74 @@ footer .payment-div .img-div img {
     }
 
     .test-div a{
-        padding: 4px;
-        font-size: 10px;
+        padding: 3px;
+        font-size: 13px;
         width: 75px;
         height: 40px;
     }
+
+    .all-perfume{
+        margin: 100px 0;
+    }
+
+    .hola{
+        margin-top: 0;
+    
+    }
+
+    .oud-page-description{
+        margin: 20px;
+    }
+
+    .oud-page-img img{
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+    }
+
+    .oud-page-img{
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .swiper-2 {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .swiper-pagination-1{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 30px 0;
+    }
+    .oud-page-details{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .oud-page-details h1{
+        font-size: 25px;
+    }
+
+    .price-p{
+        font-size: 15px;
+        margin-top: 20px;
+    }
+
+    .prod-status{
+        font-size: 15px;
+
+    }
+
+    .amount-desc{
+        font-size: 18px;
+    }
+
+
 
    
 }
