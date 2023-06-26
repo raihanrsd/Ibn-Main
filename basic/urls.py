@@ -45,6 +45,9 @@ urlpatterns = [
     path("profile_page/<int:user_id>", views.show_profile_page, name="profile_page"),
     path("add_shipping", views.add_shipping, name="add_shipping"),
     path("change_profile/<int:user_id>", views.change_profile, name="change_profile"),
-    
 
+    # payment messages
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/failure/', views.payment_failure, name='payment_failure'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),  
 ]
