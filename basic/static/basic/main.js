@@ -943,6 +943,10 @@ function proceedToPayment(){
 
 function changePaymentSelection(x){
     var type = x.dataset.type;
+    if(type == 'online') {
+        let payment_method = document.querySelector('#payment_method');
+        payment_method.value = "online";
+    }
     let div1 = document.querySelector('.payment-type-cash');
     let div2 = document.querySelector('.payment-type-online');
     let div3 = document.querySelector('.selected-p')
@@ -955,7 +959,6 @@ function changePaymentSelection(x){
     div2.classList.toggle('selected');
     div3.remove();
 
-    
     
     if(type === 'cash'){
         div1.append(div4);
