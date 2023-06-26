@@ -15,9 +15,6 @@ class User(AbstractUser):
     default_shipping_id = models.IntegerField(default=0)
 
 
-
-
-
 class QuantityManagement(models.Model):
     amount = models.DecimalField(max_digits=30, decimal_places=2, null=True, blank=True)
     def __str__(self):
@@ -58,7 +55,7 @@ class Ouds(models.Model):
     offer_amount = models.IntegerField(default="50")
     img = models.ImageField(null=True, blank=True,upload_to="images/")
     cover_image1 = models.ImageField(null=True, blank=True,upload_to="images/")
-    category= models.ForeignKey(Categories, on_delete=models.PROTECT, null=True)
+    category= models.ForeignKey(Categories, on_delete=models.CASCADE, null=True)
     amount_type = models.ManyToManyField(QuantityManagement)
     amount_number = models.IntegerField(default="3")
     tags = models.CharField(max_length=1000, default = "")
@@ -140,8 +137,8 @@ class Order(models.Model):
     status = models.CharField(max_length=20, default="not delivered")
     reason_for_cancellation = models.CharField(max_length=200, default="none")
 
-    def __str__(self):
-        return f"{self.id}"
+    # def __str__(self):
+    #     return f"{self.id}"
     
     def serialize(self):
         return {
@@ -218,8 +215,8 @@ class Promos(models.Model):
 
 
 class UserOrder(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    order = models.ForeignKey(Order, on_delete= models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete= models.CASCADE)
 
 
 class Moderators(models.Model):

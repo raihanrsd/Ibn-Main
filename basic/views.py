@@ -1,3 +1,6 @@
+import requests
+from sslcommerz_lib import SSLCOMMERZ
+import uuid
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -17,30 +20,31 @@ import os
 CLIENT_ID = '31889031476-0dhc7cpg32shmjhv7megtv0do7ndp1q2.apps.googleusercontent.com'
 
 
-
 def index(request):
     ouds = Ouds.objects.all().order_by("-id")
     paginator = Paginator(ouds, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "basic/index.html",{
-        "ouds" : page_obj,
+    return render(request, "basic/index.html", {
+        "ouds": page_obj,
     })
+
 
 def home(request):
     category = Categories.objects.get(name="Exclusive")
     ouds = Ouds.objects.filter(category=category)
-    return render(request, "basic/home.html",{
-        "ouds" : ouds,
+    return render(request, "basic/home.html", {
+        "ouds": ouds,
     })
 
 
 def exclusive(request):
     category = Categories.objects.get(name="Exclusive")
     ouds = Ouds.objects.filter(category=category)
-    return render(request, "basic/exclusive.html",{
-        "ouds" : ouds,
+    return render(request, "basic/exclusive.html", {
+        "ouds": ouds,
     })
+
 
 def category(request, category_name):
     category = Categories.objects.get(name=category_name)
@@ -48,13 +52,11 @@ def category(request, category_name):
         ouds = Ouds.objects.filter(category=category).order_by("-id")
     except:
         return render(request, "basic/error.html")
-    
+
     return render(request, "basic/category.html", {
-        "ouds" :ouds,
-        "category" : category,
+        "ouds": ouds,
+        "category": category,
     })
-
-
 
 
 # user login option
@@ -78,13 +80,13 @@ def login_view(request):
         return render(request, "basic/login.html")
 
 
-#user logout 
+# user logout
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
 
-#user register 
+# user register
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -121,7 +123,6 @@ def register(request):
         return render(request, "basic/register.html")
 
 
-
 def update_amount(request, oud_id):
     oud = Ouds.objects.get(pk=oud_id)
     return JsonResponse(oud.serialize())
@@ -133,27 +134,110 @@ def oud_page(request, oud_id):
     review = None
     if Review.objects.filter(oud=oud):
         review = Review.objects.filter(oud=oud)
-    return render(request, "basic/oud_page.html",{
-        "oud" : oud,
-        "reviews" : review,
-        "ouds" : ouds,
+    return render(request, "basic/oud_page.html", {
+        "oud": oud,
+        "reviews": review,
+        "ouds": ouds,
     })
 
 
 def review(request, oud_id):
     oud = Ouds.objects.get(pk=oud_id)
     review = request.POST.get('review')
-    review = Review(user = request.user, oud = oud, review = review)
+    review = Review(user=request.user, oud=oud, review=review)
     review.save()
     return HttpResponseRedirect(reverse("oud_page", args=(oud.id,)))
 
 
 def show_cart(request):
     id = None
-    return render(request, "basic/cart.html",{
-        'id' : id,
-        'validation' : False,
+    return render(request, "basic/cart.html", {
+        'id': id,
+        'validation': False,
     })
+
+@csrf_exempt
+def payment_success(request):
+    transaction_id = request.POST.get('tran_id')
+
+    try:
+        order = Order.objects.get(transaction_id=transaction_id)
+    except Order.DoesNotExist:
+        return HttpResponse("Order does not exist")
+
+    print(request.POST)
+    val_id = request.POST.get('val_id')
+    store_id = "ibnma6496853da64bf"
+    store_passwd = "ibnma6496853da64bf@ssl"
+
+    # Construct the validation API url
+    url = f"https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?val_id={val_id}&store_id={store_id}&store_passwd={store_passwd}&format=json"
+
+    response = requests.get(url, verify=True)
+    response_json = response.json()
+
+    print(response)
+    print(response_json)
+    if response_json["status"] == "VALID":
+        order.is_paid = True
+        order.save()
+
+        return render(request, "basic/payment_success.html",)
+
+    return render(request, "basic/payment_failure.html",)
+
+@csrf_exempt
+def payment_failure(request):
+    transaction_id = request.POST.get("tran_id")
+    order = Order.objects.get(transaction_id=transaction_id)
+    print("deleted in failure")
+    order.delete()
+
+    return render(request, "basic/payment_failure.html",)
+
+@csrf_exempt
+def payment_cancel(request):
+    transaction_id = request.POST.get("tran_id")
+    order = Order.objects.get(transaction_id=transaction_id)
+    print("deleted in cancel")
+    order.delete()
+
+    return render(request, "basic/payment_cancel.html",)
+
+
+def handle_online_payment(transaction_id):
+    order = Order.objects.get(transaction_id=transaction_id)
+
+    settings = {
+        "store_id": "ibnma6496853da64bf",
+        "store_pass": "ibnma6496853da64bf@ssl",
+        "issandbox": True,
+    }
+
+    sslcz = SSLCOMMERZ(settings)
+    post_body = {}
+    post_body["total_amount"] = order.total_price
+    post_body["currency"] = "BDT"
+    post_body["tran_id"] = transaction_id
+    post_body["success_url"] = "http://127.0.0.1:8000/payment/success/"
+    post_body["fail_url"] = "http://127.0.0.1:8000/payment/failure/"
+    post_body["cancel_url"] = "http://127.0.0.1:8000/payment/cancel/"
+    post_body["emi_option"] = 0
+    post_body["cus_name"] = order.name
+    post_body["cus_email"] = order.email
+    post_body["cus_phone"] = order.phone
+    post_body["cus_add1"] = order.address
+    post_body["cus_city"] = order.city
+    post_body["cus_country"] = order.country
+    post_body["shipping_method"] = "NO"
+    post_body["multi_card_name"] = ""
+    post_body["num_of_item"] = 1
+    post_body["product_name"] = "Test"
+    post_body["product_category"] = "Test Category"
+    post_body["product_profile"] = "general"
+
+    return sslcz.createSession(post_body)
+
 
 def take_order(request):
     if request.method == 'POST':
@@ -162,9 +246,10 @@ def take_order(request):
         total_price = request.POST.get("total_price", 0.00)
         delivery_charge = request.POST.get("delivery_charge", 0.00)
         promo_discount = request.POST.get("promo_discount", 0.00)
+        payment_method = request.POST.get("payment_method", 'Cash')
         address = request.POST.get("address", '')
         area = request.POST.get("area", '')
-        town=request.POST.get("town", '')
+        town = request.POST.get("town", '')
         city = request.POST.get("city", '')
         country = request.POST.get("country", '')
         phone = request.POST.get("phone", '')
@@ -172,21 +257,58 @@ def take_order(request):
         orders = request.POST.get("itemsJSON", '')
         if len(orders) < 8:
             return render(request, "basic/error.html")
-        order = Order(name=name, email=email, address=address, city=city, country=country, phone=phone, zip=zip, order=orders, total_price=total_price, area = area, town=town, promo_discount = promo_discount, delivery_charge=delivery_charge)
+
+        order = Order(name=name, email=email, address=address, city=city, country=country, phone=phone, zip=zip, order=orders, total_price=total_price,
+                      area=area, town=town, promo_discount=promo_discount, delivery_charge=delivery_charge, payment_method=payment_method)
         order.save()
-        tracker = Tracker(order=order, email=email, desc="Order has been placed and you will shortly notified of your product delivery date.")
-        tracker.save()
 
-        user_order = UserOrder(order = order, user = request.user)
-        user_order.save()
+        if payment_method.lower() == 'online':
+            transaction_id = uuid.uuid4().hex
+            # making sure the transaction id is unique
+            while Order.objects.filter(transaction_id=transaction_id):
+                transaction_id = uuid.uuid4().hex
 
-        return render(request, "basic/cart.html", {
-            'validation' : True,
-            'id' : order.id,
-        })
+            order.is_paid = False
+            order.transaction_id = transaction_id
+            order.save()
+
+            ssl_response = handle_online_payment(transaction_id)
+            print(ssl_response)
+            if not ssl_response["status"] == "SUCCESS":
+                order.delete()
+
+                # TODO: show proper error message in the template: payment gateway error.
+                return render(request, "basic/cart.html", {
+                    'message': "Payment gateway error. Please try again later.",
+                    'validation': False,
+                    'id': id,
+                })
+
+            tracker = Tracker(order=order, email=email,
+                              desc="Order has been placed and you will shortly notified of your product delivery date.")
+            tracker.save()
+
+            user_order = UserOrder(order=order, user=request.user)
+            user_order.save()
+
+            return redirect(ssl_response["GatewayPageURL"])
+
+        else:
+            tracker = Tracker(order=order, email=email,
+                              desc="Order has been placed and you will shortly notified of your product delivery date.")
+            tracker.save()
+
+            user_order = UserOrder(order=order, user=request.user)
+            user_order.save()
+
+            return render(request, "basic/cart.html", {
+                'validation': True,
+                'id': order.id,
+            })
+
     return render(request, "basic/cart.html", {
-        'validation' : False,
-        'id' : id,
+        'validation': False,
+        'id': id,
     })
 
 
@@ -200,16 +322,16 @@ def show_tracker(request):
             tracker = Tracker.objects.get(order=order, email=email)
             test = json.loads(order.order)
             amount = order.total_price
-            return render(request, "basic/tracker.html",{
-                "tracker" : tracker,
-                "order" : order,
-                "item_list" : test,
-                "total_price" : amount,
+            return render(request, "basic/tracker.html", {
+                "tracker": tracker,
+                "order": order,
+                "item_list": test,
+                "total_price": amount,
             })
 
         except:
-            return render(request, "basic/tracker.html",{
-                "message" : "Please fill up the from with valid information",
+            return render(request, "basic/tracker.html", {
+                "message": "Please fill up the from with valid information",
             })
     return render(request, "basic/tracker.html")
 
@@ -223,31 +345,32 @@ def search(request):
         if query in product.description:
             search_result.append(product)
             category_list.append(product.category.name)
-    
+
     search_result = reversed(search_result)
     return render(request, "basic/search.html", {
-        "ouds" : search_result,
-        "category_list" : category_list,
+        "ouds": search_result,
+        "category_list": category_list,
     })
 
 
 def contact_us(request):
     msg = None
     if request.method == "POST":
-        
+
         email = request.POST.get("email", "")
         name = request.POST.get("name", "")
         phoneno = request.POST.get("phoneno", "")
         message = request.POST.get("message", "")
         if message != "" and email != "" and name != "" and phoneno != "":
-            contact_us = ContactUs(name=name, email=email, phoneno=phoneno, message=message)
+            contact_us = ContactUs(
+                name=name, email=email, phoneno=phoneno, message=message)
             contact_us.save()
             return render(request, "basic/contact_us.html", {
-                "message" : "Thank You for contacting us. Someone from our team will contact you soon.",
+                "message": "Thank You for contacting us. Someone from our team will contact you soon.",
             })
         else:
-            return render(request, "basic/contact_us.html",{
-                "message" : "Please fill up the from with valid information",
+            return render(request, "basic/contact_us.html", {
+                "message": "Please fill up the from with valid information",
             })
 
         """
@@ -257,18 +380,17 @@ def contact_us(request):
             })
         """
 
-        
-    return render(request, "basic/contact_us.html",{
-        "message" : msg,
+    return render(request, "basic/contact_us.html", {
+        "message": msg,
     })
-
 
 
 def test_slider(request):
-    return render(request, "basic/slider.html",{
-        "ouds" : Ouds.objects.all(),
+    return render(request, "basic/slider.html", {
+        "ouds": Ouds.objects.all(),
     })
-        
+
+
 @login_required(login_url='login')
 def admin_page(request):
     user_data = User.objects.all()
@@ -284,17 +406,17 @@ def admin_page(request):
     category_data = Categories.objects.all()
 
     return render(request, "basic/admin_page.html", {
-        "user_data" : user_data,
-        "ouds" : oud_data.order_by("-id"),
-        "promos" : promo_data,
-        "quantity_data" : quantity_data,
+        "user_data": user_data,
+        "ouds": oud_data.order_by("-id"),
+        "promos": promo_data,
+        "quantity_data": quantity_data,
         "reviews": review_data,
-        "orders" : order_data.order_by("-id"),
-        "trackers" : tracker_data.order_by("-id"),
-        "contents" : web_data,
-        "contactus_data" : contact_us,
-        "moderators" : moderators,
-        "categories" : category_data, 
+        "orders": order_data.order_by("-id"),
+        "trackers": tracker_data.order_by("-id"),
+        "contents": web_data,
+        "contactus_data": contact_us,
+        "moderators": moderators,
+        "categories": category_data,
     })
 
 
@@ -303,36 +425,37 @@ def profile_page(request):
     user = request.user
     user_order_link = None
     shipping_address = None
-    if UserOrder.objects.filter(user = user):
-        user_orders_link = UserOrder.objects.filter(user = user)
+    if UserOrder.objects.filter(user=user):
+        user_orders_link = UserOrder.objects.filter(user=user)
 
-    if ShippingAddress.objects.filter(user = user):
-        shipping_address = ShippingAddress.objects.filter(user = user)
-    return render(request, "basic/profile_page.html",{
-        "user_order_data" : user_orders_link,
-        "shipping_addresses" : shipping_address,
+    if ShippingAddress.objects.filter(user=user):
+        shipping_address = ShippingAddress.objects.filter(user=user)
+    return render(request, "basic/profile_page.html", {
+        "user_order_data": user_orders_link,
+        "shipping_addresses": shipping_address,
     })
+
 
 @login_required(login_url='login')
 def individual_user_page(request, user_id):
-    user = User.objects.get(pk = user_id)
+    user = User.objects.get(pk=user_id)
     shipping_address = None
     user_orders = None
-    if ShippingAddress.objects.filter(user = user):
-        shipping_address = ShippingAddress.objects.filter(user = user)
+    if ShippingAddress.objects.filter(user=user):
+        shipping_address = ShippingAddress.objects.filter(user=user)
 
-    if UserOrder.objects.filter(user = user):
-        user_orders = UserOrder.objects.filter(user = user)
-    
+    if UserOrder.objects.filter(user=user):
+        user_orders = UserOrder.objects.filter(user=user)
+
     return render(request, "basic/show_user.html", {
-        "user_orders" : user_orders,
-        "shipping_addresses" : shipping_address,
+        "user_orders": user_orders,
+        "shipping_addresses": shipping_address,
     })
 
 
 @login_required(login_url='login')
 def edit_ouds(request, oud_id):
-    oud = Ouds.objects.get(pk = int(oud_id))
+    oud = Ouds.objects.get(pk=int(oud_id))
     quantity_list = QuantityManagement.objects.all()
     categories = Categories.objects.all()
     if request.method == "POST":
@@ -397,14 +520,10 @@ def edit_ouds(request, oud_id):
 
         amount_type = request.POST.getlist("amount_type")
         oud.amount_type.clear()
-        print(amount_type)
-        
+
         for amount in amount_type:
             quantity = QuantityManagement.objects.get(amount=amount)
             oud.amount_type.add(quantity)
-
-        print(oud.amount_type)
-        print("print anything")
 
         amount_number = request.POST.get("amount_number", "")
         oud.amount_number = int(amount_number)
@@ -420,9 +539,9 @@ def edit_ouds(request, oud_id):
         return HttpResponseRedirect(reverse("admin_page"))
 
     return render(request, "basic/oud_edit.html", {
-        "oud" : oud,
-        "quantity_list" : quantity_list,
-        "categories" : categories,
+        "oud": oud,
+        "quantity_list": quantity_list,
+        "categories": categories,
     })
 
 
@@ -431,50 +550,51 @@ def add_oud(request):
     categories = Categories.objects.all()
     if request.method == "POST":
         title = request.POST.get("title", "")
-        
+
         type = request.POST.get("type", "")
-        
+
         description = request.POST.get("description", "")
-        
+
         exerpt = request.POST.get("exerpt", '')
-        
+
         base_price = request.POST.get("base_price", '')
-        
+
         amount = float(request.POST.get("amount", 0.00))
-        
+
         base_amount = float(request.POST.get("base_amount", 0.00))
-        
+
         price_1 = request.POST.get("price_1", "")
-        
+
         price_2 = request.POST.get("price_2", "")
-        
+
         price_3 = request.POST.get("price_3", "")
-        
+
         price_4 = request.POST.get("price_4", "")
-        
+
         prev_price_1 = request.POST.get("prev_price_1", "")
-        
+
         prev_price_2 = request.POST.get("prev_price_2", "")
 
         prev_price_3 = request.POST.get("prev_price_3", "")
-        
+
         prev_price_4 = request.POST.get("prev_price_4", "")
 
         offer_status = request.POST.get("offer_status", "")
 
         offer_amount = request.POST.get("offer_amount", "")
-        
+
         amount_type = request.POST.getlist("amount_type")
-        
+
         amount_number = int(request.POST.get("amount_number", ""))
-        
+
         category = request.POST.get("category", "")
 
         category = Categories.objects.get(name=category)
-       
+
         tags = request.POST.get("tags", '')
-        
-        oud = Ouds.objects.create(title = title, type=type, description=description, exerpt=exerpt, amount=amount, base_price=base_price,base_amount=base_amount, price_1=price_1, price_2= price_2, price_3=price_3, price_4= price_4, prev_price_1= prev_price_1, prev_price_2=prev_price_2, prev_price_3=prev_price_3, prev_price_4=prev_price_4, offer_status=offer_status, offer_amount=offer_amount, category=category, amount_number=amount_number, tags=tags)
+
+        oud = Ouds.objects.create(title=title, type=type, description=description, exerpt=exerpt, amount=amount, base_price=base_price, base_amount=base_amount, price_1=price_1, price_2=price_2, price_3=price_3, price_4=price_4,
+                                  prev_price_1=prev_price_1, prev_price_2=prev_price_2, prev_price_3=prev_price_3, prev_price_4=prev_price_4, offer_status=offer_status, offer_amount=offer_amount, category=category, amount_number=amount_number, tags=tags)
 
         img = request.FILES.get('img', None)
         if img:
@@ -491,14 +611,14 @@ def add_oud(request):
         oud.save()
         return HttpResponseRedirect(reverse("admin_page"))
     return render(request, "basic/oud_add.html", {
-        "quantity_list" : quantity_list,
-        "categories" : categories,
+        "quantity_list": quantity_list,
+        "categories": categories,
     })
-    
+
 
 @login_required(login_url='login')
 def show_order(request, order_id):
-    order = Order.objects.get(pk = order_id)
+    order = Order.objects.get(pk=order_id)
     order_data = order.order
     order_dict = json.loads(order_data)
     order_tracker = Tracker.objects.get(order=order)
@@ -506,41 +626,37 @@ def show_order(request, order_id):
         amount = order_dict[ordr][3]
         amount_arr = order_dict[ordr][5]
         price_arr = order_dict[ordr][7]
-        
+
         for i in range(len(amount_arr)):
             if float(amount) == float(amount_arr[i]):
-                order_dict[ordr].append(float(price_arr[i]) * int(order_dict[ordr][0]))
-                
-        
-            
-            
+                order_dict[ordr].append(
+                    float(price_arr[i]) * int(order_dict[ordr][0]))
 
     user = None
-    if UserOrder.objects.filter(order = order):
-        user_order_data = UserOrder.objects.get(order = order)
+    if UserOrder.objects.filter(order=order):
+        user_order_data = UserOrder.objects.get(order=order)
         user = user_order_data.user
 
     product_price = order.total_price + order.promo_discount - order.delivery_charge
-        
-   
-    return render(request, "basic/order.html",{
-        "orders" : order_dict,
-        "main_order" : order,
-        "user_of_order" : user,
-        "product_price" : product_price,
-        "tracker" : order_tracker,
+
+    return render(request, "basic/order.html", {
+        "orders": order_dict,
+        "main_order": order,
+        "user_of_order": user,
+        "product_price": product_price,
+        "tracker": order_tracker,
     })
-    
+
 
 def show_content(request):
-    web_contents = WebContents.objects.get(pk = 1)
+    web_contents = WebContents.objects.get(pk=1)
     return JsonResponse(web_contents.serialize())
+
 
 @login_required(login_url='login')
 def change_content(request):
-    web_contents = WebContents.objects.get(pk = 1)
+    web_contents = WebContents.objects.get(pk=1)
     if request.method == 'POST':
-        print("comes here")
         aboutus = request.POST.get("aboutus", "")
         web_contents.aboutus = aboutus
 
@@ -583,11 +699,10 @@ def change_content(request):
         web_contents.save()
 
         return HttpResponseRedirect(reverse("admin_page"))
-    
-    return render(request, "basic/change_content.html", {
-        "web_content" : web_contents,
-    })
 
+    return render(request, "basic/change_content.html", {
+        "web_content": web_contents,
+    })
 
 
 @login_required(login_url='login')
@@ -597,13 +712,13 @@ def check_promo(request, promo_code):
         promo = Promos.objects.get(name=promo_code)
     except Promos.DoesNotExist:
         promo = Promos.objects.get(id=3)
-    
+
     return JsonResponse(promo.serialize())
 
 
 @login_required(login_url='login')
 def change_visibility(request, oud_id):
-    oud = Ouds.objects.get(pk = oud_id)
+    oud = Ouds.objects.get(pk=oud_id)
 
     if oud.visibility:
         oud.visibility = False
@@ -613,44 +728,43 @@ def change_visibility(request, oud_id):
     return JsonResponse(oud.serialize())
 
 
-
 @login_required(login_url='login')
 @csrf_exempt
 def delete_record(request, what, nice_id):
     record = None
     if what == "product":
-        record = Ouds.objects.get(pk = nice_id)
+        record = Ouds.objects.get(pk=nice_id)
 
     elif what == "review":
-        record = Review.objects.get(pk = nice_id)
-        
+        record = Review.objects.get(pk=nice_id)
+
     elif what == "quantity":
-        record = QuantityManagement.objects.get(pk = nice_id)
+        record = QuantityManagement.objects.get(pk=nice_id)
 
     elif what == "shipping":
-        record = ShippingAddress.objects.get(pk = nice_id)
-        
+        record = ShippingAddress.objects.get(pk=nice_id)
+
     elif what == "moderator":
-        record = Moderators.objects.get(pk = nice_id)
-        
+        record = Moderators.objects.get(pk=nice_id)
+
     elif what == "order":
-        record = Order.objects.get(pk = nice_id)
-        
+        record = Order.objects.get(pk=nice_id)
+
     elif what == "category":
-        record = Categories.objects.get(pk = nice_id)
-        
+        record = Categories.objects.get(pk=nice_id)
+
     elif what == "promo":
-        record = Promos.objects.get(pk = nice_id)
-        
+        record = Promos.objects.get(pk=nice_id)
+
     elif what == "contact":
-        record = ContactUs.objects.get(pk = nice_id)
+        record = ContactUs.objects.get(pk=nice_id)
 
     elif what == "tracker":
-        record = Tracker.objects.get(pk = nice_id)
-        
+        record = Tracker.objects.get(pk=nice_id)
+
     elif what == "user":
         record = User.objects.get(pk=nice_id)
-    
+
     record.delete()
 
     return HttpResponseRedirect(reverse("admin_page"))
@@ -659,40 +773,39 @@ def delete_record(request, what, nice_id):
 def show_aboutus(request):
     web_contents = WebContents.objects.get(pk=1)
     return render(request, "basic/about_us.html", {
-        "web_contents" : web_contents,
+        "web_contents": web_contents,
     })
-
 
 
 def add_category(request):
     if request.method == 'POST':
         name = request.POST.get("name", "")
-        category = Categories.objects.create(name = name)
+        category = Categories.objects.create(name=name)
         category.save()
-        
-    return HttpResponseRedirect(reverse("admin_page"))
 
+    return HttpResponseRedirect(reverse("admin_page"))
 
 
 def add_promo(request):
-    
+
     if request.method == 'POST':
-        
+
         name = request.POST.get("name", "")
-        
+
         discount_amount = request.POST.get("discount_amount", "")
-        
-        promo = Promos.objects.create(name = name, discount_amount=discount_amount)
+
+        promo = Promos.objects.create(
+            name=name, discount_amount=discount_amount)
         promo.save()
-        
+
     return HttpResponseRedirect(reverse("admin_page"))
-        
+
 
 def add_quantity(request):
-    
+
     if request.method == 'POST':
         amount = request.POST.get("amount", "")
-        quantity = QuantityManagement.objects.create(amount = amount)
+        quantity = QuantityManagement.objects.create(amount=amount)
         quantity.save()
 
     return HttpResponseRedirect(reverse("admin_page"))
@@ -702,47 +815,43 @@ def add_quantity(request):
 def edit_record(request, what, nice_id):
     record = None
 
-
     if what == "review":
-        record = Review.objects.get(pk = nice_id)
-        
+        record = Review.objects.get(pk=nice_id)
+
     elif what == "quantity":
-        record = QuantityManagement.objects.get(pk = nice_id)
+        record = QuantityManagement.objects.get(pk=nice_id)
         data = json.loads(request.body)
         amount = data.get("val", "")
         record.amount = float(amount)
         record.save()
 
     elif what == "shipping":
-        record = ShippingAddress.objects.get(pk = nice_id)
-        
+        record = ShippingAddress.objects.get(pk=nice_id)
+
     elif what == "moderator":
-        record = Moderators.objects.get(pk = nice_id)
-        
+        record = Moderators.objects.get(pk=nice_id)
+
     elif what == "order":
-        record = Order.objects.get(pk = nice_id)
-        
-        
+        record = Order.objects.get(pk=nice_id)
+
     elif what == "category":
-        record = Categories.objects.get(pk = nice_id)
+        record = Categories.objects.get(pk=nice_id)
         data = json.loads(request.body)
         name = data.get("val", "")
         record.name = name
         record.save()
 
-        
     elif what == "promo":
-        record = Promos.objects.get(pk = nice_id)
+        record = Promos.objects.get(pk=nice_id)
         data = json.loads(request.body)
         name = data.get("val", "")
         discount_amount = data.get("")
         record.name = name
         record.save()
-    
-    return JsonResponse(record.serialize())
-        
 
-    
+    return JsonResponse(record.serialize())
+
+
 def cancel_order(request, order_id):
     order = Order.objects.get(pk=order_id)
 
@@ -755,22 +864,21 @@ def cancel_order(request, order_id):
 def show_profile_page(request, user_id):
     user = User.objects.get(pk=user_id)
     order = None
-    if UserOrder.objects.filter(user = user):
-        order = UserOrder.objects.filter(user = user)
-    
+    if UserOrder.objects.filter(user=user):
+        order = UserOrder.objects.filter(user=user)
+
     shipping_address = None
 
-    if ShippingAddress.objects.filter(user = user):
-        shipping_address = ShippingAddress.objects.filter(user= user)
+    if ShippingAddress.objects.filter(user=user):
+        shipping_address = ShippingAddress.objects.filter(user=user)
 
     wishlist = None
 
-
     return render(request, "basic/profile_page.html", {
-        "user_data" : user,
-        "orders" : order,
-        "shipping_addresses" : shipping_address,
-        "wishlist" : wishlist, 
+        "user_data": user,
+        "orders": order,
+        "shipping_addresses": shipping_address,
+        "wishlist": wishlist,
     })
 
 
@@ -781,9 +889,9 @@ def add_shipping(request):
 
     return HttpResponseRedirect(reverse("profile_page", args=(user.id,)))
 
-    
+
 def change_profile(request, user_id):
-    user = User.objects.get(pk = user_id)
+    user = User.objects.get(pk=user_id)
 
     if request.method == 'POST':
         user.username = request.POST.get("username", "")
@@ -794,4 +902,3 @@ def change_profile(request, user_id):
         user.save()
 
     return HttpResponseRedirect(reverse("profile_page", args=(user.id,)))
-
