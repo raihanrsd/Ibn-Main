@@ -64,14 +64,23 @@ def login_view(request):
     if request.method == "POST":
 
         # Attempt to sign user in
-        username = request.POST["username"]
+        phoneno = request.POST["phoneno"]
         password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        print(phoneno)
+        print(password)
+        user = authenticate(request, contact_no=phoneno, password=password)
+
 
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            print("nice nice")
+            print(user.is_authenticated)
+            category = Categories.objects.get(name="Exclusive")
+            ouds = Ouds.objects.filter(category=category)
+            return render(request, "basic/home.html", {
+                "ouds": ouds,
+            })
         else:
             return render(request, "basic/login.html", {
                 "message": "Invalid username and/or password."
@@ -271,9 +280,7 @@ def take_order(request):
             order.is_paid = False
             order.transaction_id = transaction_id
             order.save()
-
             ssl_response = handle_online_payment(transaction_id)
-            print(ssl_response)
             if not ssl_response["status"] == "SUCCESS":
                 order.delete()
 

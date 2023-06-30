@@ -1,44 +1,44 @@
 {% extends "basic/layout.html" %}
 
 {% block body %}
-    
 
-    <h1>Register !</h1>
+<div class="registration_div">
+
+    
+<!--Best of luck sireee -->    
+
+    <h1 class="register-h1">Register !</h1>
     {% if message %}
-        <div style="color:white;">{{ message }}</div>
+        <div style="color:black;">{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" class="m-3 p-3" style="margin-top: 100px;">
+    
+
+    <form action="{% url 'register' %}" method="post" enctype="multipart/form-data" class="m-3 p-3" style="margin-top: 100px;" class="register-form-div">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control login_inp" autofocus type="text" name="username" placeholder="Username">
+            <input class="form-control login_inp" autofocus type="text" name="username" placeholder="Username" style="min-width:50vw; margin: 0;">
         </div>
         <div class="form-group">
-            <input class="form-control login_inp" type="email" name="email" placeholder="Email Address">
+            <input class="form-control login_inp" type="email" name="email" placeholder="Email Address" style="min-width:50vw; margin: 0;">
         </div>
         <div class="form-group">
-            <input class="form-control login_inp" type="password" name="password" placeholder="Password">
+            <input class="form-control login_inp" type="password" name="password" placeholder="Password" style="min-width:50vw;margin: 0;">
         </div>
         <div class="form-group">
-            <input class="form-control login_inp"type="password" name="confirmation" placeholder="Confirm Password">
-        </div>
-        <div class="form-group">
-            <label style="color:white;">Upload a Profile Picture (optional)</label>
-            <input class="form-control-file" style="color:white;" type="file" name="profile_pic" id="profile_pic">
-        </div>
-        <div class="form-group">
-            <label for="cover_pic" style="color:white;">Upload a Cover Picture (optional)</label>
-            <input class="form-control-file" type="file" style="color:white;" name="cover_pic" placeholder="Cover Photo" id="cover_pic">
-        </div>
-        <div class="form-group">
-            
-            <input class="form-control login_inp" type="text" name="bio" placeholder="Bio (optional)">
+            <input class="form-control login_inp"type="password" name="confirmation" placeholder="Confirm Password" style="min-width:50vw;margin: 0;">
         </div>
 
-        <input class="btn btn-outline-light" type="submit" value="Register">
+        <div>
+            <input class="register-btn registration_div" type="submit" value="Register" >
+        </div>
+        
     </form>
 
-    <span style="color:white;">Already have an account?</span> <a href="{% url 'login' %}">Log In here.</a><br>
+
+    <span >Already have an account?</span> <a onclick="show_account_div()" style="cursor:pointer;">Log In here.</a><br>
+
+</div>
     
    
 

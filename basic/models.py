@@ -8,7 +8,7 @@ class User(AbstractUser):
     status = models.CharField(max_length=100, default="user")
     img = models.ImageField(null=True, blank=True,upload_to="images/")
     full_name = models.CharField(max_length=1000, default="Raihan Rashid")
-    contact_no = models.CharField(max_length=20, default="01746695655")
+    contact_no = models.CharField(max_length=20,unique=True)
     gender = models.CharField(max_length=6, default="male")
     points = models.IntegerField(default=0)
     has_shipping = models.BooleanField(default = False)

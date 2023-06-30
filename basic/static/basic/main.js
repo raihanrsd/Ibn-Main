@@ -229,6 +229,7 @@ function add_cart_func(x) {
 
     let idstr = x.id.toString();
     let product_id = x.dataset.id;
+    let name_of_product = x.dataset.name;
     let amount = x.dataset.amount;
     let amount_number = x.dataset.amountnumber;
     let category = x.dataset.category;
@@ -259,7 +260,7 @@ function add_cart_func(x) {
     }
     else {
         qty = 1;
-        name_of_product = x.dataset.name;
+        //name_of_product = x.dataset.name;
         id = product_id;
 
         cart[idstr] = [qty, name_of_product, id, amount, amount_number, amount_arr, category, price_arr, prev_price_arr, img_url];
@@ -324,6 +325,8 @@ function add_cart_func(x) {
 
     document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
     update_cart(cart, idstr);
+
+    showAlert('Product Added', `${name_of_product} has been added to Your cart`, '#155724', '#d4edd9');
 }
 
 
@@ -354,6 +357,7 @@ function subtract_func(x) {
         if (Object.keys(cart).length === 0) {
             bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
         }
+        showAlert('Product Removed', `${oud_name} has been removed From your cart`, '#856305', '#fff2cd');
     }
     else {
         document.getElementById(`val_${id}`).innerHTML = cart[id][0];
@@ -444,8 +448,25 @@ function clearCart() {
 function show_menu() {
     let x = document.querySelector(".my_nav");
     let nice = document.querySelector(".menu_bar_x");
+    
     nice.style.left = 0;
     x.style.left = 0;
+}
+
+function showAlert(heading, text, primary_color, secondary_color){
+    let alert_div = document.querySelector('.alert-special-div');
+    let alert_h1 = document.querySelector('.alert-heading');
+    let alert_text = document.querySelector('.alert-text');
+    alert_h1.innerHTML = heading;
+    alert_text.innerHTML = text;
+    alert_div.style.left = "50px";
+    alert_div.style.color = primary_color;
+    alert_div.style.backgroundColor = secondary_color;
+
+    setTimeout(function(){
+        alert_div.style.left = "-100%";
+    }, 5000);
+
 }
 
 function hide_menu(){
@@ -839,7 +860,7 @@ function proceedToCheckout() {
         var qty_div = document.getElementById(`div_${item}`);
         var price_div = document.getElementById(`price_${item}`);
 
-        qty_div.classList.remove('display_flex');
+        //qty_div.classList.remove('display_flex');
 
         img_div.classList.remove('main-cart-page-div1');
         img_div.classList.add('main-cart-page-div1-phase-2');
@@ -851,11 +872,12 @@ function proceedToCheckout() {
         main_div.classList.add('main-cart-page-div-phase-2');
         minus_btn.style.display = "none";
         plus_btn.style.display = "none";
+        //main_div.style.flexDirection = "column";
         amount_selection.style.display = "none";
-        qty_div.innerHTML = `<div class="beyadop-class">Qty: x${cart[item][0]}</div>`;
-        price_div.innerHTML  = `Price: BDT ${price_div.dataset.value}`
+        qty_div.innerHTML = `<p>Qty: x${cart[item][0]}</p>`;
+        price_div.innerHTML  = `<p>Price: BDT${price_div.dataset.value} </p>`;
         
-        amount_selection_p.innerHTML = `Amount : ` + cart[item][3] + " gm";
+        amount_selection_p.innerHTML = `<p>Amount : ` + cart[item][3] + " gm</p>";
         console.log(cart[item][3]);
         document.querySelector(`.button-phase-1`).style.display = "none";
     }
@@ -1016,20 +1038,18 @@ function initial_cart_state(){
         main_div.classList.add('main-cart-page-div');
         main_div.classList.remove('main-cart-page-div-phase-2');
         
-        amount_selection.style.display = "block";
-        if (qty === 1) {
-            qty_div.innerHTML = `<p>Quantity: </p><button id='minus_${item}'
-                                    class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>Remove</button> <span id='val_${item}'>${cart[item][0]}
-                                    </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
-
+        amount_selection.style.display = "flex";
+        var windowWidth = document.documentElement.clientWidth;
+        if(windowWidth >762){
+            //main_div.style.flexDirection = "row";
         }
-        else {
-            qty_div.innerHTML = `<p>Quantity: </p><button id='minus_${item}'
+       
+            qty_div.innerHTML = `<p class='quantity-writing'>Quantity: </p><button id='minus_${item}'
                                     class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
                                     </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
 
-        }
-        price_div.innerHTML  = `Price: BDT ${price_div.dataset.value}`
+        
+        price_div.innerHTML  = `<p>Price: BDT ${price_div.dataset.value} </p>`
         
         amount_selection_p.innerHTML = `Amount : `;
         console.log(cart[item][3]);

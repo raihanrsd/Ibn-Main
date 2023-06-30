@@ -18,7 +18,7 @@
         integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <!--<script src="{% static 'basic/lightSlider.js' %}"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
 
@@ -27,7 +27,9 @@
 
 <body>
     <div class="alert-special-div">
-        
+        <div class="alert-heading"><h1>Alert</h1></div>
+        <hr>
+        <div class="alert-text">This is the alert Text</div>
     </div>
     <header class="main_header">
         <div class="menu_search">
@@ -50,9 +52,9 @@
 
         </a>
         <div id="mobile_ibnmain_name_li">
-            <h3 class="ibnmain-writeup">IBN MA'IN</h3>
-            <img src="{% static 'basic/images/logo.png' %}" width="65" height="65"
-                class="align-top ibnmain-img-mobile" alt="">
+            <a href="{% url 'home' %}"  class="web-brand-a"><h3 class="ibnmain-writeup">IBN MA'IN</h3></a>
+            <a href="{% url 'home' %}"><img src="{% static 'basic/images/logo.png' %}" width="65" height="65" class="align-top ibnmain-img-mobile"
+                alt=""></a>
         </div>
         <div class="nav_stuffs">
             <div class="search_icon_1">
@@ -71,8 +73,8 @@
 
             <span>
                 {% if not user.is_authenticated %}
-                <a class="sign_in"
-                        href="{% url 'login' %}"><i class="bi bi-person sign_in_icon"><span class="nav-writing account-nav-writeup">Sign In</span> </a></i>
+                <i class="bi bi-person sign_in_icon" onclick="show_account_div()"><span
+                        class="nav-writing account-nav-writeup">Sign In</span></i>
                 {% else %}
                 <i class="bi bi-person sign_in_icon" onclick="show_account_div()"><span
                         class="sign_in nav-writing account-nav-writeup"> Account</span></i>
@@ -96,12 +98,13 @@
             </div>
 
             <div class="account-x-div1">
+                {% if user.is_authenticated %}
                 <h1 class="account-x-h1">Account</h1>
 
                 {% if user.img %}
                 <div class="img_div" style="background-image:url({{user.img.url}})"></div>
                 {% else %}
-                <div class="img_div"><img class="user-img" src="{% static 'basic/images/user.png' %}"></div>
+                <div class="img_div" style="background-image:url({% static 'basic/images/user.png' %})"></div>
                 {% endif %}
 
                 {% if user.status != "user" %}
@@ -111,9 +114,9 @@
 
                 {% endif %}
 
-                {% if user.is_authenticated %}
+
                 <li class="account-li">
-                <a href="{% url 'profile_page' user.id %}">My Profile</a>
+                    <a href="{% url 'profile_page' user.id %}">My Profile</a>
                 </li>
                 <li class="account-li">
                     <a href="#">My Orders</a>
@@ -125,6 +128,23 @@
                 <li class="account-li">
                     <a href="{% url 'logout' %}">Logout/Signout</a>
                 </li>
+                {% else %}
+                <h1 class="account-x-h1">Sign In</h1>
+                <form action="{% url 'login' %}" method="post" class="sign-in-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input autofocus class="form-control login_inp" type="number" name="phoneno"
+                            placeholder="Contact No.">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control login_inp" type="password" name="password" placeholder="Password">
+                    </div>
+                    <input class="register-btn" type="submit" value="Login" style="padding:5px;">
+                </form>
+                <div style="display:flex; justify-content: center; align-items: center;flex-direction: column;">
+                    <p>Don't have an account? To join us </p>  <a href="{% url 'register' %}"
+                            class='register-btn'>Register</a> <br>
+                </div>
                 {% endif %}
             </div>
 
@@ -167,8 +187,9 @@
 
             <ul class="nav_ul">
                 <li class="ibnmain_name_li">
-                    <h3>I B N M A I N</h3>
+                    <a href="{% url 'home' %}"  class="web-brand-a"><h3>IBN MA'IN</h3></a>
                 </li>
+                <a href="{% url 'home' %}" ><img src="{% static 'basic/images/logo.png' %}" class="nav-mobile-logo" alt=""></a>
                 <li class="nav_li">
                     <a class="nav_lnk" href="{% url 'home' %}">Home</a>
                 </li>

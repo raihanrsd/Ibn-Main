@@ -75,14 +75,14 @@ TEMPLATES = [
     },
 ]
 
-"""
+
 
 AUTHENTICATION_BACKENDS = [
+    'basic.authentication_backend.ContactNumberBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-"""
+
 
 
 WSGI_APPLICATION = 'ibnmain.wsgi.application'
