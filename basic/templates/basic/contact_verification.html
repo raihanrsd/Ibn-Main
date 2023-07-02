@@ -1,0 +1,18 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<h1>OTP sent to your phone. Please enter it below within 5 minutes.</h1>
+
+{% if message %}
+    <h2>{{ message }}</h2>
+{% endif %}
+
+<form action="{% url 'verify_contact' %}" method="POST">
+    {% csrf_token %}
+    <input required type="number" name="otp" placeholder="Enter OTP">
+    <input type="submit" value="Verify">
+</form>
+
+{% endblock %}
