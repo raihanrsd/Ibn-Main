@@ -9,12 +9,16 @@ class User(AbstractUser):
     status = models.CharField(max_length=100, default="user")
     img = models.ImageField(null=True, blank=True,upload_to="images/")
     full_name = models.CharField(max_length=1000, default="Raihan Rashid")
-    contact_no = models.CharField(max_length=20)
+    contact = models.CharField(max_length=20, unique=True)
     gender = models.CharField(max_length=6, default="male")
     points = models.IntegerField(default=0)
     has_shipping = models.BooleanField(default = False)
     default_shipping_id = models.IntegerField(default=0)
-
+    
+    otp = models.IntegerField(blank=True, null=True)
+    otp_last_created = models.DateTimeField(default=datetime.datetime.now())
+    contact_verified = models.BooleanField(default=False)
+    
 
 class QuantityManagement(models.Model):
     amount = models.DecimalField(max_digits=30, decimal_places=2, null=True, blank=True)
