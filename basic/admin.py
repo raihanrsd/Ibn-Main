@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Ouds, Categories, Order, QuantityManagement,Tracker, ContactUs, Review, WebContents,Promos
+from .models import User, Ouds, Categories, Order, QuantityManagement,Tracker, ContactUs, Review, WebContents,Promos, NoticeBoard
 
 class OudAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'base_price', 'category')
@@ -20,6 +20,7 @@ admin.site.register(ContactUs)
 admin.site.register(Review)
 admin.site.register(WebContents)
 admin.site.register(Promos)
+admin.site.register(NoticeBoard)
 
 
 # Register your models here.

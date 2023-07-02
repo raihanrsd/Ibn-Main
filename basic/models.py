@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import datetime
+
 import os
 
 
@@ -8,7 +9,7 @@ class User(AbstractUser):
     status = models.CharField(max_length=100, default="user")
     img = models.ImageField(null=True, blank=True,upload_to="images/")
     full_name = models.CharField(max_length=1000, default="Raihan Rashid")
-    contact_no = models.CharField(max_length=20,unique=True)
+    contact_no = models.CharField(max_length=20)
     gender = models.CharField(max_length=6, default="male")
     points = models.IntegerField(default=0)
     has_shipping = models.BooleanField(default = False)
@@ -130,11 +131,8 @@ class Order(models.Model):
     address = models.CharField(max_length=300)
     phone = models.CharField(max_length=20)
     email = models.CharField(max_length=200)
-    area = models.CharField(max_length=200, default="none")
-    town = models.CharField(max_length=200, default="none")
     transaction_id = models.CharField(max_length=500, default="none")
     city = models.CharField(max_length=200)
-    country = models.CharField(max_length=50)
     zip = models.CharField(max_length=10)
     is_paid = models.BooleanField(default=False)
     status = models.CharField(max_length=20, default="not delivered")
@@ -220,6 +218,7 @@ class Promos(models.Model):
 class UserOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete= models.CASCADE)
+    order_date = models.DateField(default=datetime.date.today)
 
 
 class Moderators(models.Model):
@@ -232,10 +231,7 @@ class ShippingAddress(models.Model):
     address = models.CharField(max_length=300)
     phone = models.CharField(max_length=20)
     email = models.CharField(max_length=200)
-    area = models.CharField(max_length=200, default="none")
-    town = models.CharField(max_length=200, default="none")
     city = models.CharField(max_length=100)
-    country = models.CharField(max_length=50)
     zip = models.CharField(max_length=10)
 
     def __str__(self):

@@ -76,11 +76,12 @@ TEMPLATES = [
 ]
 
 
-
+"""
 AUTHENTICATION_BACKENDS = [
-    'basic.authentication_backend.ContactNumberBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+"""
 
 
 

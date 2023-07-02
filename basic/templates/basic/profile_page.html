@@ -64,8 +64,7 @@
             <div class="row">
                 <div class="col">
                     <div class="display_flex_center">
-                        <input type="submit" class="profile-page-btn submit-form-btn">
-
+                        <input type="hidden" class="profile-page-btn submit-form-btn" id="profile-change-button">
                     </div>
                     
 
@@ -74,14 +73,184 @@
             </div>
         </form>
 
+        <div class="individual-profile-button-div">
+            <a class="register-btn profile-change-button-1" onclick="edit_in_profile()">Edit Profile</a>
+            <a class="register-btn profile-change-button-1" >Change Password</a>
+        </div>
     </div>
 
     <div class="user-page-orders user-div">
-        nigga nigga niggga
+
+       
+        <div class="individual-order-div-user">
+            <table class="order-table">
+                <thead>
+                  <tr>
+                    <th colspan="4">
+                      Online Store Purchases
+                    </th>  
+                  </tr>
+                  <tr>
+                    <th>
+                        Order Id
+                    </th>
+                    <th>
+                        Order Status
+                    </th>
+                    <th>
+                        Order Date
+                    </th>
+                    <th>
+                        Total Price
+                    </th>
+                    
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <hr class="row-bar">
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                  <tr>
+                    <td><a href="{% url 'show_order_user' order.order.id %}">#{{order.order.id}}</a></td>
+                    {% if order.order.status == "not delivered" %}
+                    <td>Pending</td>
+                    {% elif order.order.status == "delivered" %}
+                    <td>Delivered</td>
+                    {% else %}
+                    <td>>Cancelled</td>
+                    {% endif %}
+
+
+                    <td>{{order.order_date}}</td>
+                    <td>BDT {{order.order.total_price}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <hr class="row-bar">
+                    </td>
+                  </tr>
+                  
+                {% endfor %}
+                  
+                </tbody>
+              </table>
+              
+        </div>
+        
     </div>
 
-    <div class="user-page-shipping-address uder-div">
-        <a href="{% url 'add_shipping' %}" class="btn btn-outline-primary main-oud-add-btn">Add Shipping +</a>
+    <div class="user-page-shipping-address user-div">
+        <div class="individual-user-page-shipping">
+            <div style="width: 100%;display: flex; justify-content: center; align-items: center;">
+                <a onclick="show_shipping_div()" class="register-btn" style="width:100%;">Add New Shipping</a>
+            </div>
+            
+            <div class="all-shipping-addresses">
+                {% for shipping_address in shipping_addresses %}
+                <div class="individual-shipping-addresses">
+                    <div>
+                        <p><b>Shipping address:</b></p>
+                        <p>{{shipping_address.name}}</p>
+                        <p>{{shipping_address.phone}}</p>
+                        <p>{{shipping_address.email}}</p>
+                        <p>{{shipping_address.address}}</p>
+                        <p>{{shipping_address.city}}, {{shipping_address.zip}}</p>
+                    </div>
+                    <div style="display: flex; justify-content:center; align-items: flex-end; flex-direction: column;">
+                        <p><a data-id={{shipping_address.id}} onclick="show_shipping_edit_div(this)">Edit</a></p>
+                        <p><a onclick="show_category_delete_box(this, 'shipping')" data-id="{{shipping_address.id}}" id="shipping_delete_btn_{{shipping_address.id}}">Delete</a></p>
+                        {% if user.shipping_address_id == shipping_address.id %}
+                        <p>Default</p>
+                        {% else %}
+                        <p><a>Set As Default</a></p>
+                        {% endif %}
+                    </div>
+                    <div id="shipping_delete_{{shipping_address.id}}" class="delete-confirmation-box">
+                        <p>Are You sure that You want to delete this record?</p>
+                        <div class="delete-box-buttons">
+                            <a href="{% url 'delete_record' what='shipping' nice_id=shipping_address.id %}" class="btn btn-danger">Delete</a>
+                            <button class="btn btn-dark" onclick="hide_category_delete_box(this, 'shipping')" data-id="{{shipping_address.id}}">Close</button>
+                        </div>
+        
+                    </div>
+                </div>
+                <div class="new-shipping-form-div" id="{{shipping_address.id}}_edit_form">
+                    <div style="width: 100%; display: flex; justify-content: flex-end; align-items: center;padding: 10px;">
+                        <i class="bi bi-x" data-id="{{shipping_address.id}}" onclick="hide_edit_shipping_div(this)"></i>
+                    </div>
+                    <h1>Edit Shipping Address</h1>
+                    <form action="{% url 'edit_records_user' user_id=user.id nice_id=shipping_address.id what='shipping'  %}" method="post" enctype="multipart/form-data" class="m-3 p-3" style="margin-top: 100px;" class="register-form-div">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input class="form-control login_inp" autofocus type="text" name="name" style="width: 100%;" placeholder="Recipient's Name" value={{shipping_address.name}} required >
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control login_inp" type="email" name="email" placeholder="Email Address" style="width: 100%;" value={{shipping_address.email}} required >
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control login_inp" type="number" name="contact_no" style="width: 100%;" placeholder="Contact No." value={{shipping_address.phone}} required >
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control login_inp" type="text" name="address" style="width: 100%;" placeholder="Address" value={{shipping_address.address}} required >
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control login_inp" type="text" name="city" style="width: 100%;" placeholder="City" value={{shipping_address.city}} required >
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control login_inp" type="number" name="zip" style="width: 100%;" placeholder="Zip" value={{shipping_address.zip}} required >
+                        </div>
+        
+                        
+                        
+                        <div>
+                            <input class="register-btn-pseudo registration_div" type="submit" value="Edit Shipping Address" >
+                        </div>
+                        
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="new-shipping-form-div" id="new-shipping-form">
+            <div style="width: 100%; display: flex; justify-content: flex-end; align-items: center;padding: 10px;">
+                <i class="bi bi-x" onclick="hide_shipping_div()"></i>
+            </div>
+            <h1>New Shipping Address</h1>
+            <form action="{% url 'add_shipping' %}" method="post" enctype="multipart/form-data" class="m-3 p-3" style="margin-top: 100px;" class="register-form-div">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input class="form-control login_inp" autofocus type="text" name="name" style="width: 100%;" placeholder="Recipient's Name" required >
+                </div>
+                <div class="form-group">
+                    <input class="form-control login_inp" type="email" name="email" placeholder="Email Address" style="width: 100%;" required >
+                </div>
+                <div class="form-group">
+                    <input class="form-control login_inp" type="number" name="contact_no" style="width: 100%;" placeholder="Contact No." required >
+                </div>
+                <div class="form-group">
+                    <input class="form-control login_inp" type="text" name="address" style="width: 100%;" placeholder="Address" required >
+                </div>
+                <div class="form-group">
+                    <input class="form-control login_inp" type="text" name="city" style="width: 100%;" placeholder="City" required >
+                </div>
+                <div class="form-group">
+                    <input class="form-control login_inp" type="number" name="zip" style="width: 100%;" placeholder="Zip" required >
+                </div>
+
+                
+                
+                <div>
+                    <input class="register-btn-pseudo registration_div" type="submit" value="Add New Address" >
+                </div>
+                
+            </form>
+        </div>
+        
+        
     </div>
 
     <div class="user-page-wishlist user-div">
@@ -106,6 +275,8 @@
     else if (cart_state["user_state"] == 4) {
         show_user_page_div("wishlist");
     }
+
+    
 </script>
 
 {% endblock %}

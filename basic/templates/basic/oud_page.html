@@ -2,6 +2,59 @@
 {% load static %}
 
 {% block body %}
+<div class="noticeboard-div">
+    <div class="swiper-content">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+          <!-- Slides -->
+          
+            {% for notice in noticeboard %}
+            <div class="swiper-slide">
+                <p>{{notice.notice}}</p>
+                
+            </div>
+    
+            {% endfor %}
+          
+    
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-paginationss"></div>
+      
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      
+      </div>
+
+</div>
+
+<script>
+    const swiper_content = new Swiper('.swiper-content', {
+        // Optional parameters
+        slidesPerView: 1,
+        direction: 'horizontal',
+        loop: true,         // Enable loop mode
+        autoplay: {
+          delay: 3000,      // Delay between slides in milliseconds
+          disableOnInteraction: false,  // Enable autoplay even when user interacts with swiper
+        },
+      
+        // If we need pagination
+        pagination: {
+          el: '.swiper-paginationss',
+        },
+      
+        // Navigation arrows
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      
+        // And if we need scrollbar
+      });
+</script>
+
 <div class="oud-page-main-div">
     <div class="hola">
         

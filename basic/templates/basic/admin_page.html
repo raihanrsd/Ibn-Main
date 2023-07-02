@@ -21,6 +21,7 @@
             <a onclick="show_admin_page_category()">Categories</a>
             <a onclick="show_admin_page_promos()">Promos</a>
             <a onclick="show_admin_page_quantity()">Quantity</a>
+            <a onclick="show_admin_page_notice()">Notice Board</a>
         </div>
     </div>
     <div class="dropdown">
@@ -287,6 +288,42 @@
             {% endfor %}
 
         </div>
+
+        <div class="admin-page-notice">
+            <div class="item-add-form">
+                <form action="{% url 'notice' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="notice" class="form-control login_inp-item" placeholder="Notice Text" required>
+                    <input type="submit" class="btn btn-success nice_btn" value="Submit">
+                </form>
+            </div>
+            {% for notice in noticeboard %}
+            <div class="individual-item">
+
+            
+                <p class="notice_name_{{notice.id}}" id="notice_p_{{notice.id}}">{{notice.notice | slice:":50"}}</p>
+            
+                <div class="input-control-div not_visible" id="notice_div_{{notice.id}}" >
+                    <input type="text" class="form-control" name="notice" id="notice_input_{{notice.id}}" value="{{notice.amount}}">
+                    <a class="btn btn-dark" data-id="{{notice.id}}" onclick="edit_category(this, 'notice')">Close</a>
+                </div>
+                
+                <a class="btn btn-primary" data-id="{{notice.id}}" onclick="edit_category(this, 'notice')" id="notice_edit_1_{{notice.id}}">Edit</a>
+                <a class="btn btn-success not_visible" data-id="{{notice.id}}" onclick="edit_category_nice(this, 'notice')" id="notice_edit_2_{{notice.id}}">Enter</a>
+                <a class="btn btn-danger" onclick="show_category_delete_div(this, 'notice')" data-id="{{notice.id}}" id="notice_delete_btn_{{notice.id}}">Delete</a>
+        
+            </div>
+            <div id="notice_delete_{{notice.id}}" class="delete-confirmation-box">
+                <p>Are You sure that You want to delete this record?</p>
+                <div class="delete-box-buttons">
+                    <a href="{% url 'delete_record' what='notice' nice_id=notice.id %}" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-dark" onclick="hide_category_delete_box(this, 'notice')" data-id="{{notice.id}}">Close</button>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
     </div>
 
     <div class="admin-page-users">
@@ -530,18 +567,7 @@
     }
 
 
-    function show_category_delete_box(x, name){
-        var category_id = x.dataset.id;
-
-        var div = document.querySelector(`#${name}_delete_${category_id}`);
-        div.style.display = "flex";
-    }
-
-    function hide_category_delete_box(x, name){
-        var category_id = x.dataset.id;
-        var div = document.querySelector(`#${name}_delete_${category_id}`);
-        div.style.display = "none";
-    }
+    
 
 
 </script>

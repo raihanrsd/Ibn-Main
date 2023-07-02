@@ -41,8 +41,10 @@ urlpatterns = [
     path("admin_page/" + str(num) + "/add_promo", views.add_promo, name="add_promo"),
     path("admin_page/" + str(num) + "/add_quantity", views.add_quantity, name="add_quantity"),
     path("admin_page/" + str(num) + "/edit/<str:what>/<int:nice_id>", views.edit_record, name="edit_records"),
+
     path("cancel_order/<int:order_id>", views.cancel_order, name="cancel_order"),
     path("profile_page/<int:user_id>", views.show_profile_page, name="profile_page"),
+    path("profile_page/<int:user_id>/edit/<str:what>/<int:nice_id>", views.edit_record, name="edit_records_user"),
     path("add_shipping", views.add_shipping, name="add_shipping"),
     path("change_profile/<int:user_id>", views.change_profile, name="change_profile"),
 

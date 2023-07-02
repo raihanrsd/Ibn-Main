@@ -12,6 +12,7 @@ body {
 
 body.overlay {
     opacity: 0.8;
+    overflow: hidden;
 }
 
 
@@ -286,6 +287,10 @@ i:hover {
     align-items: flex-start;
     margin: 5%;
     width: 90%;
+}
+
+.user-page-profile label{
+    font-size: 12px;
 }
 
 .user-page-profile form {
@@ -635,7 +640,7 @@ hr {
     padding-left: 30px;
     padding-right: 30px;
     padding-top: 10px;
-    z-index: 1001;
+    z-index: 3001;
     transition: opacity 1s ease, top 1s ease;
     transition: height 0.5s ease, top 0.5s ease;
     background-color: #fff;
@@ -645,6 +650,8 @@ hr {
     height: 0;
     padding-top: 0 !important;
     top: 35px;
+    z-index: 3005;
+    
     
 }
 
@@ -1317,6 +1324,38 @@ hr {
     margin: 100px 90px;
 }
 
+.noticeboard-div{
+    display: inline-block;
+    width: 100%;
+    padding-top: 10px;
+    font-size: 12px;
+    
+    position: fixed;
+    left:0;
+    top: 140px;
+    text-align: center;
+    background-color: #000000;
+    color: white;
+    z-index: 3000;
+    transition: 1s;
+}
+
+.noticeboard-div-scrolled{
+    display: inline-block;
+    width: 100%;
+    padding-top: 10px;
+    font-size: 12px;
+    
+    position: fixed;
+    left:0;
+    top: 70px !important;
+    text-align: center;
+    background-color: #000000;
+    color: white;
+    z-index: 2500;
+    transition: 1s;
+}
+
 .all-perfume-img-div img {
     height: 350px;
     width: 250px;
@@ -1496,7 +1535,7 @@ hr {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 3000;
     align-items: center;
     transition: padding-top 1s ease, top 1s ease;
 }
@@ -2386,11 +2425,40 @@ footer .payment-div .img-div img {
     text-align: center;
 }
 
-.register-btn:hover{
-    background-color: #000;
-    color: white;
+.register-btn-pseudo{
+    width: 100px;
+    height: 50px;
+    padding: 10px;
+    background-color: transparent;
+    color:#fff;
+    border:solid 1px #fff;
+    outline: none;
+    text-decoration: none;
+    text-align: center;
+}
+
+
+.register-btn-pseudo:hover{
+    background-color: #fff;
+    color: black;
     text-decoration: none;
 }
+
+
+
+.register-btn:hover{
+    background-color: #000;
+    color: white !important;
+    text-decoration: none;
+}
+
+.register-btn:focus{
+    background-color: #000;
+    color: white !important;
+    text-decoration: none;
+}
+
+
 /* why ibnmain */
 
 .why_ibn_main_div {
@@ -2730,6 +2798,102 @@ footer .payment-div .img-div img {
     font-size: 30px;
 }
 
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.individual-user-page-shipping{
+    width: 100%;
+    padding: 20px;
+    margin: 20px;
+}
+.user-page-shipping-address{
+    width: 100%;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.new-shipping-form-div{
+    display: none;
+    position: fixed;
+    text-align: center;
+    color: white;
+    width: 100%;
+    height: 550px;
+    padding: 10px;
+    max-width: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3500;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.new-shipping-form-div h1{
+    font-size: 18px;
+    font-weight: 600;
+    transform: translateY(-10px);
+}
+
+.individual-order-div-user{
+    width: 100%;
+    padding: 10px;
+    margin: 20px;
+    border: solid 1px black;
+}
+
+.individual-shipping-addresses{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.individual-shipping-addresses a:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.individual-profile-button-div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.individual-profile-button-div a{
+    margin: 5px 15px;
+}
+
+.all-shipping-addresses{
+    width: 100%;
+    padding: 10px;
+}
+
+.heading-bar {
+  border: none;
+  border-top: 1px solid #000;
+  margin: 0;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.row-bar {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+  width: 100%;
+}
+
 .bi-eye-slash {
     font-size: 30px;
 }
@@ -2753,6 +2917,10 @@ footer .payment-div .img-div img {
     display: none;
     justify-content: space-evenly;
     align-items: center;
+    width: 100%;
+}
+
+.user-page-orders{
     width: 100%;
 }
 
@@ -3425,6 +3593,14 @@ footer .payment-div .img-div img {
         margin-left: 10px;
     }
 
+    .noticeboard-div{
+        top: 100px;
+    }
+
+    .noticeboard-div-scrolled{
+        top: 75px !important;
+    }
+
     .main-cart-page-div {
         flex-direction: column;
         justify-content: flex-start;
@@ -3762,13 +3938,14 @@ footer .payment-div .img-div img {
         width: 100%;
         aspect-ratio: 2/3;
         object-fit: cover;
+        margin-top: 40px;
     }
 
     .oud-page-img{
         width: 100%;
         padding: 0;
         margin: 0;
-        background-color: red;
+        margin-top: 100px;
     }
     .all-perfume-img-div{
         width: 100%;
@@ -4205,6 +4382,16 @@ footer .payment-div .img-div img {
 
     .alert-special-div{
         width: 60%;
+    }
+
+    .user-page-button-div{
+        margin-top: 30px;
+    }
+    .individual-shipping-addresses{
+        font-size: 12px;
+    }
+    .ending{
+        font-size: 12px;
     }
 
     

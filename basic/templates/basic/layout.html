@@ -133,8 +133,8 @@
                 <form action="{% url 'login' %}" method="post" class="sign-in-form">
                     {% csrf_token %}
                     <div class="form-group">
-                        <input autofocus class="form-control login_inp" type="number" name="phoneno"
-                            placeholder="Contact No.">
+                        <input autofocus class="form-control login_inp" type="text" name="username"
+                            placeholder="Username">
                     </div>
                     <div class="form-group">
                         <input class="form-control login_inp" type="password" name="password" placeholder="Password">

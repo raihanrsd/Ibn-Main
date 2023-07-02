@@ -25,16 +25,20 @@ def index(request):
     paginator = Paginator(ouds, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    notices = NoticeBoard.objects.all()
     return render(request, "basic/index.html", {
         "ouds": page_obj,
+         "noticeboard": notices,
     })
 
 
 def home(request):
     category = Categories.objects.get(name="Exclusive")
     ouds = Ouds.objects.filter(category=category)
+    
     return render(request, "basic/home.html", {
         "ouds": ouds,
+       
     })
 
 
@@ -64,23 +68,17 @@ def login_view(request):
     if request.method == "POST":
 
         # Attempt to sign user in
-        phoneno = request.POST["phoneno"]
+        username = request.POST["username"]
         password = request.POST["password"]
-        print(phoneno)
-        print(password)
-        user = authenticate(request, contact_no=phoneno, password=password)
+        
+        user = authenticate(request, username=username, password=password)
 
 
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            print("nice nice")
-            print(user.is_authenticated)
-            category = Categories.objects.get(name="Exclusive")
-            ouds = Ouds.objects.filter(category=category)
-            return render(request, "basic/home.html", {
-                "ouds": ouds,
-            })
+            print("check 1")
+            return HttpResponseRedirect(reverse("home"))
         else:
             return render(request, "basic/login.html", {
                 "message": "Invalid username and/or password."
@@ -92,7 +90,7 @@ def login_view(request):
 # user logout
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("home"))
 
 
 # user register
@@ -100,13 +98,11 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
-
+        contact_no = request.POST["contact_no"]
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
-        img = request.FILES.get('profile_pic', None)
-        cover = request.FILES.get('cover_pic', None)
-        bio = request.POST["bio"]
+
         if password != confirmation:
             return render(request, "basic/register.html", {
                 "message": "Passwords must match."
@@ -114,20 +110,14 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
-            if img:
-                user.img = img
-            if bio:
-                user.bios = bio
-            if cover:
-                user.cover = cover
+            user = User(username = username, email = email, contact_no = contact_no, password = password)
             user.save()
         except IntegrityError:
             return render(request, "basic/register.html", {
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("home"))
     else:
         return render(request, "basic/register.html")
 
@@ -140,6 +130,7 @@ def update_amount(request, oud_id):
 def oud_page(request, oud_id):
     oud = Ouds.objects.get(pk=oud_id)
     ouds = Ouds.objects.filter(category=oud.category)
+    notices = NoticeBoard.objects.all()
     review = None
     if Review.objects.filter(oud=oud):
         review = Review.objects.filter(oud=oud)
@@ -147,6 +138,7 @@ def oud_page(request, oud_id):
         "oud": oud,
         "reviews": review,
         "ouds": ouds,
+        "noticeboard":notices,
     })
 
 
@@ -257,18 +249,17 @@ def take_order(request):
         promo_discount = request.POST.get("promo_discount", 0.00)
         payment_method = request.POST.get("payment_method", 'Cash')
         address = request.POST.get("address", '')
-        area = request.POST.get("area", '')
-        town = request.POST.get("town", '')
+        
         city = request.POST.get("city", '')
-        country = request.POST.get("country", '')
+        
         phone = request.POST.get("phone", '')
         zip = request.POST.get("zip", '')
         orders = request.POST.get("itemsJSON", '')
         if len(orders) < 8:
             return render(request, "basic/error.html")
 
-        order = Order(name=name, email=email, address=address, city=city, country=country, phone=phone, zip=zip, order=orders, total_price=total_price,
-                      area=area, town=town, promo_discount=promo_discount, delivery_charge=delivery_charge, payment_method=payment_method)
+        order = Order(name=name, email=email, address=address, city=city, phone=phone, zip=zip, order=orders, total_price=total_price,
+                      promo_discount=promo_discount, delivery_charge=delivery_charge, payment_method=payment_method)
         order.save()
 
         if payment_method.lower() == 'online':
@@ -411,6 +402,7 @@ def admin_page(request):
     contact_us = ContactUs.objects.all()
     moderators = Moderators.objects.all()
     category_data = Categories.objects.all()
+    noticeboard = NoticeBoard.objects.all()
 
     return render(request, "basic/admin_page.html", {
         "user_data": user_data,
@@ -424,6 +416,7 @@ def admin_page(request):
         "contactus_data": contact_us,
         "moderators": moderators,
         "categories": category_data,
+        "noticeboard" : noticeboard,
     })
 
 
@@ -760,6 +753,7 @@ def delete_record(request, what, nice_id):
     elif what == "shipping":
         record = ShippingAddress.objects.get(pk=nice_id)
 
+
     elif what == "moderator":
         record = Moderators.objects.get(pk=nice_id)
 
@@ -780,6 +774,9 @@ def delete_record(request, what, nice_id):
 
     elif what == "user":
         record = User.objects.get(pk=nice_id)
+    
+    elif what == "notice":
+        record = NoticeBoard.objects.get(pk=nice_id)
 
     record.delete()
 
@@ -839,10 +836,16 @@ def edit_record(request, what, nice_id):
         data = json.loads(request.body)
         amount = data.get("val", "")
         record.amount = float(amount)
-        record.save()
+        
 
     elif what == "shipping":
         record = ShippingAddress.objects.get(pk=nice_id)
+        record.name = request.POST.get("name", "")
+        record.email = request.POST.get("email", "")
+        record.phone = request.POST.get("contact_no", "")
+        record.address = request.POST.get("address", "")
+        record.city = request.POST.get("city", "")
+        record.zip = request.POST.get("zip", "")
 
     elif what == "moderator":
         record = Moderators.objects.get(pk=nice_id)
@@ -855,7 +858,7 @@ def edit_record(request, what, nice_id):
         data = json.loads(request.body)
         name = data.get("val", "")
         record.name = name
-        record.save()
+        
 
     elif what == "promo":
         record = Promos.objects.get(pk=nice_id)
@@ -863,7 +866,15 @@ def edit_record(request, what, nice_id):
         name = data.get("val", "")
         discount_amount = data.get("")
         record.name = name
-        record.save()
+        
+
+    elif what == "notice":
+        record = NoticeBoard.objects.get(pk=nice_id)
+        data = json.loads(request.body)
+        notice = data.get("val", "")
+        record.notice = notice
+    
+    record.save()
 
     return JsonResponse(record.serialize())
 
@@ -881,7 +892,7 @@ def show_profile_page(request, user_id):
     user = User.objects.get(pk=user_id)
     order = None
     if UserOrder.objects.filter(user=user):
-        order = UserOrder.objects.filter(user=user)
+        order = UserOrder.objects.filter(user=user).order_by("-id")
 
     shipping_address = None
 
@@ -901,7 +912,21 @@ def show_profile_page(request, user_id):
 def add_shipping(request):
     user = request.user
     if request.method == 'POST':
-        pass
+        name = request.POST.get("name", "")
+        email = request.POST.get("email", "")
+        contact_no = request.POST.get("contact_no", "")
+        address = request.POST.get("address", "")
+        city = request.POST.get("city", "")
+        zip = request.POST.get("zip", "")
+
+        shipping_address = ShippingAddress(user=user, name=name, address=address, phone=contact_no, email=email, city=city, zip=zip)
+        shipping_address.save()
+
+        user.has_shipping = True
+        user.default_shipping_id = shipping_address.id
+
+        user.save()
+        return HttpResponseRedirect(reverse("profile_page", args=(user.id,)))
 
     return HttpResponseRedirect(reverse("profile_page", args=(user.id,)))
 
