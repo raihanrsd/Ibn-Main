@@ -1,0 +1,66 @@
+{% extends "basic/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    <div class="tracker-main-div">
+        <div class="inside-tracker-div">
+            <div class="tracker-header">
+                <h1 style="font-size: 17px">Order Id: <span style="color:cornflowerblue">#{{tracker.order.id}}</span></h1>
+                <h1>Delivery Date: {{tracker.delivary_date}}</h1>
+            </div>
+
+            <div class="loading-bar-div">
+                <div class="loading-bar">
+                    <div class="progress-bar"></div>
+                </div>
+
+                <div class="loading-icon-div">
+                    <i class="bi bi-check-circle-fill" id="icon-0"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-1"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-2"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-3"></i>
+                    
+                </div>
+            </div>
+
+            <div class="order-icon-div">
+                <div style="width: 20%; display: flex;justify-content: flex-start; align-items: center;font-size:13px;">
+                    <img src="{% static 'basic/images/process.png' %}" alt="" width="40px">
+                    <p><b>Order Processed</b></p>
+                </div>
+                <div style="width: 20%; display: flex;justify-content: flex-start; align-items: center;font-size:13px;">
+                    <img src="{% static 'basic/images/package-delivered.png' %}" alt="" width="40px">
+                    <p><b>Order Delivered</b></p>
+                </div>
+                <div style="width: 20%; display: flex;justify-content: flex-start; align-items: center;font-size:13px;">
+                    <img src="{% static 'basic/images/shipped.png' %}" alt="" width="40px">
+                    <p><b>Order En Route</b></p>
+                </div>
+                <div style="width: 20%; display: flex;justify-content: flex-start; align-items: center; font-size:13px; transform: translateX(20px)">
+                    
+                    <img src="{% static 'basic/images/house.png' %}" alt="" width="40px">
+                    <p style="width: 50px;"><b>Order Arrived</b></p>
+                    
+                </div>
+            </div>
+
+            {% if user.status == "admin" %}
+                <div class="admin-change-div">
+                    <button class="register-btn">Edit Order Status</button>
+                </div>
+            {% endif %}
+            <script>
+                for(var i = 0; i <= parseInt({{tracker.progress}}); i++){
+                    document.querySelector(`#icon-${i}`).style.color = "#bbffbb";
+                }
+
+                document.querySelector(`.progress-bar`).style.width = "{{progress}}%";
+            </script>
+            
+            
+           
+
+        </div>
+    </div>
+{% endblock %}
