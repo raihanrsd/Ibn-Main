@@ -284,9 +284,22 @@ i:hover {
 .user-page-profile {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    flex-direction: column;
     margin: 5%;
     width: 90%;
+    padding: 20px;
+}
+
+.user-page-profile > div{
+    width: 100% !important;
+}
+
+.user-page-profile-main-form-div{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .user-page-profile label{
@@ -1169,7 +1182,7 @@ hr {
 
 .profile-page-btn:hover {
     background-color: transparent;
-    color: white;
+    color: black;
 }
 
 
@@ -1800,6 +1813,7 @@ footer {
 
 }
 
+
 footer .footer_div {
     flex-basis: 13%;
     margin: 2%;
@@ -2414,7 +2428,8 @@ footer .payment-div .img-div img {
 }
 
 .register-btn{
-    width: 100px;
+    min-width: 100px;
+
     height: 50px;
     padding: 10px;
     background-color: transparent;
@@ -2807,7 +2822,6 @@ footer .payment-div .img-div img {
 .individual-user-page-shipping{
     width: 100%;
     padding: 20px;
-    margin: 20px;
 }
 .user-page-shipping-address{
     width: 100%;
@@ -3030,26 +3044,46 @@ th, td {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100%;
 }
 
+
+.admin_page_orders{
+    width: 100%;
+}
 .admin-page-products {
     width: 100%;
 }
 
-.admin-page-admins {
-    width: 95%;
-    margin: 2.5%;
+.admin-page-pending-orders{
+    width: 100%;
 }
+
+.admin-page-delivered-orders{
+    width: 100%;
+
+}
+
+.admin-page-delivered-orders{
+    width: 100%;
+}
+
+
 
 .admin-page-individual-users {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
+    width: 95%;
+    padding: 5px;
+    box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.25);
+    margin: 10px 2.5%;
 }
 
-.admin-page-moderators {
-    width: 95%;
+.admin-page-users{
+    width: 100%;
+}
+.admin-page-users > div{
+    width: 100%;
 }
 
 .individual-item {
@@ -3152,7 +3186,7 @@ th, td {
 }
 
 .dropdown-content.show {
-    height: 150px;
+    height: 200px;
     padding: 10px;
 }
 
@@ -3162,6 +3196,93 @@ th, td {
     padding: 10px;
     border: none;
     cursor: pointer;
+}
+
+.tracker-main-div{
+
+    width: 100%;
+    height: 100vh;
+    background-color: black;
+
+}
+
+.inside-tracker-div{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 700px;
+    aspect-ratio: 7/5;
+    padding: 50px;
+    border-radius: 20px;
+    background-color: white;
+    backdrop-filter: blur(5px);
+}
+
+.tracker-header{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.loading-bar{
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+    background-color: rgba(128, 128, 128, 0.344);
+    overflow: hidden;
+}
+
+.progress-bar{
+    height: 100%;
+    width: 10%;
+    background-color:  #bbffbb;
+}
+
+.loading-icon-div{
+    position: absolute;
+    left:0;
+    top: -15px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 30px;
+}
+
+.loading-icon-div i{
+    color: rgba(128, 128, 128, 0.344);;
+    background-color: white;
+}
+
+.loading-bar-div{
+    position: relative;
+    width: 100%;
+    margin-top: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.order-icon-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 70px;
+    width: 100%;
+}
+
+
+.inside-tracker-div h1{
+    font-size: 15px;
+    font-weight: 400;
+
 }
 
 .arrow {
@@ -4394,9 +4515,29 @@ th, td {
         font-size: 12px;
     }
 
-    
+    .tracker-main-div i{
+        font-size: 30px;
+    }
 
-    
+    .tracker-main-div p{
+        font-size: 8px;
+        width: 30px;
+    }
+
+    .tracker-main-div img{
+        width: 20px;
+    }
+    .tracker-main-div h1{
+        font-size: 12px;
+    }
+
+    .order-icon-div{
+        margin-top: 50px;
+    }
+
+    .inside-tracker-div{
+        top: 45%;
+    }
 
 
    

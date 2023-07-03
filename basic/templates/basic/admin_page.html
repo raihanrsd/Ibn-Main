@@ -274,7 +274,7 @@
                 
                 <a class="btn btn-primary" data-id="{{quantity.id}}" onclick="edit_category(this, 'quantity')" id="quantity_edit_1_{{quantity.id}}">Edit</a>
                 <a class="btn btn-success not_visible" data-id="{{quantity.id}}" onclick="edit_category_nice(this, 'quantity')" id="quantity_edit_2_{{quantity.id}}">Enter</a>
-                <a class="btn btn-danger" onclick="show_category_delete_div(this, 'quantity')" data-id="{{quantity.id}}" id="quantity_delete_btn_{{quantity.id}}">Delete</a>
+                <a class="btn btn-danger" onclick="show_category_delete_box(this, 'quantity')" data-id="{{quantity.id}}" id="quantity_delete_btn_{{quantity.id}}">Delete</a>
         
             </div>
             <div id="quantity_delete_{{quantity.id}}" class="delete-confirmation-box">
@@ -291,7 +291,7 @@
 
         <div class="admin-page-notice">
             <div class="item-add-form">
-                <form action="{% url 'notice' %}" method="post">
+                <form action="{% url 'add_notice' %}" method="post">
                     {% csrf_token %}
                     <input type="text" name="notice" class="form-control login_inp-item" placeholder="Notice Text" required>
                     <input type="submit" class="btn btn-success nice_btn" value="Submit">
@@ -301,16 +301,16 @@
             <div class="individual-item">
 
             
-                <p class="notice_name_{{notice.id}}" id="notice_p_{{notice.id}}">{{notice.notice | slice:":50"}}</p>
+                <p class="notice_name_{{notice.id}}" id="notice_p_{{notice.id}}">{{notice.notice}}</p>
             
                 <div class="input-control-div not_visible" id="notice_div_{{notice.id}}" >
-                    <input type="text" class="form-control" name="notice" id="notice_input_{{notice.id}}" value="{{notice.amount}}">
+                    <input type="text" class="form-control" name="notice" id="notice_input_{{notice.id}}" value="{{notice.notice}}">
                     <a class="btn btn-dark" data-id="{{notice.id}}" onclick="edit_category(this, 'notice')">Close</a>
                 </div>
                 
                 <a class="btn btn-primary" data-id="{{notice.id}}" onclick="edit_category(this, 'notice')" id="notice_edit_1_{{notice.id}}">Edit</a>
                 <a class="btn btn-success not_visible" data-id="{{notice.id}}" onclick="edit_category_nice(this, 'notice')" id="notice_edit_2_{{notice.id}}">Enter</a>
-                <a class="btn btn-danger" onclick="show_category_delete_div(this, 'notice')" data-id="{{notice.id}}" id="notice_delete_btn_{{notice.id}}">Delete</a>
+                <a class="btn btn-danger" onclick="show_category_delete_box(this, 'notice')" data-id="{{notice.id}}" id="notice_delete_btn_{{notice.id}}">Delete</a>
         
             </div>
             <div id="notice_delete_{{notice.id}}" class="delete-confirmation-box">
@@ -332,7 +332,12 @@
             {% if user.status == "admin" %}
             <div class="admin-page-individual-users">
                 <p>{{user.username}}</p>
-                <p>{{user.status}}</p>
+                <select disabled name="user-status">
+                    <option value="admin" selected>Admin</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="user">User</option>
+                </select>
+                <a class="register-btn" onclick="change_admin_user_status()">Change Status</a>
             </div>
             {% endif %}
             {% endfor %}
@@ -367,42 +372,182 @@
 
     <div class="admin_page_orders">
         <div class="admin-page-pending-orders">
-            {% for order in orders %}
-            {% if order.status == "not delivered" %}
-            <div class="individual-order-pending">
-                <p>{{order.id}}</p>
-                <p>{{order.name}}</p>
-                <p>{{order.total_price}}</p>
-                <p>{{order.address}}</p>
-                <a href="{% url 'show_order_admin' order.id %}" class="show-order-details">Show Order Details</a>
+            <div class="individual-order-div-user">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th colspan="4">
+                                Online Store Purchases
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Order Id
+                            </th>
+                            <th>
+                                Order Status
+                            </th>
+                            <th>
+                                Order Date
+                            </th>
+                            <th>
+                                Total Price
+                            </th>
+    
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><a href="{% url 'show_order_user' order.order.id %}">#{{order.order.id}}</a></td>
+                            {% if order.order.status == "not delivered" %}
+                            <td style="color:rgb(189, 189, 2)">Pending</td>
+                            {% elif order.order.status == "delivered" %}
+                            <td style="color:green">Delivered</td>
+                            {% else %}
+                            <td style="color:red">Cancelled</td>
+                            {% endif %}
+    
+    
+                            <td>{{order.order_date}}</td>
+                            <td>BDT {{order.order.total_price}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+    
+                        {% endfor %}
+    
+                    </tbody>
+                </table>
+    
             </div>
-            {% endif %}
-            {% endfor %}
         </div>
         <div class="admin-page-delivered-orders">
-            {% for order in orders %}
-            {% if order.status == "delivered" %}
-            <div class="individual-order-delivered">
-                <p>{{order.id}}</p>
-                <p>{{order.name}}</p>
-                <p>{{order.total_price}}</p>
-                <p>{{order.address}}</p>
+            <div class="individual-order-div-user">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th colspan="4">
+                                Online Store Purchases
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Order Id
+                            </th>
+                            <th>
+                                Order Status
+                            </th>
+                            <th>
+                                Order Date
+                            </th>
+                            <th>
+                                Total Price
+                            </th>
+    
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><a href="{% url 'show_order_user' order.order.id %}">#{{order.order.id}}</a></td>
+                            {% if order.order.status == "not delivered" %}
+                            <td>Pending</td>
+                            {% elif order.order.status == "delivered" %}
+                            <td>Delivered</td>
+                            {% else %}
+                            <td>>Cancelled</td>
+                            {% endif %}
+    
+    
+                            <td>{{order.order_date}}</td>
+                            <td>BDT {{order.order.total_price}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+    
+                        {% endfor %}
+    
+                    </tbody>
+                </table>
+    
             </div>
-            {% endif %}
-            {% endfor %}
         </div>
 
         <div class="admin-page-cancelled-orders">
-            {% for order in orders %}
-            {% if order.status == "cancelled" %}
-            <div class="individual-order-cancelled">
-                <p>{{order.id}}</p>
-                <p>{{order.name}}</p>
-                <p>{{order.total_price}}</p>
-                <p>{{order.address}}</p>
+            <div class="individual-order-div-user">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th colspan="4">
+                                Online Store Purchases
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Order Id
+                            </th>
+                            <th>
+                                Order Status
+                            </th>
+                            <th>
+                                Order Date
+                            </th>
+                            <th>
+                                Total Price
+                            </th>
+    
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><a href="{% url 'show_order_user' order.order.id %}">#{{order.order.id}}</a></td>
+                            {% if order.order.status == "not delivered" %}
+                            <td>Pending</td>
+                            {% elif order.order.status == "delivered" %}
+                            <td>Delivered</td>
+                            {% else %}
+                            <td>>Cancelled</td>
+                            {% endif %}
+    
+    
+                            <td>{{order.order_date}}</td>
+                            <td>BDT {{order.order.total_price}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <hr class="row-bar">
+                            </td>
+                        </tr>
+    
+                        {% endfor %}
+    
+                    </tbody>
+                </table>
+    
             </div>
-            {% endif %}
-            {% endfor %}
         </div>
     </div>
 
@@ -510,6 +655,9 @@
         }
         else if(admin_state["admin"] === "contact_us"){
             show_admin_page_contact_us();
+        }
+        else if(admin_state["admin"] === "Notice"){
+            show_admin_page_notice();
         }
     }
     document.addEventListener('DOMContentLoaded', function () {
