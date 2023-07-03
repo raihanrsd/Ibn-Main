@@ -549,14 +549,14 @@ function edit_in_profile(){
 
 function show_shipping_edit_div(x){
     let id = x.dataset.id;
-    const div = document.querySelector(`#${id}_edit_form`);
+    const div = document.querySelector(`#i_${id}_edit_form`);
     div.style.display = "block";
     document.body.classList.toggle("overlay");
 }
 
 function hide_edit_shipping_div(x){
     let id = x.dataset.id;
-    const div = document.querySelector(`#${id}_edit_form`);
+    const div = document.querySelector(`#i_${id}_edit_form`);
     div.style.display = "none";
     document.body.classList.toggle("overlay");
 }
@@ -650,6 +650,27 @@ function hide_cart_div() {
     div.style.right = "-100%";
     document.body.classList.remove("overlay");
     div.style.opacity = "1";
+}
+
+
+function show_admin_page_notice(){
+    show_admin_page_products()
+    const all_product_div = document.querySelector(".admin-page-edit-product");
+    const category_div = document.querySelector(".admin-page-categories");
+    const promo_div = document.querySelector(".admin-page-promos");
+    const quantity_div = document.querySelector(".admin-page-quantity_management");
+    const notice_div = document.querySelector(".admin-page-notice");
+
+
+    all_product_div.style.display = "none";
+    category_div.style.display = "none";
+    promo_div.style.display = "none";
+    quantity_div.style.display = "none";
+    notice_div.style.display = "block";
+
+    var admin_state = JSON.parse(localStorage.getItem('admin_state'));
+    admin_state["admin"] = "Notice";
+    localStorage.setItem('admin_state', JSON.stringify(admin_state));
 }
 
 
@@ -792,12 +813,14 @@ function show_admin_page_category() {
     const category_div = document.querySelector(".admin-page-categories");
     const promo_div = document.querySelector(".admin-page-promos");
     const quantity_div = document.querySelector(".admin-page-quantity_management");
+    const notice_div = document.querySelector(".admin-page-notice");
 
 
     all_product_div.style.display = "none";
     category_div.style.display = "block";
     promo_div.style.display = "none";
     quantity_div.style.display = "none";
+    notice_div.style.display = "none";
 
     var admin_state = JSON.parse(localStorage.getItem('admin_state'));
     admin_state["admin"] = "Categories";
@@ -810,12 +833,14 @@ function show_admin_page_promos() {
     const category_div = document.querySelector(".admin-page-categories");
     const promo_div = document.querySelector(".admin-page-promos");
     const quantity_div = document.querySelector(".admin-page-quantity_management");
+    const notice_div = document.querySelector(".admin-page-notice");
 
 
     all_product_div.style.display = "none";
     category_div.style.display = "none";
     promo_div.style.display = "block";
     quantity_div.style.display = "none";
+    notice_div.style.display = "none";
 
     var admin_state = JSON.parse(localStorage.getItem('admin_state'));
     admin_state["admin"] = "Promos";
@@ -828,12 +853,14 @@ function show_admin_page_quantity() {
     const category_div = document.querySelector(".admin-page-categories");
     const promo_div = document.querySelector(".admin-page-promos");
     const quantity_div = document.querySelector(".admin-page-quantity_management");
+    const notice_div = document.querySelector(".admin-page-notice");
 
 
     all_product_div.style.display = "none";
     category_div.style.display = "none";
     promo_div.style.display = "none";
     quantity_div.style.display = "block";
+    notice_div.style.display = "none";
     let admin_state = JSON.parse(localStorage.getItem('admin_state'));
     admin_state["admin"] = "Quantity";
     localStorage.setItem('admin_state', JSON.stringify(admin_state));
@@ -847,7 +874,7 @@ function show_user_page_profile(x){
     });
 
     const div1 = document.querySelector(`.user-page-${what}`);
-    div1.style.display = "flex";
+    div1.style.display = "block";
 
     let cart_state = JSON.parse(localStorage.getItem('cart_state'));
     if(what === "profile"){
@@ -1325,4 +1352,34 @@ function show_admin_page_reviews() {
     admin_state["admin"] = "Reviews";
     localStorage.setItem('admin_state', JSON.stringify(admin_state));
 
+}
+
+function getCookie(name) {
+    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+}
+
+
+function change_tracker_status(x, id){
+    let value = x.dataset.value;
+    fetch(`/show_order/${id}/tracker/${value}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then((response) => response.json())
+    .then(info => {
+        for(var i = 0; i <= 3; i++){
+            document.querySelector(`#icon-${i}`).style.color = "rgba(128, 128, 128, 0.344)";
+        }
+        for(var i = 0; i <= parseInt(info.value); i++){
+            document.querySelector(`#icon-${i}`).style.color = "#bbffbb";
+        }
+
+        document.querySelector(`.progress-bar`).style.width = `${info.progress}%`;
+    });
+
+    //location.reload();
 }

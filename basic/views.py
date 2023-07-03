@@ -5,6 +5,7 @@ import random
 import requests
 from sslcommerz_lib import SSLCOMMERZ
 import uuid
+import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -74,6 +75,10 @@ def login_view(request):
         password = request.POST["password"]
 
         user = authenticate(request, username=username, password=password)
+
+        
+
+
 
         # Check if authentication successful
         if user is not None:
@@ -249,7 +254,7 @@ def payment_success(request):
     except Order.DoesNotExist:
         return HttpResponse("Order does not exist")
 
-    print(request.POST)
+    #print(request.POST)
     val_id = request.POST.get('val_id')
     store_id = "ibnma6496853da64bf"
     store_passwd = "ibnma6496853da64bf@ssl"
@@ -260,8 +265,8 @@ def payment_success(request):
     response = requests.get(url, verify=True)
     response_json = response.json()
 
-    print(response)
-    print(response_json)
+    #print(response)
+    #print(response_json)
     if response_json["status"] == "VALID":
         order.is_paid = True
         order.save()
@@ -275,7 +280,7 @@ def payment_success(request):
 def payment_failure(request):
     transaction_id = request.POST.get("tran_id")
     order = Order.objects.get(transaction_id=transaction_id)
-    print("deleted in failure")
+    #print("deleted in failure")
     order.delete()
 
     return render(request, "basic/payment_failure.html",)
@@ -286,7 +291,7 @@ def payment_cancel(request):
     transaction_id = request.POST.get("tran_id")
     order = Order.objects.get(transaction_id=transaction_id)
     print("deleted in cancel")
-    order.delete()
+    #order.delete()
 
     return render(request, "basic/payment_cancel.html",)
 
@@ -318,8 +323,8 @@ def handle_online_payment(transaction_id):
     post_body["shipping_method"] = "NO"
     post_body["multi_card_name"] = ""
     post_body["num_of_item"] = 1
-    post_body["product_name"] = "Test"
-    post_body["product_category"] = "Test Category"
+    post_body["product_name"] = "Perfume"
+    post_body["product_category"] = "Perfume Category"
     post_body["product_profile"] = "general"
 
     return sslcz.createSession(post_body)
@@ -371,7 +376,7 @@ def take_order(request):
                               desc="Order has been placed and you will shortly notified of your product delivery date.")
             tracker.save()
 
-            user_order = UserOrder(order=order, user=request.user)
+            user_order = UserOrder(order=order, user=request.user, order_date=datetime.date.today)
             user_order.save()
 
             return redirect(ssl_response["GatewayPageURL"])
@@ -417,6 +422,18 @@ def show_tracker(request):
                 "message": "Please fill up the from with valid information",
             })
     return render(request, "basic/tracker.html")
+
+
+def show_trac(request, order_id):
+    order = Order.objects.get(pk = order_id)
+    tracker = Tracker.objects.get(order = order)
+    progress = tracker.progress / 3 * 100
+    return render(request, "basic/tracker_v2.html", {
+        "tracker": tracker,
+        "progress" : progress,
+    })
+
+
 
 
 def search(request):
@@ -481,7 +498,7 @@ def admin_page(request):
     promo_data = Promos.objects.all()
     quantity_data = QuantityManagement.objects.all()
     review_data = Review.objects.all()
-    order_data = Order.objects.all()
+    order_data = UserOrder.objects.all()
     tracker_data = Tracker.objects.all()
     web_data = WebContents.objects.get(pk=1)
     contact_us = ContactUs.objects.all()
@@ -836,6 +853,8 @@ def delete_record(request, what, nice_id):
 
     elif what == "shipping":
         record = ShippingAddress.objects.get(pk=nice_id)
+        record.delete()
+        return HttpResponseRedirect(reverse("profile_page", args=(request.user.id,)))
 
     elif what == "moderator":
         record = Moderators.objects.get(pk=nice_id)
@@ -894,6 +913,15 @@ def add_promo(request):
             name=name, discount_amount=discount_amount)
         promo.save()
 
+    return HttpResponseRedirect(reverse("admin_page"))
+
+
+def add_notice(request):
+    if request.method=="POST":
+
+        notice = request.POST.get("notice", "")
+        notice = NoticeBoard(notice=notice)
+        notice.save()
     return HttpResponseRedirect(reverse("admin_page"))
 
 
@@ -1024,3 +1052,45 @@ def change_profile(request, user_id):
         user.save()
 
     return HttpResponseRedirect(reverse("profile_page", args=(user.id,)))
+
+
+def edit_shipping(request, user_id, what, nice_id):
+    record = ShippingAddress.objects.get(pk=nice_id)
+    record.name = request.POST.get("name", "")
+    record.email = request.POST.get("email", "")
+    record.phone = request.POST.get("contact_no", "")
+    record.address = request.POST.get("address", "")
+    record.city = request.POST.get("city", "")
+    record.zip = request.POST.get("zip", "")
+    record.save()
+    return HttpResponseRedirect(reverse("profile_page", args=(user_id,)))
+
+
+@csrf_exempt
+def change_trac_value(request, value, order_id):
+    if request.user.status == "user":
+        return HttpResponseRedirect(reverse("show_tracker_user", args=(order_id,)))
+
+    order = Order.objects.get(pk=order_id)
+    order.status = "not delivered"
+    tracker = Tracker.objects.get(order=order)
+    tracker.progress = int(value)
+    if int(value) == 3:
+        order.status = "delivered"
+    
+    tracker.save()
+    order.save()
+
+    progress = tracker.progress / 3 * 100
+    return JsonResponse({"value": value, "progress" : progress})
+
+
+
+def change_delivery_date(request, order_id):
+    order = Order.objects.get(pk = order_id)
+    tracker = Tracker.objects.get(order=order)
+    var = request.POST.get("delivery_date", datetime.date.today)
+    
+    tracker.delivary_date = var
+    tracker.save()
+    return HttpResponseRedirect(reverse("show_tracker_user", args=(order_id,)))

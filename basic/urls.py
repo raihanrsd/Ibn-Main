@@ -36,18 +36,28 @@ urlpatterns = [
     path("admin_page/" + str(num) + "/change_visibility/<int:oud_id>", views.change_visibility, name="change_visibility"),
     path("admin_page/" + str(num) + "/delete_record/<str:what>/<int:nice_id>", views.delete_record, name="delete_record" ),
     path("show_order/<int:order_id>", views.show_order, name="show_order_user"),
+
+    #all tracker related requests
+    path("show_order/<int:order_id>/tracker", views.show_trac, name="show_tracker_user"),
+    path("show_order/<int:order_id>/tracker/<int:value>", views.change_trac_value, name="show_tracker_user_value"),
+    path("show_order/<int:order_id>/change_delivery", views.change_delivery_date, name="change_delivery_date"),
+
+
     path("admin_page/" + str(num) + "/show_order/<int:order_id>", views.show_order, name="show_order_admin"),
+
     path("aboutus/get_webcontents", views.show_content, name="get_contents" ),
     path("admin_page/" + str(num) + "/add_category", views.add_category, name="add_category"),
     path("admin_page/" + str(num) + "/add_promo", views.add_promo, name="add_promo"),
     path("admin_page/" + str(num) + "/add_quantity", views.add_quantity, name="add_quantity"),
     path("admin_page/" + str(num) + "/edit/<str:what>/<int:nice_id>", views.edit_record, name="edit_records"),
+    path("admin_page/" + str(num) + "/add_notice", views.add_notice, name="add_notice"),
 
     path("cancel_order/<int:order_id>", views.cancel_order, name="cancel_order"),
     path("profile_page/<int:user_id>", views.show_profile_page, name="profile_page"),
-    path("profile_page/<int:user_id>/edit/<str:what>/<int:nice_id>", views.edit_record, name="edit_records_user"),
+    path("profile_page/<int:user_id>/edit/<str:what>/<int:nice_id>", views.edit_shipping, name="edit_records_user"),
     path("add_shipping", views.add_shipping, name="add_shipping"),
     path("change_profile/<int:user_id>", views.change_profile, name="change_profile"),
+
 
     # payment messages
     path('payment/success/', views.payment_success, name='payment_success'),

@@ -9,7 +9,7 @@
 
     <div class="order-buttons-div">
         <button class="btn btn-outline-primary">Invoice</button>
-        <button class="btn btn-outline-success">Tracker</button>
+        <a class="btn btn-outline-success" href="{% url 'show_tracker_user' order_id=main_order.id %}">Tracker</a>
         <a href="{% url 'cancel_order' main_order.id %}"><button class="btn btn-outline-danger" >Cancel</button></a>
     </div>
 </div>

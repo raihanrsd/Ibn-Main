@@ -6,8 +6,16 @@
     <div class="tracker-main-div">
         <div class="inside-tracker-div">
             <div class="tracker-header">
-                <h1 style="font-size: 17px">Order Id: <span style="color:cornflowerblue">#{{tracker.order.id}}</span></h1>
+                <h1 style="font-size: 17px">Order Id: <span style="color:cornflowerblue"><a href="{% url 'show_order_user' tracker.order.id %}">#{{tracker.order.id}}</a></span></h1>
+                {% if user.status == "user" %}
                 <h1>Delivery Date: {{tracker.delivary_date}}</h1>
+                {% else %}
+                <form action="{% url 'change_delivery_date' tracker.order.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="date" name="delivery_date" value="{{ tracker.delivary_date|date:'Y-m-d' }}">
+                    <input type="submit" class="register-btn" value="Submit">
+                </form>
+                {% endif %}
             </div>
 
             <div class="loading-bar-div">
@@ -16,10 +24,17 @@
                 </div>
 
                 <div class="loading-icon-div">
+                    {% if user.status == "user" %}
                     <i class="bi bi-check-circle-fill" id="icon-0"></i>
                     <i class="bi bi-check-circle-fill" id="icon-1"></i>
                     <i class="bi bi-check-circle-fill" id="icon-2"></i>
                     <i class="bi bi-check-circle-fill" id="icon-3"></i>
+                    {% else %}
+                    <i class="bi bi-check-circle-fill" id="icon-0" data-value="0" onclick="change_tracker_status(this, {{tracker.order.id}})"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-1" data-value="1" onclick="change_tracker_status(this, {{tracker.order.id}})"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-2" data-value="2" onclick="change_tracker_status(this, {{tracker.order.id}})"></i>
+                    <i class="bi bi-check-circle-fill" id="icon-3" data-value="3" onclick="change_tracker_status(this, {{tracker.order.id}})"></i>
+                    {% endif %}
                     
                 </div>
             </div>
@@ -45,11 +60,7 @@
                 </div>
             </div>
 
-            {% if user.status == "admin" %}
-                <div class="admin-change-div">
-                    <button class="register-btn">Edit Order Status</button>
-                </div>
-            {% endif %}
+
             <script>
                 for(var i = 0; i <= parseInt({{tracker.progress}}); i++){
                     document.querySelector(`#icon-${i}`).style.color = "#bbffbb";
