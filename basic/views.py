@@ -1,3 +1,4 @@
+import vonage
 from django.utils import timezone
 import datetime
 import random
@@ -9,8 +10,6 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django import forms
-from django.forms import ModelForm
 from django.contrib.auth.decorators import login_required
 import json
 from django.http import JsonResponse
@@ -75,15 +74,14 @@ def login_view(request):
         password = request.POST["password"]
 
         user = authenticate(request, username=username, password=password)
-        
-        if user.contact_verified == False:
-            request.session['contact'] = user.contact
-            return HttpResponseRedirect(reverse("verify_contact"))
 
         # Check if authentication successful
         if user is not None:
+            if user.contact_verified == False:
+                request.session['contact'] = user.contact
+                return HttpResponseRedirect(reverse("verify_contact"))
+
             login(request, user)
-            print("check 1")
             return HttpResponseRedirect(reverse("home"))
         else:
             return render(request, "basic/login.html", {
@@ -101,7 +99,23 @@ def logout_view(request):
 
 
 def send_OTP(contact, otp):
-    pass
+
+    client = vonage.Client(key="c7ffa548", secret="PYXCz6glC2fVwJm6")
+    sms = vonage.Sms(client)
+
+    responseData = sms.send_message(
+        {
+            "from": "Vonage APIs",
+            "to": contact,
+            "text": f"Your OTP is {otp}",
+        }
+    )
+
+    if responseData["messages"][0]["status"] == "0":
+        print("Message sent successfully.")
+    else:
+        print(
+            f"Message failed with error: {responseData['messages'][0]['error-text']}")
 
 
 def verify_contact(request):
@@ -128,9 +142,9 @@ def verify_contact(request):
             user.otp = new_otp
             user.otp_last_created = datetime.datetime.now()
             user.save()
-            
+
             print(new_otp)
-            # send_OTP(user.contact, new_otp)
+            send_OTP(user.contact, new_otp)
 
             return render(request, "basic/contact_verification.html", {
                 "message": "OTP expired. Another OTP has been sent."
@@ -148,7 +162,6 @@ def verify_contact(request):
 
 
 # user register
-# TODO: when the user logs in, make sure their 'phone_verified' is True
 
 def register(request):
     if request.method == "POST":
@@ -185,7 +198,7 @@ def register(request):
                 "message": "Username, email and contact must be unique."
             })
         request.session['contact'] = contact
-        # send_OTP(contact, otp)
+        send_OTP(contact, otp)
         return HttpResponseRedirect(reverse("verify_contact"))
     else:
         return render(request, "basic/register.html")
