@@ -182,6 +182,16 @@ def register(request):
             return render(request, "basic/register.html", {
                 "message": "Passwords must match."
             })
+            
+        if contact[0] != '+' or contact[1] != '8' or contact[2] != '8' or contact[3] != '0':
+            return render(request, "basic/register.html", {
+                "message": "Contact number must start with +880."
+            })
+        
+        if len(contact) != 14:
+            return render(request, "basic/register.html", {
+                "message": "Invalid contact number. Try again."
+            })
 
         # OTP verification
         otp = random.randint(100000, 999999)
