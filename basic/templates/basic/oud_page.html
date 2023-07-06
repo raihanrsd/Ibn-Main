@@ -116,7 +116,7 @@
             </p>
 
             {% if oud.type == 'close' %}
-            <p class="prod-status">Product is out of stock ;-;</p>
+            <p class="prod-status">Product is out of stock</p>
             {% else %}
             <p class="prod-status">Product in stock</p>
             {% endif %}
@@ -147,7 +147,7 @@
                         data-id="{{oud.id}}" onclick="add_cart_func(this)" data-name="{{oud.title}}"
                         data-amount="{{oud.amount}}" data-baseamount="{{oud.base_amount}}"
                         data-baseprice="{{oud.base_price}}" data-amountnumber="{{oud.amount_number}}"
-                        data-category="{{oud.category.name}}">
+                        data-category="{{oud.category.name}}" data-imgurl="{{oud.img.url}}">
                         <i class="bi bi-cart"></i> Add to Cart
                     </button>
                 </span>

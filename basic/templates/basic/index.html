@@ -141,7 +141,6 @@
                 </span>
                 </div>
             <div id="button_div_{{oud.id}}"></div>
-            
         </div>
     </div>
 
@@ -208,7 +207,7 @@
 
     
     <script>
-        update_all_cart()
+        //update_all_cart()
 
         function update_all_cart(){
             for(var item in cart){
@@ -229,20 +228,7 @@
         }
 
         function clearCart(){
-            cart = JSON.parse(localStorage.getItem('cart'));
-            for (var item in cart){
-                let x = document.querySelector(`#minus_${item}`);
-                console.log(x);
-                let id = cart[item][2];
-                let name = cart[item][1];
-                let amount = cart[item][3];
-                let amount_number = cart[item][4];
-                let category = cart[item][6];
-                let img_url = cart[item][9];
-                document.getElementById(`div_${item}`).innerHTML = `<button class="btn btn-outline-primary cart cart-btn" id="${item}" data-id='${id}' onclick="add_cart_func(this)" data-name='${name}' data-amount="${amount}" 
-                                                    data-amountnumber='${amount_number}' data-category='${category}' data-imgurl='${img_url}'><i class="bi bi-cart"></i> Add to Cart</button>`;
-            }
-            cart = {};
+            cart={};
             localStorage.removeItem('cart');
             const bruh_div = document.querySelector(".cart-product-div");
             bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";

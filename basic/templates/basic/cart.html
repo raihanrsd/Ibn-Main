@@ -524,9 +524,6 @@
             let amount_number = parseInt(cart[id][4]);
             let amount = cart[id][3];
 
-            document.getElementById(`div_${id}`).innerHTML = `<button class="btn btn-outline-primary cart" id="${id}" data-id='${oud_id}' onclick="add_cart_func(this)" data-name='${oud_name}' data-amount="${amount}" 
-                                                                      data-amountnumber='${amount_number}''>Add to cart</button>`;
-
 
             let serial = 0;
 
@@ -544,11 +541,12 @@
 
 
             sum -= total_product_price;
+            console.log(total_product_price);
             cart_state["sum"] = sum;
 
             promo_discount = (sum * promo_discount / 100);
 
-            cart_state["sum"] = sum;
+            //cart_state["sum"] = sum;
 
             delete cart[id];
 

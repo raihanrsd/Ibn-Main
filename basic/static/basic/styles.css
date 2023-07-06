@@ -785,7 +785,7 @@ hr {
 }
 
 .cart-btn-divs button {
-    background-color: black;
+    background-color: #000000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1487,17 +1487,27 @@ hr {
 }
 
 .cart {
-    color: #000;
-    border-color: #000;
+    color: #000000;
+    border-color: #000000;
     padding: 7px;
     border-radius: 0;
     font-family: 'Crimson Text', serif;
 }
 
 .cart:hover {
-    background-color: #000;
-    border-color: #fff;
+    background-color: #000000 !important;
+    color: white;
 
+}
+
+.cart:focus{
+    background-color: #000000 !important;
+    color: white;
+}
+
+.cart::after{
+    background-color: #000000 !important;
+    color: white;
 }
 
 
@@ -4195,9 +4205,11 @@ th, td {
     }
 
     .separate-cart-inner-div {
-        width: 60%;
+        width: 90%;
         height: 155px;
         padding: 5px;
+        box-shadow:none;
+        
     }
 
     .separate-cart-inner-div-img {

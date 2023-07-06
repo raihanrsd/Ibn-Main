@@ -4,7 +4,7 @@ function change_price(x) {
     const amount = x.dataset.amount;
     const serial = x.dataset.serial;
     const status = x.dataset.status;
-    const cart = JSON.parse(localStorage.getItem('cart'));
+    //const cart = JSON.parse(localStorage.getItem('cart'));
     console.log(status);
     document.querySelectorAll(`.price_btn_${id}`).forEach(function (button) {
         button.classList.remove("active");
@@ -16,29 +16,14 @@ function change_price(x) {
         second_element = document.querySelector(`.prev_price_${id}`);
     }
 
-    for (var item in cart) {
-        if (parseInt(cart[item][2]) === parseInt(id)) {
-
-            const price_elem = document.getElementById(`cart-prod-div-price-${item}`);
-            let val = price_elem.dataset.value;
-
-            const qty_elem = document.getElementById(`cart-prod-div-amount-${item}`);
-
-            qty_elem.innerHTML = "Amount: " + amount + " gm";
-
-            let price = cart[item][7][serial - 1] * cart[item][0];
-            price_elem.innerHTML = "Total Price: " + price + " BDT";
-            price_elem.dataset.value = price;
-            cart[item][3] = amount;
-        }
-    }
-
-
-
-    console.log(cart);
     
-    localStorage.setItem('cart', JSON.stringify(cart));
-    console.log(cart);
+
+
+
+    //console.log(cart);
+    
+    //localStorage.setItem('cart', JSON.stringify(cart));
+    //console.log(cart);
 
     fetch(`update_amount/${id}`, {
         method: 'GET'
@@ -51,6 +36,7 @@ function change_price(x) {
             if (serial == 1) {
                 num = oud.price_1;
                 second_num = oud.prev_price_1;
+                
             }
             else if (serial == 2) {
                 num = oud.price_2;
@@ -67,9 +53,10 @@ function change_price(x) {
             element.innerHTML = num;
             if (status == "open") second_element.innerHTML = "Tk " + second_num;
             if (document.getElementById(`special_btn_${id}`)) {
-                document.getElementById(`special_btn_${id}`).dataset.amount = oud.amount;
+                document.getElementById(`special_btn_${id}`).dataset.amount = amount;
             }
         });
+
 
 
 
@@ -264,6 +251,15 @@ function add_cart_func(x) {
         prev_price_arr.push(parseFloat(c));
     }
 
+    let j = 0;
+
+    while(cart[idstr + "_" + j] != undefined){
+        j++;
+    }
+    idstr = idstr + "_" + j;
+
+
+
 
     if (cart[idstr] != undefined) {
         qty = cart[idstr][0] + 1;
@@ -335,7 +331,7 @@ function add_cart_func(x) {
     console.log(cart);
 
     document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
-    update_cart(cart, idstr);
+    //update_cart(cart, idstr);
 
     showAlert('Product Added', `${name_of_product} has been added to Your cart`, '#155724', '#d4edd9');
 }
@@ -435,6 +431,9 @@ function update_cart(cart, item) {
     let amount_number = btn.dataset.amountnumber;
     let category = btn.dataset.category;
     let img_url = btn.dataset.imgurl;
+
+
+
 
     document.getElementById(`div_${item}`).innerHTML = `<button id='minus_${item}'
     class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}' data-amountnumber='${amount_number}' data-category='${category}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
