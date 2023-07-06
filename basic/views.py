@@ -63,41 +63,7 @@ def category(request, category_name):
         "ouds": ouds,
         "category": category,
     })
-
-
-# user login option
-def login_view(request):
-    if request.method == "POST":
-
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-
-        user = authenticate(request, username=username, password=password)
-
-        # Check if authentication successful
-        if user is not None:
-            if user.contact_verified == False:
-                request.session['contact'] = user.contact
-                return HttpResponseRedirect(reverse("verify_contact"))
-
-            login(request, user)
-            return HttpResponseRedirect(reverse("home"))
-        else:
-            return render(request, "basic/login.html", {
-                "message": "Invalid username and/or password."
-            })
-
-    else:
-        return render(request, "basic/login.html")
-
-
-# user logout
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("home"))
-
-
+    
 def send_OTP(contact, otp):
 
     client = vonage.Client(key="c7ffa548", secret="PYXCz6glC2fVwJm6")
@@ -116,6 +82,40 @@ def send_OTP(contact, otp):
     else:
         print(
             f"Message failed with error: {responseData['messages'][0]['error-text']}")
+
+# user login option
+def login_view(request):
+    if request.method == "POST":
+
+        # Attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+
+        user = authenticate(request, username=username, password=password)
+
+        # Check if authentication successful
+        if user is not None:
+            if user.contact_verified == False:
+                request.session['contact'] = user.contact
+                otp = random.randint(100000, 999999)
+                send_OTP(user.contact, otp)
+                return HttpResponseRedirect(reverse("verify_contact"))
+
+            login(request, user)
+            return HttpResponseRedirect(reverse("home"))
+        else:
+            return render(request, "basic/login.html", {
+                "message": "Invalid username and/or password."
+            })
+
+    else:
+        return render(request, "basic/login.html")
+
+
+# user logout
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("home"))
 
 
 def verify_contact(request):
@@ -183,6 +183,7 @@ def register(request):
                 "message": "Passwords must match."
             })
             
+        print(contact)
         if contact[0] != '+' or contact[1] != '8' or contact[2] != '8' or contact[3] != '0':
             return render(request, "basic/register.html", {
                 "message": "Contact number must start with +880."
