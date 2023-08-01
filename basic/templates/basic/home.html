@@ -147,7 +147,7 @@
                             <a href="{% url 'oud_page' oud.id %}">{{oud.title}}</a>
                             <span class="slider-text">{{oud.category.name}}</span>
                         </div>
-                        <a href="{% url 'oud_page' oud.id %}" class="slider-price">{{oud.base_price}}</a>
+                        <a href="{% url 'oud_page' oud.id %}" class="slider-price">BDT {{oud.base_price}}</a>
                     </div>
                 </div>
 
@@ -511,11 +511,7 @@
             disableOnInteraction: false,  // Enable autoplay even when user interacts with swiper
         },
 
-        // If we need pagination
-        pagination: {
-            el: '.swiper-pagination',
-        },
-
+       
         // Navigation arrows
         navigation: {
             nextEl: '.swiper-button-next',

@@ -19,11 +19,10 @@
     
         </div>
         <!-- If we need pagination -->
-        <div class="swiper-paginationss"></div>
+       
       
         <!-- If we need navigation buttons -->
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
+       
       
       </div>
 
@@ -112,7 +111,7 @@
 
 
 
-            <p class="price-p"><b>Current Price: Tk</b><span class="updated_price_{{oud.id}}">{{oud.base_price}}</span>
+            <p class="price-p"><b>Price: BDT</b><span class="updated_price_{{oud.id}}">{{oud.base_price}}</span>
             </p>
 
             {% if oud.type == 'close' %}
@@ -135,7 +134,7 @@
             <div>
             {% for amount in oud.amount_type.all %}
 
-            <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart" onclick="change_price(this)"
+            <button class="btn btn-outline-dark m-2 price_btn_{{oud.id}} cart oud_page_btn" onclick="change_price(this)"
                 data-amount="{{amount.amount}}" data-id="{{oud.id}}" data-serial="{{forloop.counter}}">{{amount.amount}}
                 gm</button>
             <input id="hidden_inp_{{forloop.counter}}_special_btn_{{oud.id}}" type="hidden" value="{{amount.amount}}">
@@ -143,12 +142,12 @@
         </div>
             <div>
                 <span id="div_special_btn_{{oud.id}}">
-                    <button class="btn btn-outline-primary cart cart-btn" id="special_btn_{{oud.id}}"
+                    <button class="btn btn-outline-dark cart cart-btn" id="special_btn_{{oud.id}}"
                         data-id="{{oud.id}}" onclick="add_cart_func(this)" data-name="{{oud.title}}"
                         data-amount="{{oud.amount}}" data-baseamount="{{oud.base_amount}}"
                         data-baseprice="{{oud.base_price}}" data-amountnumber="{{oud.amount_number}}"
                         data-category="{{oud.category.name}}" data-imgurl="{{oud.img.url}}">
-                        <i class="bi bi-cart"></i> Add to Cart
+                        Add to Cart
                     </button>
                 </span>
             </div>
@@ -197,7 +196,7 @@
                         <a href="{% url 'oud_page' oud.id %}">{{oud.title}}</a>
                         <span class="slider-text">{{oud.category.name}}</span>
                     </div>
-                    <a href="{% url 'oud_page' oud.id %}" class="slider-price">{{oud.base_price}}</a>
+                    <a href="{% url 'oud_page' oud.id %}" class="slider-price">BDT {{oud.base_price}}</a>
                 </div>
             </div>
        

@@ -41,7 +41,7 @@
             <h1 class="cart-h1">Checkout Form</h1>
             <hr class="cart-hr">
         </div>
-        <form method="post" action="{% url 'take_order' %}" class="checkout-form">
+        <form method="post" action="{% url 'take_order' %}" class="checkout-form" onsubmit="cleanAllStorage()">
             {% csrf_token %}
             <input type="hidden" name="itemsJSON" id="itemsJSON" required>
             <input type="hidden" name="total_price" id="total_price" required>
@@ -109,13 +109,13 @@
                     <hr>
                     <div>
                         <input type="radio" name="myRadioGroup" id="delivery-radioButton1" data-location="inside"
-                            checked value="0" onchange="changeDeliveryLocation()">
-                        <label for="myRadioGroup">Inside Chattogram (BDT 0)</label>
+                            checked value="70" onchange="changeDeliveryLocation()">
+                        <label for="myRadioGroup">Inside Dhaka and Chattogram (BDT 70)</label>
                     </div>
                     <div>
                         <input type="radio" name="myRadioGroup" id="delivery-radioButton2" data-location="outside"
-                            value="60" onchange="changeDeliveryLocation()">
-                        <label for="myRadioGroup">Outside Chattogram (BDT 60)</label>
+                            value="100" onchange="changeDeliveryLocation()">
+                        <label for="myRadioGroup">Outside Dhaka and Chattogram (BDT 100)</label>
                     </div>
                 </div>
 
@@ -154,7 +154,7 @@
 
                         <div class="total-price-div-2">
                             <p id="subtotal_price_span">0</p>
-                            <p id="delivery-charge-price-span">0</p>
+                            <p id="delivery-charge-price-span">70</p>
                             <p id="discount-price-span">0</p>
                             <p id="total_price_span">0</p>
                         </div>
@@ -162,11 +162,21 @@
                     </div>
 
                     <div class="total-price-div-4">
+                        {% if user.is_authenticated %}
                         <button class="arrow-button button-phase-1 phase-1" onclick="proceedToCheckout()"
                             id="checkout-btn">
                             <span class="button-text">PROCEED TO CHECKOUT</span>
                             <span class="arrow-icon"><i class="bi bi-arrow-right custom-icon"></i></span>
                         </button>
+                        {% else %}
+
+                        <button class="arrow-button button-phase-1 phase-1" onclick="show_account_div()"
+                            id="checkout-btn">
+                            <span class="button-text">SIGN IN</span>
+                            <span class="arrow-icon"><i class="bi bi-arrow-right custom-icon"></i></span>
+                        </button>
+
+                        {% endif %}
 
                         <button class="arrow-button  btn-disable button-phase-2 phase-2" onclick="checkAllInput()">
                             <span class="button-textd">PROCEED TO PAYMENT</span>
@@ -201,7 +211,7 @@
         document.getElementById("checkout-btn").disabled = true;
         document.getElementById("checkout-btn").classList.add('btn-disable');
     }
-    const jsConfetti = new JSConfetti();
+    
     var cart_state = JSON.parse(localStorage.getItem('cart_state'));
 
 
@@ -223,6 +233,8 @@
         let main_div = document.createElement("div");
         let second_div1 = document.createElement("div");
         let second_div2 = document.createElement("div");
+        let hidden_mobile_div = document.createElement("div");
+
 
         let serial = 0;
 
@@ -231,6 +243,8 @@
                 serial = i;
             }
         }
+
+        
 
         let total_product_price = cart[item][7][serial] * qty;
         sum += total_product_price;
@@ -280,7 +294,26 @@
 
 
 
-
+        hidden_mobile_div.innerHTML = `
+                                    <table class='cart-page-table'>
+                                        <tr>
+                                            <td>
+                                                
+                                                <button id='minus_${item}'
+                                                data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
+                                                </span> <button id='plus_${item}' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>
+                                                
+                                            </td>
+                                            <td>
+                                                <p data-value="${total_product_price}" id="price_${item}">Price: BDT ${total_product_price}</p>
+                                            </td>
+                                            <td>
+                                                <p id='remove_${item}'
+                                                class="cart-remove-link" data-id='${item}' onclick='remove_oud(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>Remove</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+        `
         let amount_selection_div = document.createElement("div");
         let amount_selection_p = document.createElement("p");
         amount_selection_p.id = `amount_selection_p_${item}`;
@@ -316,7 +349,8 @@
 
 
         list.append(second_div1);
-        list.append(second_div2);
+        //list.append(second_div2);
+        list.append(hidden_mobile_div);
 
 
 
@@ -354,7 +388,7 @@
 
 
 
-    if (cart_state["delivery_charge"] != 0) {
+    if (cart_state["delivery_charge"] != 70) {
         document.getElementById("delivery-radioButton2").checked = true;
     }
     else {
@@ -505,13 +539,15 @@
 
 
         localStorage.setItem('cart_state', JSON.stringify(cart_state));
-        document.getElementById(`price_${id}`).innerHTML = "<p>Price: BDT " + total_product_price + "</p>";
+        document.getElementById(`price_${id}`).innerHTML = "Price: BDT " + total_product_price;
         document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
         document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
         document.getElementById('delivery_charge').value = delivery_charge;
         document.getElementById('promo_discount').value = promo_discount;
         document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
         document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+        document.querySelector('.cart-subtotal-price-span').innerHTML = cart_state["sum"];
+        document.querySelector(`#cart-prod-div-total-price-${id}`).innerHTML = total_product_price + " BDT";
 
         document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
     }
@@ -548,7 +584,17 @@
 
             //cart_state["sum"] = sum;
 
+            
+            let product_div = document.getElementById(`this-cart-prod-div-${id}`);
+            product_div.remove();
+            cart = JSON.parse(localStorage.getItem('cart'));
             delete cart[id];
+            
+            document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
+            if (Object.keys(cart).length === 0) {
+                bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
+            }
+            showAlert('Product Removed', `${oud_name} has been removed From your cart`, '#856305', '#fff2cd');
 
             localStorage.setItem('cart_state', JSON.stringify(cart_state));
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -561,6 +607,7 @@
             document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
             document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
             document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
+            document.querySelector('.cart-subtotal-price-span').innerHTML = cart_state["sum"];
             document.getElementById(id).remove();
     }
 
@@ -592,7 +639,7 @@
             }
 
             let total_product_price = cart[id][7][serial] * qty;
-            document.getElementById(`price_${id}`).innerHTML = "<p>Price: BDT " + total_product_price + "</p>";
+            document.getElementById(`price_${id}`).innerHTML = "Price: BDT " + total_product_price;
             let cart_state = JSON.parse(localStorage.getItem('cart_state'));
             var promo_discount = cart_state["promo_discount"];
             var delivery_charge = cart_state["delivery_charge"];
@@ -614,6 +661,9 @@
             document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
             document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
             document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+            document.querySelector(`#cart-prod-div-total-price-${id}`).innerHTML = total_product_price + " BDT";
+            document.querySelector(`#cart-prod-div-quantity-${id}`).innerHTML = "Qty: x" + qty;
+            document.querySelector('.cart-subtotal-price-span').innerHTML = cart_state["sum"];
         }
 
 
@@ -661,16 +711,20 @@
         promo_discount = (sum * promo_discount / 100);
         cart[id][3] = new_amount;
 
+        cart_state["sum"] = sum;
+
         localStorage.setItem('cart_state', JSON.stringify(cart_state));
         document.getElementById(`minus_${id}`).dataset.amount = new_amount;
         localStorage.setItem('cart', JSON.stringify(cart));
-        document.getElementById(`price_${id}`).innerHTML = "<p>Price: BDT " + product_price_before + "</p>";
+        document.getElementById(`price_${id}`).innerHTML = "Price: BDT " + product_price_before;
         document.getElementById(`total_price_span`).innerHTML = "BDT " + (sum - promo_discount + delivery_charge);
         document.getElementById('total_price').value = sum - promo_discount + delivery_charge;
         document.getElementById('delivery_charge').value = delivery_charge;
         document.getElementById('promo_discount').value = promo_discount;
         document.querySelector("#delivery-charge-price-span").innerHTML = "BDT " + delivery_charge;
         document.querySelector("#discount-price-span").innerHTML = "BDT -" + promo_discount;
+        document.querySelector('.cart-subtotal-price-span').innerHTML = cart_state["sum"];
+        console.log("calls");
 
         document.getElementById(`subtotal_price_span`).innerHTML = "BDT " + (sum);
 
@@ -684,8 +738,8 @@
         var sum = cart_state["sum"];
         var promo_discount = cart_state["promo_discount"];
         console.log(outsideVal);
-        if (parseInt(selectedVal) === 0) {
-            delivery_charge = 0;
+        if (parseInt(selectedVal) === 70) {
+            delivery_charge = 70;
         }
         else {
             delivery_charge = parseInt(outsideVal);
@@ -802,25 +856,24 @@
 
 
 
-    {% if validation %}
 
-    jsConfetti.addConfetti({
-        confettiNumber: 1000,
-        confettiColors: [
-            '#cd0a54', '#0647ff', '#ff70ff', '#7885ff', '#fbb1bd', '#f9bec7',
-        ],
-    });
-    showAlert('Thanks for ordering',  'You can keep a track of your order by using your order id which is: {{id}}.', '#155724', '#d4edd9');
-    document.location = "/";
-    localStorage.removeItem('cart');
-    cart_state = JSON.parse(localStorage.getItem('cart_state'));
-    cart_state['cart'] = 1;
-    cart_state['promo_discount'] = 0;
-    cart_state['delivery_charge'] = 0;
-    cart_state['promo_name'] = "none";
-    {% endif %}
 
     document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+
+    function cleanAllStorage(){
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        cart = {};
+        localStorage.setItem('cart', JSON.stringify(cart))
+
+        let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+        cart_state['cart'] = 1;
+        cart_state['promo_discount'] = 0;
+        cart_state['delivery_charge'] = 70;
+        cart_state['promo_name'] = "none";
+        localStorage.setItem('cart_state', JSON.stringify(cart_state));
+        return true;
+    }
 
 </script>
 {% endblock %}

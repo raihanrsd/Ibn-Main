@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from .models import User, Ouds, Review, Order, QuantityManagement, Tracker, Categories, ContactUs, UserOrder, Promos, WebContents, Moderators, ShippingAddress, Analytics, NoticeBoard
 import os
@@ -22,6 +23,14 @@ import os
 
 CLIENT_ID = '31889031476-0dhc7cpg32shmjhv7megtv0do7ndp1q2.apps.googleusercontent.com'
 
+
+def send_email_to_user(request):
+    subject = 'Welcome to Our Website'
+    message = 'Thank you for signing up on our website!'
+    from_email = 'raihan.interactivecares@gmail.com'  # Replace with your Gmail address
+    to_email = 'raihanrsd98@gmail.com'    # Replace with the recipient's email address
+    send_mail(subject, message, from_email, [to_email], fail_silently=False)
+    return HttpResponseRedirect("")
 
 def index(request):
     ouds = Ouds.objects.all().order_by("-id")
@@ -389,10 +398,7 @@ def take_order(request):
             user_order = UserOrder(order=order, user=request.user)
             user_order.save()
 
-            return render(request, "basic/cart.html", {
-                'validation': True,
-                'id': order.id,
-            })
+            return show_order(request, order.id, "Done")
 
     return render(request, "basic/cart.html", {
         'validation': False,
@@ -727,7 +733,7 @@ def add_oud(request):
 
 
 @login_required(login_url='login')
-def show_order(request, order_id):
+def show_order(request, order_id, message=""):
     order = Order.objects.get(pk=order_id)
     order_data = order.order
     order_dict = json.loads(order_data)
@@ -755,6 +761,7 @@ def show_order(request, order_id):
         "user_of_order": user,
         "product_price": product_price,
         "tracker": order_tracker,
+        "message" : message,
     })
 
 
@@ -1094,3 +1101,37 @@ def change_delivery_date(request, order_id):
     tracker.delivary_date = var
     tracker.save()
     return HttpResponseRedirect(reverse("show_tracker_user", args=(order_id,)))
+
+@csrf_exempt
+def change_user_status(request, user_id, what):
+    status = "failed"
+    user = User.objects.get(pk = user_id)
+    if request.user.status == "admin":
+        
+        user.status = what
+        if what == "admin":
+            user.is_staff = True
+            user.is_superuser = True
+        elif what == "user":
+            user.is_staff = False
+            user.is_superuser = False
+        elif what == "moderator":
+            user.is_staff = True
+            user.is_superuser = False
+        status = "passed"
+    user.save()
+        
+    return JsonResponse({"status": status, "user_name": user.username, "what": what})
+
+
+@csrf_exempt
+def change_payment_status(request, order_id):
+    order = Order.objects.get(pk = order_id)
+    status = "failed"
+
+    if request.user.status == "admin" or request.user.status == "moderator":
+        order.is_paid = not order.is_paid
+        status = "success"
+    order.save()
+    return JsonResponse({"status" : status, "order_status" : order.is_paid})
+            

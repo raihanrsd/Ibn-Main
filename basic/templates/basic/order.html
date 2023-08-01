@@ -172,7 +172,11 @@
             <div class="address-address"><p><b>Payment Method:</b></p><p class="custom-done">{{ main_order.payment_method }}</p></div>
 
         </div>
-
+        {% if message == "Done" %}
+        <script>
+            showAlert('Order Confirmed', `Your Order has been confirmed`, '#155724', '#d4edd9', "done");
+        </script>
+        {% endif %}
 
     </div>
 </div>

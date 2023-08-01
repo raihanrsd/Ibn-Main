@@ -5,6 +5,8 @@
 
     <div class="tracker-main-div">
         <div class="inside-tracker-div">
+            {% if user.is_authenticated %}
+            {% if  request.user == user or request.user.status == "admin" or request.user.status == "moderator" %}
             <div class="tracker-header">
                 <h1 style="font-size: 17px">Order Id: <span style="color:cornflowerblue"><a href="{% url 'show_order_user' tracker.order.id %}">#{{tracker.order.id}}</a></span></h1>
                 {% if user.status == "user" %}
@@ -58,6 +60,9 @@
                     <p style="width: 50px;"><b>Order Arrived</b></p>
                     
                 </div>
+                
+                
+                
             </div>
 
 
@@ -67,7 +72,48 @@
                 }
 
                 document.querySelector(`.progress-bar`).style.width = "{{progress}}%";
+
+                function change_payment_status(){
+                    fetch("change_payment_status",{
+                        method: 'PUT',
+                    })
+                    .then((response) => response.json())
+                    .then(status => {
+                        if(status.status == "success" && status.order_status){
+                            showAlert('Payment Status', `The payment of the order has been confirmed!`, '#155724', '#d4edd9');
+                        }
+                        else if(status.status == "success"){
+                            showAlert('Payment Status', `Change is confirmed but Payment is not confirmed!`, '#155724', '#d4edd9');
+                        }
+                        else{
+                            showAlert('Payment Status', `Payment Status Couldn't be changed!`, '#155724', '#d4edd9');
+                        }
+                    })
+                }
+
             </script>
+
+            {% if user.status != "user" %}
+            <div class="payment-status-edit-div">
+                <label for="payment_status">Payment Status:</label>
+                <input type="checkbox" 
+                    {% if tracker.order.is_paid %}
+                    checked
+                    {% endif %}
+                    onchange="change_payment_status()"
+                >
+            </div>
+            {% endif %}
+
+            {% else %}
+            You are not Authorised to view this page!
+            {% endif %}
+
+            {% else %}
+            Please <a href="#" onclick="show_account_div">Login</a> in order to check your Order Status
+            {% endif %}
+
+
             
             
            

@@ -155,7 +155,7 @@
                     <a class="page-link" href="?page=1">&laquo; First Page</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ posts.previous_page_number }}">previous</a>
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
                 </li>
                 
             {% else %}
@@ -230,9 +230,12 @@
         function clearCart(){
             cart={};
             localStorage.removeItem('cart');
+            localStorage.removeItem('cart_state');
             const bruh_div = document.querySelector(".cart-product-div");
             bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
-            document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+            document.querySelectorAll("#nav_cart").forEach(function(div){
+                div.innerHTML = Object.keys(cart).length;
+            });
 
         }
         //document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;

@@ -16,12 +16,12 @@ function change_price(x) {
         second_element = document.querySelector(`.prev_price_${id}`);
     }
 
-    
+
 
 
 
     //console.log(cart);
-    
+
     //localStorage.setItem('cart', JSON.stringify(cart));
     //console.log(cart);
 
@@ -36,7 +36,7 @@ function change_price(x) {
             if (serial == 1) {
                 num = oud.price_1;
                 second_num = oud.prev_price_1;
-                
+
             }
             else if (serial == 2) {
                 num = oud.price_2;
@@ -58,28 +58,26 @@ function change_price(x) {
         });
 
 
-
-
 }
 
 window.addEventListener('scroll', function () {
     var main_header = document.querySelector('.main_header');
     var nav_bar = document.querySelector(".my_nav");
     var notice_board = document.querySelector(".noticeboard-div");
-    if (window.scrollY > (main_header.offsetHeight / 2) ) {
+    if (window.scrollY > (main_header.offsetHeight / 2)) {
         main_header.classList.add("main_header_scrolled");
         document.querySelector('.navbar_brand').style.opacity = "0";
         var windowWidth = document.documentElement.clientWidth;
-        if(windowWidth > 900){
+        if (windowWidth > 900) {
             nav_bar.classList.add("my_nav_scrolled");
         }
 
-        if(notice_board){
+        if (notice_board) {
             notice_board.classList.add('noticeboard-div-scrolled');
         }
 
-        
-        
+
+
         document.querySelector('.ibnmain_name_li').style.display = "block";
         document.querySelector('.ibnmain-writeup').style.display = "block";
         document.querySelector('.ibnmain-img-mobile').style.display = "none";
@@ -88,10 +86,10 @@ window.addEventListener('scroll', function () {
         main_header.classList.remove("main_header_scrolled");
         document.querySelector('.navbar_brand').style.opacity = "1";
         nav_bar.classList.remove("my_nav_scrolled");
-        if(notice_board){
+        if (notice_board) {
             notice_board.classList.remove('noticeboard-div-scrolled');
         }
-        
+
         document.querySelector('.ibnmain_name_li').style.display = "none";
         document.querySelector('.ibnmain-writeup').style.display = "none";
         document.querySelector('.ibnmain-img-mobile').style.display = "block";
@@ -146,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var cart_state = {};
         var state = 1;
         cart_state["cart"] = state;
-        cart_state["delivery_charge"] = 0;
+        cart_state["delivery_charge"] = 70;
         cart_state["promo_discount"] = 0;
         cart_state["promo_name"] = "none";
         cart_state["sum"] = 0;
@@ -208,7 +206,7 @@ if (localStorage.getItem('cart_state') == null) {
     var cart_state = {};
     var state = 1;
     cart_state["cart"] = state;
-    cart_state["delivery_charge"] = 0;
+    cart_state["delivery_charge"] = 70;
     cart_state["promo_discount"] = 0;
     cart_state["promo_name"] = "none";
     cart_state["sum"] = 0;
@@ -231,6 +229,8 @@ function add_cart_func(x) {
     let amount = x.dataset.amount;
     let amount_number = x.dataset.amountnumber;
     let category = x.dataset.category;
+    let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+    let cart = JSON.parse(localStorage.getItem('cart'));
     const amount_arr = [];
     const price_arr = [];
     const prev_price_arr = [];
@@ -251,9 +251,13 @@ function add_cart_func(x) {
         prev_price_arr.push(parseFloat(c));
     }
 
+    let sum = cart_state["sum"];
+    
+
+
     let j = 0;
 
-    while(cart[idstr + "_" + j] != undefined){
+    while (cart[idstr + "_" + j] != undefined) {
         j++;
     }
     idstr = idstr + "_" + j;
@@ -276,10 +280,13 @@ function add_cart_func(x) {
     let product_div = document.createElement("div");
     let product_div1 = document.createElement("div");
     let product_div2 = document.createElement("div");
-
+    let product_div_main = document.createElement("div");
+    let product_div3 = document.createElement("div");
+    product_div_main.classList.add("separate-cart-outer-div");
     product_div.classList.add("separate-cart-inner-div");
     product_div1.classList.add("separate-cart-inner-div-img");
     product_div2.classList.add("separate-cart-inner-div-content");
+    product_div3.classList.add("separate-cart-inner-div-price")
 
     let img = document.createElement("img");
     img.src = img_url;
@@ -288,18 +295,24 @@ function add_cart_func(x) {
     let h1 = document.createElement("h1");
     h1.innerHTML = name_of_product;
 
-    product_div.id = `this-cart-prod-div-${idstr}`;
+    product_div_main.id = `this-cart-prod-div-${idstr}`;
+    
 
     product_div2.appendChild(h1);
 
     let p1 = document.createElement("p");
     let p2 = document.createElement('p');
     let p3 = document.createElement("p");
+    let p4 = document.createElement("p");
+    let p5 = document.createElement("a");
 
-    p1.innerHTML = "Quantity: x" + qty;
+    
+
+    p1.innerHTML = "Qty: x" + qty;
     p2.innerHTML = "Amount: " + amount + " gm";
     p1.id = `cart-prod-div-quantity-${idstr}`;
     p2.id = `cart-prod-div-amount-${idstr}`;
+
 
     var serial = 0;
 
@@ -309,35 +322,101 @@ function add_cart_func(x) {
         }
     }
     var total_price = qty * cart[idstr][7][serial];
-    p3.innerHTML = "Total Price: " + total_price + " BDT";
+    p3.innerHTML = "Price: " +cart[idstr][7][serial] + " BDT";
+    product_div.dataset.price = total_price;
+    p4.innerHTML = total_price + " BDT";
+    p4.id = `cart-prod-div-total-price-${idstr}`;
+    p5.innerHTML = "Remove";
+    p5.classList.add("remove-from-cart-btn");
+    p5.onclick = function() {
+        remove_from_cart(idstr); // Pass your item ID or any relevant data as needed   
+    };  
+
+    sum += total_price;
+
+    cart_state["sum"] = sum;
     p3.id = `cart-prod-div-price-${idstr}`;
     p3.dataset.value = total_price;
-    product_div2.appendChild(p1);
+    product_div3.appendChild(p1);
+    product_div3.appendChild(p4);
+    product_div3.appendChild(p5);
     product_div2.appendChild(p2);
     product_div2.appendChild(p3);
     product_div.appendChild(product_div1);
     product_div.appendChild(product_div2);
+    product_div_main.appendChild(product_div);
+    product_div_main.appendChild(product_div3);
 
     if (Object.keys(cart).length === 1) {
         bruh_div.innerHTML = "";
-        bruh_div.appendChild(product_div);
+        bruh_div.appendChild(product_div_main);
     }
     else {
-        bruh_div.appendChild(product_div);
+        bruh_div.appendChild(product_div_main);
     }
 
-
+    document.querySelector('.cart-subtotal-price-span').innerHTML = sum;
     localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('cart_state', JSON.stringify(cart_state));
     console.log(cart);
+    
 
-    document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+
+    document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
     //update_cart(cart, idstr);
 
     showAlert('Product Added', `${name_of_product} has been added to Your cart`, '#155724', '#d4edd9');
 }
 
+function remove_item(x) {
+    let id = x.dataset.id;
+    let product_div = document.getElementById(`this-cart-prod-div-${id}`);
+    product_div.remove();
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    let cart_state =JSON.parse(localStorage.getItem('cart_state'));
+    let sum = cart_state["sum"];
+    let price = product_div.dataset.price;
+    sum -= price;
+    document.querySelector('.cart-subtotal-price-span').innerHTML = sum;
+    delete cart[id];
+    cart_state["sum"] = sum;
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('cart_state', JSON.stringify(cart_state));
+    document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
+    if (Object.keys(cart).length === 0) {
+        bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
+    }
+    showAlert('Product Removed', `${oud_name} has been removed From your cart`, '#856305', '#fff2cd');
+}
 
 
+
+function remove_from_cart(item){
+    console.log(item);
+    console.log("Comes here");
+    document.querySelector(`#this-cart-prod-div-${item}`).remove();
+    let cart = JSON.parse(localStorage.getItem('cart'));
+    let cart_state =JSON.parse(localStorage.getItem('cart_state'));
+    let sum = cart_state["sum"];
+    let price = cart[item][0] * cart[item][7][0];
+    sum -= price;
+    document.querySelector('.cart-subtotal-price-span').innerHTML = sum;
+    showAlert('Product Removed', `${cart[item][1]} has been removed From your cart`, '#856305', '#fff2cd');
+    delete cart[item];
+    cart_state["sum"] = sum;
+    console.log(cart);
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('cart_state', JSON.stringify(cart_state));
+    //document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
+    if (Object.keys(cart).length === 0) {
+        bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
+    }
+
+    document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
+    
+}
 
 
 function subtract_func(x) {
@@ -360,7 +439,7 @@ function subtract_func(x) {
                                                             data-amountnumber='${amount_number}' data-category='${category}' data-imgurl='${img_url}'><i class="bi bi-cart"></i> Add to Cart</button>`;
         console.log(cart);
         localStorage.setItem('cart', JSON.stringify(cart));
-        document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+        document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
         if (Object.keys(cart).length === 0) {
             bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
         }
@@ -375,7 +454,7 @@ function subtract_func(x) {
 
         qty_elem.innerHTML = "Quantity: x" + cart[id][0];
         var i;
-        for (i = 0; i < parseInt(cart[id][4]); i+=1) {
+        for (i = 0; i < parseInt(cart[id][4]); i += 1) {
             if (parseFloat(cart[id][3]) === parseFloat(cart[id][5][i])) {
                 break;
             }
@@ -408,7 +487,7 @@ function add_func(x) {
     qty_elem.innerHTML = "Quantity: x" + cart[id][0];
 
     var i;
-    for (i = 0; i < parseInt(cart[id][4]); i+=1) {
+    for (i = 0; i < parseInt(cart[id][4]); i += 1) {
         if (parseFloat(cart[id][3]) === parseFloat(cart[id][5][i])) {
             break;
         }
@@ -440,7 +519,7 @@ function update_cart(cart, item) {
     </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amount='${amount}' data-amountnumber='${amount_number}' data-imgurl='${img_url}'>+</button>`;
 
 
-    document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+    document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
 }
 
 
@@ -451,19 +530,20 @@ function clearCart() {
     const bruh_div = document.querySelector(".cart-product-div");
     bruh_div.innerHTML = "You have not added any product to your cart. Thus it is empty.";
     //localStorage.removeItem('cart');
-    document.querySelector("#nav_cart").innerHTML = Object.keys(cart).length;
+    document.querySelectorAll("#nav_cart").forEach(function (div) { div.innerHTML = Object.keys(cart).length });
 }
 
 
 function show_menu() {
     let x = document.querySelector(".my_nav");
     let nice = document.querySelector(".menu_bar_x");
-    
-    nice.style.left = 0;
+
+    nice.style.left = "93%";
+    //nice.style.right = 0;
     x.style.left = 0;
 }
 
-function showAlert(heading, text, primary_color, secondary_color){
+function showAlert(heading, text, primary_color, secondary_color, confetti="") {
     let alert_div = document.querySelector('.alert-special-div');
     let alert_h1 = document.querySelector('.alert-heading');
     let alert_text = document.querySelector('.alert-text');
@@ -473,13 +553,23 @@ function showAlert(heading, text, primary_color, secondary_color){
     alert_div.style.color = primary_color;
     alert_div.style.backgroundColor = secondary_color;
 
-    setTimeout(function(){
+    setTimeout(function () {
         alert_div.style.left = "-100%";
     }, 5000);
 
+    if(confetti === "Done"){
+        const jsConfetti = new JSConfetti();
+        jsConfetti.addConfetti({
+            confettiNumber: 1000,
+            confettiColors: [
+                '#cd0a54', '#0647ff', '#ff70ff', '#7885ff', '#fbb1bd', '#f9bec7',
+            ],
+        });
+    }
+
 }
 
-function hide_menu(){
+function hide_menu() {
     let x = document.querySelector(".my_nav");
     x.style.left = "-100%";
     let nice = document.querySelector(".menu_bar_x");
@@ -533,12 +623,12 @@ function show_account_div() {
 }
 
 
-function edit_in_profile(){
-    document.querySelectorAll('.profile-page-inp').forEach(function (input){
+function edit_in_profile() {
+    document.querySelectorAll('.profile-page-inp').forEach(function (input) {
         input.disabled = false;
     });
     document.getElementById('profile-change-button').setAttribute("type", "submit");
-    document.querySelectorAll('.profile-change-button-1').forEach(function(button){
+    document.querySelectorAll('.profile-change-button-1').forEach(function (button) {
         button.style.display = "none";
     });
 
@@ -546,27 +636,27 @@ function edit_in_profile(){
 
 }
 
-function show_shipping_edit_div(x){
+function show_shipping_edit_div(x) {
     let id = x.dataset.id;
     const div = document.querySelector(`#i_${id}_edit_form`);
     div.style.display = "block";
     document.body.classList.toggle("overlay");
 }
 
-function hide_edit_shipping_div(x){
+function hide_edit_shipping_div(x) {
     let id = x.dataset.id;
     const div = document.querySelector(`#i_${id}_edit_form`);
     div.style.display = "none";
     document.body.classList.toggle("overlay");
 }
 
-function show_shipping_div(){
+function show_shipping_div() {
     const div = document.querySelector("#new-shipping-form");
     div.style.display = "block";
     document.body.classList.toggle("overlay");
 }
 
-function hide_shipping_div(){
+function hide_shipping_div() {
     const div = document.querySelector("#new-shipping-form");
     div.style.display = "none";
     document.body.classList.toggle("overlay");
@@ -652,7 +742,7 @@ function hide_cart_div() {
 }
 
 
-function show_admin_page_notice(){
+function show_admin_page_notice() {
     show_admin_page_products()
     const all_product_div = document.querySelector(".admin-page-edit-product");
     const category_div = document.querySelector(".admin-page-categories");
@@ -866,7 +956,7 @@ function show_admin_page_quantity() {
 }
 
 
-function show_user_page_profile(x){
+function show_user_page_profile(x) {
     let what = x.dataset.what;
     document.querySelectorAll('.user-div').forEach(function (div) {
         div.style.display = "none";
@@ -876,22 +966,22 @@ function show_user_page_profile(x){
     div1.style.display = "block";
 
     let cart_state = JSON.parse(localStorage.getItem('cart_state'));
-    if(what === "profile"){
+    if (what === "profile") {
         cart_state["user_state"] = 1;
     }
-    else if(what === "orders"){
+    else if (what === "orders") {
         cart_state["user_state"] = 2;
     }
-    else if(what === "shipping-address"){
+    else if (what === "shipping-address") {
         cart_state["user_state"] = 3;
     }
-    else if(what === "wishlist"){
+    else if (what === "wishlist") {
         cart_state["user_state"] = 4;
     }
 }
 
-function show_user_page_div(what){
-   
+function show_user_page_div(what) {
+
     document.querySelectorAll('.user-div').forEach(function (div) {
         div.style.display = "none";
     });
@@ -905,38 +995,58 @@ function show_user_page_div(what){
 function proceedToCheckout() {
 
     let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+    const btn1 = document.getElementById("state-1");
+    const btn2 = document.getElementById("state-2");
+    const btn3 = document.getElementById("state-3");
     const btn4 = document.getElementById("state-2-back");
     const btn5 = document.getElementById("state-3-back");
 
-    document.querySelectorAll('.phase-1').forEach(function (div){
+    document.querySelectorAll(".state-button").forEach(function (button) {
+        button.classList.remove('state-next');
+    });
+    btn1.classList.add('state-next');
+    btn2.classList.add('state-next');
+    btn4.style.display = "block";
+    btn5.style.display = "none";
+    hr1.classList.add('dark-hr');
+    hr2.classList.remove('dark-hr');
+
+    document.querySelectorAll('.phase-1').forEach(function (div) {
         div.style.display = "none";
     });
 
-    document.querySelectorAll('.phase-3').forEach(function (div){
+    document.querySelectorAll('.phase-3').forEach(function (div) {
         div.style.display = "none";
     });
 
-    document.querySelectorAll('.phase-2').forEach(function (div){
+    document.querySelectorAll('.phase-2').forEach(function (div) {
         div.style.display = "block";
     });
-    
+
 
     let cart_div = document.querySelector(".cart-main-div");
     cart_div.classList.remove("cart-main-div");
     cart_div.classList.add("cart-main-div-phase-2");
     console.log("success?");
     document.querySelector(".checkout-form-div").style.display = "flex";
+    // document.querySelectorAll(".cart-internal-div2").forEach((div) => {
+    //     div.style.display = "none";
+    // })
+
+    // document.querySelectorAll(".cart-page-table").forEach((div) => {
+    //     div.style.display = "block";
+    // })
     const cart = JSON.parse(localStorage.getItem('cart'));
-    for (var item in cart) {
-        var minus_btn = document.querySelector(`#minus_${item}`);
-        var plus_btn = document.querySelector(`#plus_${item}`);
-        var amount_selection = document.querySelector(`#amount_selection_${item}`);
-        var amount_selection_p = document.querySelector(`#amount_selection_p_${item}`);
-        var img_div = document.getElementById(`main-img-div-${item}`);
-        var content_div = document.getElementById(`main-content-div-${item}`);
-        var main_div = document.getElementById(item);
-        var qty_div = document.getElementById(`div_${item}`);
-        var price_div = document.getElementById(`price_${item}`);
+    for (let item in cart) {
+        let minus_btn = document.querySelector(`#minus_${item}`);
+        let plus_btn = document.querySelector(`#plus_${item}`);
+        let amount_selection = document.querySelector(`#amount_selection_${item}`);
+        let amount_selection_p = document.querySelector(`#amount_selection_p_${item}`);
+        let img_div = document.getElementById(`main-img-div-${item}`);
+        let content_div = document.getElementById(`main-content-div-${item}`);
+        let main_div = document.getElementById(item);
+        //var qty_div = document.getElementById(`div_${item}`);
+        //let price_div = document.getElementById(`price_${item}`);
 
         //qty_div.classList.remove('display_flex');
 
@@ -948,13 +1058,13 @@ function proceedToCheckout() {
 
         main_div.classList.remove('main-cart-page-div');
         main_div.classList.add('main-cart-page-div-phase-2');
-        minus_btn.style.display = "none";
-        plus_btn.style.display = "none";
+        minus_btn.disabled = true;
+        plus_btn.disabled = true;
         //main_div.style.flexDirection = "column";
         amount_selection.style.display = "none";
-        qty_div.innerHTML = `<p>Qty: x${cart[item][0]}</p>`;
-        price_div.innerHTML  = `<p>Price: BDT${price_div.dataset.value} </p>`;
-        
+        //qty_div.innerHTML = `<p>Qty: x${cart[item][0]}</p>`;
+        //price_div.innerHTML = `<p>Price: BDT${price_div.dataset.value} </p>`;
+
         amount_selection_p.innerHTML = `<p>Amount : ` + cart[item][3] + " gm</p>";
         console.log(cart[item][3]);
         document.querySelector(`.button-phase-1`).style.display = "none";
@@ -964,20 +1074,20 @@ function proceedToCheckout() {
 }
 
 
-function checkAllInput(){
+function checkAllInput() {
     var allFilled = true;
-    document.querySelectorAll('.based_inp').forEach(function (input){
-        if(input.value === ''){
+    document.querySelectorAll('.based_inp').forEach(function (input) {
+        if (input.value === '') {
             allFilled = false;
             showPopover(input);
-            
+
         }
     });
 
 
 
 
-    if(allFilled){
+    if (allFilled) {
         proceedToPayment();
     }
 }
@@ -988,11 +1098,11 @@ function showPopover(input) {
     var popover = document.createElement('div');
     popover.className = 'popover_nice';
     popover.textContent = 'Please fill in this field.';
-    
+
     // Position the popover next to the input field
 
 
-    
+
     // Add the popover to the document
     console.log(input.name);
     const elem = document.querySelector(`#inp_div_${input.name}`);
@@ -1006,31 +1116,48 @@ function showPopover(input) {
 
     if (input.value.trim() === '') {
         window.scrollTo({
-          top: elem.offsetTop - 100 , // Scroll to the empty input
-          behavior: 'smooth',
+            top: elem.offsetTop - 100, // Scroll to the empty input
+            behavior: 'smooth',
         });
-      }
+    }
 
-    
+
     // Remove the popover after 3 seconds
-    setTimeout(function() {
-      popover.remove();
-      input.classList.remove('error-inp');
+    setTimeout(function () {
+        popover.remove();
+        input.classList.remove('error-inp');
     }, 4000);
-  }
+}
 
-function proceedToPayment(){
+function proceedToPayment() {
     let cart_state = JSON.parse(localStorage.getItem('cart_state'));
-    document.querySelectorAll('.phase-1').forEach(function (div){
+    document.querySelectorAll('.phase-1').forEach(function (div) {
         div.style.display = "none";
     });
 
-    
+    const btn1 = document.getElementById("state-1");
+    const btn2 = document.getElementById("state-2");
+    const btn3 = document.getElementById("state-3");
+    const btn4 = document.getElementById("state-2-back");
+    const btn5 = document.getElementById("state-3-back");
 
-    document.querySelectorAll('.phase-2').forEach(function (div){
+    document.querySelectorAll(".state-button").forEach(function (button) {
+        button.classList.remove('state-next');
+    });
+    btn1.classList.add('state-next');
+    btn2.classList.add('state-next');
+    btn3.classList.add('state-next');
+    btn4.style.display = "block";
+    btn5.style.display = "none";
+    hr1.classList.add('dark-hr');
+    hr2.classList.remove('dark-hr');
+
+
+
+    document.querySelectorAll('.phase-2').forEach(function (div) {
         div.style.display = "none";
     });
-    document.querySelectorAll('.phase-3').forEach(function (div){
+    document.querySelectorAll('.phase-3').forEach(function (div) {
         div.style.display = "block";
     });
     document.querySelector('.cart_list').style.display = "none";
@@ -1041,9 +1168,9 @@ function proceedToPayment(){
 
 }
 
-function changePaymentSelection(x){
+function changePaymentSelection(x) {
     var type = x.dataset.type;
-    if(type == 'online') {
+    if (type == 'online') {
         let payment_method = document.querySelector('#payment_method');
         payment_method.value = "online";
     }
@@ -1053,41 +1180,72 @@ function changePaymentSelection(x){
     let div4 = document.createElement("p");
     let inp = document.getElementById("payment_method");
     div4.classList.add("selected-p");
-    div4.innerHTML = "Selected"; 
+    div4.innerHTML = "Selected";
 
     div1.classList.toggle('selected');
     div2.classList.toggle('selected');
     div3.remove();
 
-    
-    if(type === 'cash'){
+
+    if (type === 'cash') {
         div1.append(div4);
         inp.value = "Cash";
     }
-    else{
+    else {
         div2.append(div4);
         inp.value = "Online";
     }
 }
 
-function initial_cart_state(){
+function initial_cart_state() {
     let cart_state = JSON.parse(localStorage.getItem('cart_state'));
+    const btn1 = document.getElementById("state-1");
+    const btn2 = document.getElementById("state-2");
+    const btn3 = document.getElementById("state-3");
+    const btn4 = document.getElementById("state-2-back");
+    const btn5 = document.getElementById("state-3-back");
+    const hr1 = document.getElementById("state-hr-1");
+    const hr2 = document.getElementById("state-hr-2");
+
+    
+    btn2.classList.remove('state-next');
+    btn3.classList.remove('state-next');
+    btn1.classList.add('state-next');
+    btn4.style.display = "none";
+    btn5.style.display = "none";
+    hr1.classList.remove('dark-hr');
+    hr2.classList.remove('dark-hr');
+
+
     if (cart_state["cart"] != 1) {
         let cart_div = document.querySelector(".cart-main-div-phase-2");
         cart_div.classList.add("cart-main-div");
         cart_div.classList.remove("cart-main-div-phase-2");
     }
-    document.querySelectorAll('.phase-3').forEach(function (div){
+    document.querySelectorAll('.phase-3').forEach(function (div) {
         div.style.display = "none";
     });
 
-    document.querySelectorAll('.phase-2').forEach(function (div){
+    document.querySelectorAll('.phase-2').forEach(function (div) {
         div.style.display = "none";
     });
 
-    document.querySelectorAll('.phase-1').forEach(function (div){
+    document.querySelectorAll('.phase-1').forEach(function (div) {
         div.style.display = "block";
     });
+
+    // if(window.innerWidth > 762){
+    //     document.querySelectorAll(".cart-internal-div2").forEach((div) => {
+    //         div.style.display = "block";
+    //     })
+    
+    //     document.querySelectorAll(".cart-page-table").forEach((div) => {
+    //         div.style.display = "none";
+    //     })
+
+    //     console.log("this works");
+    // }
+    
 
     const cart = JSON.parse(localStorage.getItem('cart'));
     for (var item in cart) {
@@ -1101,11 +1259,16 @@ function initial_cart_state(){
         var amount_selection_p = document.querySelector(`#amount_selection_p_${item}`);
         var img_div = document.getElementById(`main-img-div-${item}`);
         var content_div = document.getElementById(`main-content-div-${item}`);
+        let minus_btn = document.querySelector(`#minus_${item}`);
+        let plus_btn = document.querySelector(`#plus_${item}`);
         var main_div = document.getElementById(item);
-        var qty_div = document.getElementById(`div_${item}`);
-        var price_div = document.getElementById(`price_${item}`);
+        //var qty_div = document.getElementById(`div_${item}`);
+        //var price_div = document.getElementById(`price_${item}`);
 
-        qty_div.classList.add('display_flex');
+        //qty_div.classList.add('display_flex');
+
+        minus_btn.disabled = false;
+        plus_btn.disabled = false;
 
         img_div.classList.add('main-cart-page-div1');
         img_div.classList.remove('main-cart-page-div1-phase-2');
@@ -1115,20 +1278,20 @@ function initial_cart_state(){
 
         main_div.classList.add('main-cart-page-div');
         main_div.classList.remove('main-cart-page-div-phase-2');
-        
+
         amount_selection.style.display = "flex";
         var windowWidth = document.documentElement.clientWidth;
-        if(windowWidth >762){
+        if (windowWidth > 762) {
             //main_div.style.flexDirection = "row";
         }
-       
-            qty_div.innerHTML = `<p class='quantity-writing'>Quantity: </p><button id='minus_${item}'
-                                    class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
-                                    </span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
 
-        
-        price_div.innerHTML  = `<p>Price: BDT ${price_div.dataset.value} </p>`
-        
+        //qty_div.innerHTML = `<p class='quantity-writing'>Quantity: </p><button id='minus_${item}'
+                                    //class = 'btn btn-outline-primary cart' data-id='${item}' onclick='subtract_func(this)' data-oud='${id}' data-name='${name}' data-amount='${amount}'   data-amountnumber='${amount_number}' data-imgurl='${img_url}'>-</button> <span id='val_${item}'>${cart[item][0]}
+                                    //</span> <button id='plus_${item}'class = 'btn btn-outline-primary cart' data-id='${item}' onclick='add_func(this)' data-oud='${id}' data-amountnumber='${amount_number}'>+</button>`;
+
+
+        //price_div.innerHTML = `<p>Price: BDT ${price_div.dataset.value} </p>`
+
         amount_selection_p.innerHTML = `Amount : `;
         console.log(cart[item][3]);
     }
@@ -1140,7 +1303,7 @@ function initial_cart_state(){
     document.querySelector('.cart_list').style.display = "flex";
     cart_state["cart"] = 1;
     localStorage.setItem('cart_state', JSON.stringify(cart_state));
-    
+
 }
 
 function show_delete_box(x) {
@@ -1282,14 +1445,14 @@ function show_admin_page_admin() {
     localStorage.setItem('admin_state', JSON.stringify(admin_state));
 }
 
-function show_category_delete_box(x, name){
+function show_category_delete_box(x, name) {
     var category_id = x.dataset.id;
 
     var div = document.querySelector(`#${name}_delete_${category_id}`);
     div.style.display = "flex";
 }
 
-function hide_category_delete_box(x, name){
+function hide_category_delete_box(x, name) {
     var category_id = x.dataset.id;
     var div = document.querySelector(`#${name}_delete_${category_id}`);
     div.style.display = "none";
@@ -1315,6 +1478,7 @@ function show_admin_page_moderator() {
 }
 
 
+
 function show_admin_page_user() {
     show_admin_page_users();
 
@@ -1332,6 +1496,9 @@ function show_admin_page_user() {
     admin_state["admin"] = "User";
     localStorage.setItem('admin_state', JSON.stringify(admin_state));
 }
+
+
+
 
 function show_admin_page_reviews() {
 
@@ -1359,7 +1526,7 @@ function getCookie(name) {
 }
 
 
-function change_tracker_status(x, id){
+function change_tracker_status(x, id) {
     let value = x.dataset.value;
     fetch(`/show_order/${id}/tracker/${value}`, {
         method: 'POST',
@@ -1368,17 +1535,56 @@ function change_tracker_status(x, id){
             'X-CSRFToken': getCookie('csrftoken'),
         },
     })
-    .then((response) => response.json())
-    .then(info => {
-        for(var i = 0; i <= 3; i++){
-            document.querySelector(`#icon-${i}`).style.color = "rgba(128, 128, 128, 0.344)";
-        }
-        for(var i = 0; i <= parseInt(info.value); i++){
-            document.querySelector(`#icon-${i}`).style.color = "#bbffbb";
-        }
+        .then((response) => response.json())
+        .then(info => {
+            for (var i = 0; i <= 3; i++) {
+                document.querySelector(`#icon-${i}`).style.color = "rgba(128, 128, 128, 0.344)";
+            }
+            for (var i = 0; i <= parseInt(info.value); i++) {
+                document.querySelector(`#icon-${i}`).style.color = "#bbffbb";
+            }
 
-        document.querySelector(`.progress-bar`).style.width = `${info.progress}%`;
-    });
+            document.querySelector(`.progress-bar`).style.width = `${info.progress}%`;
+        });
 
     //location.reload();
 }
+
+
+function change_admin_user_status(x, id){
+    const admin_select = document.querySelector(`select[name='${x}-user-status-${id}']`);
+    const ask_btn = document.querySelector(`.${x}-ask-btn-${id}`);
+    ask_btn.style.display = "none";
+    const confirm_btn = document.querySelector(`.${x}-confirm-btn-${id}`);
+    confirm_btn.style.display = "block";
+    admin_select.disabled = false;
+
+}
+
+
+function change_user_status(x, id){
+    const admin_select = document.querySelector(`select[name='${x}-user-status-${id}`);
+    const value = admin_select.value;
+    const ask_btn = document.querySelector(`.${x}-ask-btn-${id}`);
+    ask_btn.style.display = "block";
+    const confirm_btn = document.querySelector(`.${x}-confirm-btn-${id}`);
+    confirm_btn.style.display = "none";
+    admin_select.disabled = true;
+
+    fetch(`change_user_status/${id}/${value}`,{
+        method: 'PUT',
+    })
+    .then((response) => response.json())
+    .then(status =>{
+        if(status.status == "passed"){
+            showAlert('User Status Changed', `${status.user_name} is now a/an ${status.what}`, '#155724', '#d4edd9');
+        }
+        else{
+            showAlert('Could Not Change Status', `${status.user_name}'s status isn't changed`, '#155724', '#d4edd9');
+        }
+    });
+
+
+
+}
+

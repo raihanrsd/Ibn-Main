@@ -39,8 +39,10 @@ urlpatterns = [
 
     #all tracker related requests
     path("show_order/<int:order_id>/tracker", views.show_trac, name="show_tracker_user"),
+    path("show_order/<int:order_id>/change_payment_status", views.change_payment_status, name="payment_status"),
     path("show_order/<int:order_id>/tracker/<int:value>", views.change_trac_value, name="show_tracker_user_value"),
     path("show_order/<int:order_id>/change_delivery", views.change_delivery_date, name="change_delivery_date"),
+    path("show_order/<int:order_id>/change_delivery_status/<str:what>", views.change_payment_status, name="payment_status"),
 
 
     path("admin_page/" + str(num) + "/show_order/<int:order_id>", views.show_order, name="show_order_admin"),
@@ -57,6 +59,10 @@ urlpatterns = [
     path("profile_page/<int:user_id>/edit/<str:what>/<int:nice_id>", views.edit_shipping, name="edit_records_user"),
     path("add_shipping", views.add_shipping, name="add_shipping"),
     path("change_profile/<int:user_id>", views.change_profile, name="change_profile"),
+    path("admin_page/"+ str(num) +  "/change_user_status/<int:user_id>/<str:what>", views.change_user_status, name="change_status"),
+    path("sendmail", views.send_email_to_user, name="send_email"),
+
+
 
 
     # payment messages

@@ -100,6 +100,7 @@
                 <div class="all-perfume-details-div">
 
                     <h1>{{ oud.title }}</h1>
+                    <h1>Product id: {{ oud.id }}</h1>
                     {% if oud.offer_status != "closed" %}
                     <p class="price-p"><b>Price: </b><span class="prev_price prev_price_{{oud.id}}">Tk
                             {{oud.prev_price_1}}</span> Tk <span
@@ -332,21 +333,33 @@
             {% if user.status == "admin" %}
             <div class="admin-page-individual-users">
                 <p>{{user.username}}</p>
-                <select disabled name="user-status">
+                <select disabled name="admin-user-status-{{user.id}}">
                     <option value="admin" selected>Admin</option>
                     <option value="moderator">Moderator</option>
                     <option value="user">User</option>
                 </select>
-                <a class="register-btn" onclick="change_admin_user_status()">Change Status</a>
+                <a class="register-btn admin-ask-btn-{{user.id}}" onclick="change_admin_user_status('admin', {{user.id}})">Change Status</a>
+                <a class="register-btn admin-confirm-btn-{{user.id}}"  onclick="change_user_status('admin', {{user.id}})" style="display:none">Confirm</a>
+                
             </div>
             {% endif %}
             {% endfor %}
         </div>
         <div class="admin-page-moderators">
-            {% for moderator in moderators %}
+            {% for user in user_data %}
+            {% if user.status == "moderator" %}
             <div class="admin-page-individual-users">
-                <p>{{moderator.user.username}}</p>
+                <p>{{user.username}}</p>
+                <select disabled name="moderator-user-status-{{user.id}}">
+                    <option value="admin" >Admin</option>
+                    <option value="moderator" selected>Moderator</option>
+                    <option value="user">User</option>
+                </select>
+                <a class="register-btn moderator-ask-btn-{{user.id}}" onclick="change_admin_user_status('moderator', {{user.id}})">Change Status</a>
+                <a class="register-btn moderator-confirm-btn-{{user.id}}"  onclick="change_user_status('moderator', {{user.id}})" style="display:none">Confirm</a>
+                
             </div>
+            {% endif %}
             {% endfor %}
         </div>
         <div class="admin-page-all_users">
@@ -354,6 +367,14 @@
             {% if user.status == "user" %}
             <div class="admin-page-individual-users">
                 <p>{{user.username}}</p>
+                <select disabled name="user-user-status-{{user.id}}">
+                    <option value="admin" >Admin</option>
+                    <option value="moderator" >Moderator</option>
+                    <option value="user" selected>User</option>
+                </select>
+                <a class="register-btn user-ask-btn-{{user.id}}" onclick="change_admin_user_status('user', {{user.id}})">Change Status</a>
+                <a class="register-btn user-confirm-btn-{{user.id}}"  onclick="change_user_status('user', {{user.id}})" style="display:none">Confirm</a>
+                
             </div>
             {% endif %}
             {% endfor %}
