@@ -74,10 +74,10 @@
             <span>
                 {% if not user.is_authenticated %}
                 <i class="bi bi-person sign_in_icon" onclick="show_account_div()"><span
-                        class="nav-writing account-nav-writeup">Sign In</span></i>
+                        class="nav-writing account-nav-writeup" style="transform: translateY(-2px);">Sign In</span></i>
                 {% else %}
                 <i class="bi bi-person sign_in_icon" onclick="show_account_div()"><span
-                        class="sign_in nav-writing account-nav-writeup"> Account</span></i>
+                        class="sign_in nav-writing account-nav-writeup" style="transform: translateY(-2px);"> Account</span></i>
                 {% endif %}
             </span>
 
@@ -93,8 +93,8 @@
 
 
         <div class="separate-account-div">
-            <div class="account-x-div" style="top: 0px;">
-                <i class="bi bi-x account-x" onclick="hide_account_div()"></i>
+            <div class="account-x-div" style="top: 0px; font-size: 30px;">
+                <i class="bi bi-x account-x" onclick="hide_account_div()" style="padding: 5px;"></i>
             </div>
 
             <div class="account-x-div1">
@@ -134,7 +134,7 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <input autofocus class="form-control login_inp" type="text" name="username"
-                            placeholder="Username">
+                            placeholder="Name">
                     </div>
                     <div class="form-group">
                         <input class="form-control login_inp" type="password" name="password" placeholder="Password">
@@ -142,8 +142,13 @@
                     <input class="register-btn" type="submit" value="Login" style="padding:5px;">
                 </form>
                 <div style="display:flex; justify-content: center; align-items: center;flex-direction: column;">
-                    <p>Don't have an account? To join us </p>  <a href="{% url 'register' %}"
-                            class='register-btn'>Register</a> <br>
+                    <p class="dont-have-an-account">Don't have an account? To join us </p>  <a href="{% url 'register' %}"
+                            class='register-btn'>Sign Up</a> <br>
+                </div>
+
+                <div style="display:flex; justify-content: center; align-items: center;flex-direction: column; color: grey">
+                    <p class="dont-have-an-account">Forgot your password</p>  <a href="{% url 'change_password' %}" class="dont-have-an-account" style="text-decoration: underline;"
+                            >Recover Password</a> <br>
                 </div>
                 {% endif %}
             </div>
@@ -207,6 +212,7 @@
                 <li class="nav_li">
                     <a class="nav_lnk" href="{% url 'exclusive' %}">Exclusives</a>
                 </li>
+
                 <li class="nav_li">
                     <a class="nav_lnk" href="#">Dehn Al Oud</a>
                 </li>

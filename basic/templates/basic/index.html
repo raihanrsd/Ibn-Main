@@ -87,17 +87,18 @@
     </a>
         <div class="all-perfume-details-div">
             
-            <h1>{{ oud.title }}</h1>
+            <a href="{% url 'oud_page' oud.id %}" class="special" ><h1>{{ oud.title }}</h1></a>
             {% if oud.offer_status != "closed" %}
-            <p class="price-p"><b>Price:  </b><span class="prev_price prev_price_{{oud.id}}">Tk {{oud.prev_price_1}}</span> Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+            <p class="price-p"><b>Price:  </b><span class="prev_price prev_price_{{oud.id}}">BDT {{oud.prev_price_1}}</span> BDT <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
             {% else %}
-            <p class="price-p"><b>Price:  </b>Tk <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
+            <p class="price-p"><b>Price:  </b>BDT <span class="updated_price_{{oud.id}}">{{oud.base_price}}</span></p>
             {% endif %}
+            <!--
             {% if oud.type == 'closed' %}
                 <p class="prod-status">Product is out of stock</p>
             {% else %}
                 <p class="prod-status">Product in stock</p>
-            {% endif %}
+            {% endif %}-->
             <input id="hidden_inp1_1_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_1}}">
             <input id="hidden_inp1_2_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_2}}">
             <input id="hidden_inp1_3_special_btn_{{oud.id}}" type="hidden" value="{{oud.price_3}}">

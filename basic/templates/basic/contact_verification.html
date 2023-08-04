@@ -3,16 +3,22 @@
 
 {% block body %}
 
-<h1>OTP sent to your phone. Please enter it below within 5 minutes.</h1>
+<div style="otp-heading-div">
+<h1>OTP sent to your phone no. {{contact}}. Please enter it below within 5 minutes.</h1>
+</div>
 
 {% if message %}
-    <h2>{{ message }}</h2>
+    <script>
+        showAlert('Status', `{{message}}`, '#155724', '#d4edd9');
+    </script>
 {% endif %}
 
+
+<div class='otp-div'>
 <form action="{% url 'verify_contact' %}" method="POST">
     {% csrf_token %}
-    <input required type="number" name="otp" placeholder="Enter OTP">
+    <input required type="number" name="otp" placeholder="Enter OTP" class="form-control">
     <input type="submit" value="Verify">
 </form>
-
+</div>
 {% endblock %}

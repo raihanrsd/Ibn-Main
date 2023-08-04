@@ -19,18 +19,14 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from .models import User, Ouds, Review, Order, QuantityManagement, Tracker, Categories, ContactUs, UserOrder, Promos, WebContents, Moderators, ShippingAddress, Analytics, NoticeBoard
 import os
+import string
+import secrets
 
 
 CLIENT_ID = '31889031476-0dhc7cpg32shmjhv7megtv0do7ndp1q2.apps.googleusercontent.com'
 
 
-def send_email_to_user(request):
-    subject = 'Welcome to Our Website'
-    message = 'Thank you for signing up on our website!'
-    from_email = 'raihan.interactivecares@gmail.com'  # Replace with your Gmail address
-    to_email = 'raihanrsd98@gmail.com'    # Replace with the recipient's email address
-    send_mail(subject, message, from_email, [to_email], fail_silently=False)
-    return HttpResponseRedirect("")
+
 
 def index(request):
     ouds = Ouds.objects.all().order_by("-id")
@@ -41,6 +37,37 @@ def index(request):
     return render(request, "basic/index.html", {
         "ouds": page_obj,
         "noticeboard": notices,
+    })
+
+
+def generate_random_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(secrets.choice(characters) for i in range(length))
+    return password
+
+
+
+def change_password(request):
+    if request.method == 'POST':
+        contact_no = request.POST.get("contact_no", "")
+        user = None
+        print(contact_no)
+        print("comes here")
+        if User.objects.filter(contact = contact_no):
+            user = User.objects.filter(contact = contact_no)[0]
+        else:
+            return render(request, "basic/password_change.html",{ "message" : "Contact number not found."})
+        password = generate_random_password()
+        user.set_password(password)
+        print(user.username)
+        print(password)
+        user.save()
+        message = f"Your username is {user.username} and Your new password is {password}. Please change it after login."
+        send_OTP(contact_no, message)
+        return render(request, "basic/password_change.html",{ "message" : "Your password has been changed. Please check your message for new password."})
+
+    return render(request, "basic/password_change.html",{
+        "message" : "Please enter your contact number",
     })
 
 
@@ -82,7 +109,6 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
-
         user = authenticate(request, username=username, password=password)
 
         
@@ -121,7 +147,7 @@ def send_OTP(contact, otp):
         {
             "from": "Vonage APIs",
             "to": contact,
-            "text": f"Your OTP is {otp}",
+            "text": f"{otp}",
         }
     )
 
@@ -137,7 +163,8 @@ def verify_contact(request):
         contact = request.session.get('contact')
         if not contact:
             return render(request, "basic/contact_verification.html", {
-                "message": "contact number not found. Please try again."
+                "message": "contact number not found. Please try again.",
+                "contact": contact,
             })
 
         user = User.objects.get(contact=contact)
@@ -145,7 +172,8 @@ def verify_contact(request):
 
         if str(user.otp) != str(otp):
             return render(request, "basic/contact_verification.html", {
-                "message": "Invalid OTP. Please Try again."
+                "message": "Invalid OTP. Please Try again.",
+                "contact": contact,
             })
 
         current_time = timezone.now()
@@ -158,10 +186,11 @@ def verify_contact(request):
             user.save()
 
             print(new_otp)
-            send_OTP(user.contact, new_otp)
+            send_OTP(user.contact, "Your Otp is " + new_otp)
 
             return render(request, "basic/contact_verification.html", {
-                "message": "OTP expired. Another OTP has been sent."
+                "message": "OTP expired. Another OTP has been sent.",
+                "contact": contact,
             })
 
         user.contact_verified = True
@@ -212,7 +241,7 @@ def register(request):
                 "message": "Username, email and contact must be unique."
             })
         request.session['contact'] = contact
-        send_OTP(contact, otp)
+        send_OTP(contact, "Your otp is " + otp)
         return HttpResponseRedirect(reverse("verify_contact"))
     else:
         return render(request, "basic/register.html")
@@ -328,7 +357,7 @@ def handle_online_payment(transaction_id):
     post_body["cus_phone"] = order.phone
     post_body["cus_add1"] = order.address
     post_body["cus_city"] = order.city
-    post_body["cus_country"] = order.country
+    post_body["cus_country"] = "Bangladesh"
     post_body["shipping_method"] = "NO"
     post_body["multi_card_name"] = ""
     post_body["num_of_item"] = 1
@@ -1135,3 +1164,14 @@ def change_payment_status(request, order_id):
     order.save()
     return JsonResponse({"status" : status, "order_status" : order.is_paid})
             
+
+
+
+
+def get_featured_product_info(request):
+    web_contents = WebContents.objects.get(pk=1)
+    product_1 = Ouds.objects.get(pk=web_contents.featured_product_id_1)
+    product_2 = Ouds.objects.get(pk=web_contents.featured_product_id_2)
+    product_3 = Ouds.objects.get(pk=web_contents.featured_product_id_3)
+    
+    return JsonResponse({"product_1" : product_1.serialize(), "product_2" : product_2.serialize(), "product_3" : product_3.serialize()})

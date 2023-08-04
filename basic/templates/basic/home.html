@@ -26,6 +26,8 @@
 
             
 
+            
+
 
         </div>
         <!-- If we need pagination -->
@@ -52,14 +54,14 @@
 
     </div>
     <div class="featured-fragrances-box-div">
-        <div class="featured-box">
-            <div class="featured-img">
-                <img src="{% static 'basic/images/1.jpg' %}" alt="">
+        <div class="featured-box" id="featured_product_1">
+            <div class="featured-img" >
+                <img src="{% static 'basic/images/1.jpg' %}" alt="" id="featured_product_1_title">
             </div>
 
             <div class="featured-details">
-                <h3>Mongolian Oud</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur
+                <h3 id="featured_product_1_title">Mongolian Oud</h3>
+                <p id="featured_product_1_description">Lorem ipsum dolor sit amet, consectetur
                     adipiscing elit, sed do eiusmod tempor
                     incididunt ut labore et dolore magna aliqua.
                     Ut enim ad minim veniam, quis nostrud exercitation
@@ -67,11 +69,11 @@
                     Duis aute irure dolor in reprehenderit in voluptate
                     velit esse cillum dolore eu fugiat nulla pariatur.
                 </p>
-                <a href="#">see more.....</a>
+                <a href="#" id="featured_product_1_url">see more.....</a>
             </div>
         </div>
 
-        <div class="featured-box">
+        <div class="featured-box" id="featured_product_2">
             <div class="featured-img">
                 <img src="{% static 'basic/images/2.jpg' %}" alt="">
             </div>
@@ -88,8 +90,8 @@
             </div>
         </div>
 
-        <div class="featured-box">
-            <div class="featured-img">
+        <div class="featured-box" id="featured_product_3">
+            <div class="featured-img" >
                 <img src="{% static 'basic/images/3.jpg' %}" alt="">
             </div>
 
@@ -520,6 +522,42 @@
 
         // And if we need scrollbar
     });
+
+
+    fetch('/get_featured_product_info')
+    .then((response)  => response.json())
+    .then(data => {
+        
+        document.getElementById('featured_product_1').innerHTML = `
+        <div class="featured-img" >
+            <img src=${data.product_1.img_url} alt="" id="featured_product_1_title">
+        </div>
+
+        <div class="featured-details">
+            <h3 >${data.product_1.title}</h3>
+            <p>${data.product_1.description.substring(0,300) }....
+            </p>
+            <a href="oud_page/${data.product_1.id}" id="featured_product_1_url">see more.....</a>
+        </div>
+        `;
+
+        document.getElementById('featured_product_3').innerHTML = `
+        <div class="featured-img" >
+            <img src=${data.product_3.img_url} alt="" id="featured_product_1_title">
+        </div>
+
+        <div class="featured-details">
+            <h3 >${data.product_3.title}</h3>
+            <p>${data.product_3.description.substring(0,320) }....
+            </p>
+            <a href="oud_page/${data.product_3.id}" id="featured_product_1_url">see more.....</a>
+        </div>
+        `;
+
+        //document.getElementById('featured_product_1_url').href = data.product_1.title;
+
+    });
+
 
 
 

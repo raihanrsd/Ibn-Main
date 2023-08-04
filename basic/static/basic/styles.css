@@ -11,7 +11,6 @@ body {
 }
 
 body.overlay {
-    opacity: 0.8;
     overflow: hidden;
 }
 
@@ -156,12 +155,17 @@ i:hover {
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
-    max-height: 800px;
+    
     position: relative;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
     width: 100%;
     margin: 0 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.cart-page-hidden-mobile-div{
+    width: 100%;
 }
 
 
@@ -265,6 +269,8 @@ i:hover {
     justify-content: flex-start;
     align-items: center;
     width: 95%;
+    
+    
 }
 
 .main-cart-page-div2 {
@@ -355,6 +361,12 @@ i:hover {
     padding: 5px;
     border: 1px solid black;
     margin-bottom: 30px;
+    margin-top: 50px;
+
+}
+
+.special:hover{
+    text-decoration: none;
 }
 
 .cart-main-div-phase-2 .cart-internal-div2 > div{
@@ -505,6 +517,7 @@ i:hover {
     width: 38%;
     margin: 1%;
     padding: 0;
+    
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
@@ -767,19 +780,24 @@ hr {
 }
 
 .cart-page-table{
-    display:block;
+    display:flex;
     border-collapse: collapse;
     width: 100%;
     min-width: 330px; /* Set the width of the grid box */
     margin-bottom: 20px;
+    
+    table-layout: fixed;
 }
+
+
 
 .cart-page-table td{
     border: 1px solid black; /* Add border to each cell */
     /* Add padding to the content within each cell */
     text-align: center; /* Center-align the content within each cell */
     vertical-align: middle;
-    width: 110px;
+    width: 33.33%;
+    min-width: 110px;
     padding: 0;
 }
 
@@ -920,7 +938,8 @@ hr {
     width: 100%;
     height: 65vh;
     max-height: 70vh;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
     margin-bottom: 10%;
     font-family: 'Crimson Text', serif;
     font-size: 20px;
@@ -1497,6 +1516,7 @@ hr {
 .price-p {
     color: black;
     margin: 10px 0;
+    font-size: 18px;
 }
 
 
@@ -1525,7 +1545,6 @@ hr {
 .test-div {
     display: flex;
     justify-content: space-between;
-
 }
 
 .test-div a {
@@ -1537,7 +1556,12 @@ hr {
     color: white;
     font-weight: 500;
     font-family: 'Crimson Text', serif;
-    border: 1px solid #fff;
+    border: 1px solid #000000;
+    
+}
+
+.test-div button{
+    padding: 10px;
 }
 
 .test-div a:hover {
@@ -1583,16 +1607,16 @@ hr {
 
 .cart {
     color: #000000;
-    border-color: #000000;
+    
     padding: 7px;
     border-radius: 0;
     font-family: 'Crimson Text', serif;
+    border: 1px solid black;
 }
 
 .cart:hover {
     background-color: #000000 !important;
     color: white;
-
 }
 
 .cart:focus{
@@ -2381,6 +2405,10 @@ footer .payment-div .img-div img {
     box-sizing: border-box;
 }
 
+.dont-have-an-account {
+    color: grey;
+}
+
 .detail-box {
     width: 100%;
     display: flex;
@@ -2402,6 +2430,14 @@ footer .payment-div .img-div img {
     font-weight: 700;
     letter-spacing: 0.5px;
     padding-right: 8px;
+}
+
+.otp-heading-div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
 }
 
 .slider-type span {
@@ -2881,6 +2917,8 @@ footer .payment-div .img-div img {
     width: 100%;
     text-align: center;
     margin-top: 50px;
+    font-size: 30px;
+    font-weight: 300;
 }
 
 
@@ -2903,6 +2941,16 @@ footer .payment-div .img-div img {
 .main-oud-add-btn {
     width: 90%;
     margin: 5%;
+}
+
+.opt-div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    
 }
 
 .bi-x {
@@ -4495,6 +4543,10 @@ th, td {
         height: 40px;
     }
 
+    .test-div button{
+        padding:4px;
+    }
+
     .all-perfume{
         margin: 100px 0;
     }
@@ -4670,6 +4722,21 @@ th, td {
     .cart-page-table{
         display: block;
     }
+
+    .register-btn{
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .dont-have-an-account{
+        font-size: 15px;
+    }
+
+    .otp-heading-div{
+        font-size: 20px;
+    }
+
+
 
     
 

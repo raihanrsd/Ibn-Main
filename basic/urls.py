@@ -60,7 +60,8 @@ urlpatterns = [
     path("add_shipping", views.add_shipping, name="add_shipping"),
     path("change_profile/<int:user_id>", views.change_profile, name="change_profile"),
     path("admin_page/"+ str(num) +  "/change_user_status/<int:user_id>/<str:what>", views.change_user_status, name="change_status"),
-    path("sendmail", views.send_email_to_user, name="send_email"),
+    path("change_password", views.change_password, name="change_password"),
+    path("get_featured_product_info", views.get_featured_product_info, name="get_featured_product_info"),
 
 
 

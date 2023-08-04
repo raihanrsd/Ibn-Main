@@ -1584,7 +1584,5 @@ function change_user_status(x, id){
         }
     });
 
-
-
 }
 

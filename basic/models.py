@@ -14,7 +14,6 @@ class User(AbstractUser):
     points = models.IntegerField(default=0)
     has_shipping = models.BooleanField(default = False)
     default_shipping_id = models.IntegerField(default=0)
-    
     otp = models.IntegerField(blank=True, null=True)
     otp_last_created = models.DateTimeField(default=datetime.datetime.now())
     contact_verified = models.BooleanField(default=False)
@@ -79,6 +78,7 @@ class Ouds(models.Model):
             "id" : self.id,
             "img_url" : self.img.url,
             "title" : self.title,
+            "description" : self.description,
             "base_price" : self.base_price,
             "amount" : self.amount,
             "base_amount" : self.base_amount,
