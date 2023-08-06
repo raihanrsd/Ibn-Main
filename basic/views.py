@@ -422,7 +422,7 @@ def take_order(request):
             tracker.save()
 
             user_order = UserOrder(
-                order=order, user=request.user, order_date=datetime.date.today)
+                order=order, user=request.user, order_date=datetime.date.today())
             user_order.save()
 
             return redirect(ssl_response["GatewayPageURL"])
