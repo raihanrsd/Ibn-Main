@@ -75,7 +75,8 @@ def category(request, category_name):
     })
 
 
-def send_OTP(contact, otp):
+def send_OTP(contact, message):
+    print(f'otp : {message}')
 
     client = vonage.Client(key="c7ffa548", secret="PYXCz6glC2fVwJm6")
     sms = vonage.Sms(client)
@@ -84,7 +85,7 @@ def send_OTP(contact, otp):
         {
             "from": "Vonage APIs",
             "to": contact,
-            "text": f"Your OTP is {otp}",
+            "text": message,
         }
     )
 
@@ -134,7 +135,10 @@ def login_view(request):
             if user.contact_verified == False:
                 request.session['contact'] = user.contact
                 otp = random.randint(100000, 999999)
-                send_OTP(user.contact, otp)
+                user.otp = otp
+                user.otp_last_created = datetime.datetime.now()
+                user.save()
+                send_OTP(user.contact, f'Your OTP is {otp}')
                 return HttpResponseRedirect(reverse("verify_contact"))
 
             login(request, user)
@@ -197,7 +201,9 @@ def verify_contact(request):
         login(request, user)
         return HttpResponseRedirect(reverse("home"))
     else:
-        return render(request, "basic/contact_verification.html")
+        return render(request, "basic/contact_verification.html", {
+            "contact": request.session.get('contact'),
+        })
 
 
 # user register
@@ -221,6 +227,11 @@ def register(request):
             return render(request, "basic/register.html", {
                 "message": "Passwords must match."
             })
+            
+        if contact[0] != '+' or contact[1] != '8' or contact[2] != '8' or contact[3] != '0':
+            return render(request, "basic/register.html", {
+                "message": "Not a valid BD phone number. Phone number must start with +880."
+            })
 
         # OTP verification
         otp = random.randint(100000, 999999)
@@ -237,7 +248,7 @@ def register(request):
                 "message": "Username, email and contact must be unique."
             })
         request.session['contact'] = contact
-        send_OTP(contact, "Your otp is " + otp)
+        send_OTP(contact, "Your otp is " + str(otp))
         return HttpResponseRedirect(reverse("verify_contact"))
     else:
         return render(request, "basic/register.html")

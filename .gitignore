@@ -1,2 +1,5 @@
 venv
 ./venv
+./basic/__pycache__
+./basic/__pycache__/
+
