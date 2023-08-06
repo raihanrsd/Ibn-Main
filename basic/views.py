@@ -97,12 +97,12 @@ def send_OTP(contact, otp):
 
 def change_password(request):
     if request.method == 'POST':
-        contact_no = request.POST.get("contact_no", "")
+        contact = request.POST.get("contact_no", "")
         user = None
-        print(contact_no)
+        print(contact)
         print("comes here")
-        if User.objects.filter(contact=contact_no):
-            user = User.objects.filter(contact=contact_no)[0]
+        if User.objects.filter(contact=contact):
+            user = User.objects.filter(contact=contact)[0]
         else:
             return render(request, "basic/password_change.html", {"message": "Contact number not found."})
         password = generate_random_password()
@@ -111,7 +111,7 @@ def change_password(request):
         print(password)
         user.save()
         message = f"Your username is {user.username} and Your new password is {password}. Please change it after login."
-        send_OTP(contact_no, message)
+        send_OTP(contact, message)
         return render(request, "basic/password_change.html", {"message": "Your password has been changed. Please check your message for new password."})
 
     return render(request, "basic/password_change.html", {
