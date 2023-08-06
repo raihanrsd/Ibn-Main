@@ -26,8 +26,6 @@ import secrets
 CLIENT_ID = '31889031476-0dhc7cpg32shmjhv7megtv0do7ndp1q2.apps.googleusercontent.com'
 
 
-
-
 def index(request):
     ouds = Ouds.objects.all().order_by("-id")
     paginator = Paginator(ouds, 5)
@@ -44,31 +42,6 @@ def generate_random_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
     password = ''.join(secrets.choice(characters) for i in range(length))
     return password
-
-
-
-def change_password(request):
-    if request.method == 'POST':
-        contact_no = request.POST.get("contact_no", "")
-        user = None
-        print(contact_no)
-        print("comes here")
-        if User.objects.filter(contact = contact_no):
-            user = User.objects.filter(contact = contact_no)[0]
-        else:
-            return render(request, "basic/password_change.html",{ "message" : "Contact number not found."})
-        password = generate_random_password()
-        user.set_password(password)
-        print(user.username)
-        print(password)
-        user.save()
-        message = f"Your username is {user.username} and Your new password is {password}. Please change it after login."
-        send_OTP(contact_no, message)
-        return render(request, "basic/password_change.html",{ "message" : "Your password has been changed. Please check your message for new password."})
-
-    return render(request, "basic/password_change.html",{
-        "message" : "Please enter your contact number",
-    })
 
 
 def home(request):
@@ -102,7 +75,52 @@ def category(request, category_name):
     })
 
 
+def send_OTP(contact, otp):
+
+    client = vonage.Client(key="c7ffa548", secret="PYXCz6glC2fVwJm6")
+    sms = vonage.Sms(client)
+
+    responseData = sms.send_message(
+        {
+            "from": "Vonage APIs",
+            "to": contact,
+            "text": f"Your OTP is {otp}",
+        }
+    )
+
+    if responseData["messages"][0]["status"] == "0":
+        print("Message sent successfully.")
+    else:
+        print(
+            f"Message failed with error: {responseData['messages'][0]['error-text']}")
+
+
+def change_password(request):
+    if request.method == 'POST':
+        contact_no = request.POST.get("contact_no", "")
+        user = None
+        print(contact_no)
+        print("comes here")
+        if User.objects.filter(contact=contact_no):
+            user = User.objects.filter(contact=contact_no)[0]
+        else:
+            return render(request, "basic/password_change.html", {"message": "Contact number not found."})
+        password = generate_random_password()
+        user.set_password(password)
+        print(user.username)
+        print(password)
+        user.save()
+        message = f"Your username is {user.username} and Your new password is {password}. Please change it after login."
+        send_OTP(contact_no, message)
+        return render(request, "basic/password_change.html", {"message": "Your password has been changed. Please check your message for new password."})
+
+    return render(request, "basic/password_change.html", {
+        "message": "Please enter your contact number",
+    })
+
 # user login option
+
+
 def login_view(request):
     if request.method == "POST":
 
@@ -111,14 +129,12 @@ def login_view(request):
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
 
-        
-
-
-
         # Check if authentication successful
         if user is not None:
             if user.contact_verified == False:
                 request.session['contact'] = user.contact
+                otp = random.randint(100000, 999999)
+                send_OTP(user.contact, otp)
                 return HttpResponseRedirect(reverse("verify_contact"))
 
             login(request, user)
@@ -136,26 +152,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("home"))
-
-
-def send_OTP(contact, otp):
-
-    client = vonage.Client(key="c7ffa548", secret="PYXCz6glC2fVwJm6")
-    sms = vonage.Sms(client)
-
-    responseData = sms.send_message(
-        {
-            "from": "Vonage APIs",
-            "to": contact,
-            "text": f"{otp}",
-        }
-    )
-
-    if responseData["messages"][0]["status"] == "0":
-        print("Message sent successfully.")
-    else:
-        print(
-            f"Message failed with error: {responseData['messages'][0]['error-text']}")
 
 
 def verify_contact(request):
@@ -292,7 +288,7 @@ def payment_success(request):
     except Order.DoesNotExist:
         return HttpResponse("Order does not exist")
 
-    #print(request.POST)
+    # print(request.POST)
     val_id = request.POST.get('val_id')
     store_id = "ibnma6496853da64bf"
     store_passwd = "ibnma6496853da64bf@ssl"
@@ -303,8 +299,8 @@ def payment_success(request):
     response = requests.get(url, verify=True)
     response_json = response.json()
 
-    #print(response)
-    #print(response_json)
+    # print(response)
+    # print(response_json)
     if response_json["status"] == "VALID":
         order.is_paid = True
         order.save()
@@ -318,7 +314,7 @@ def payment_success(request):
 def payment_failure(request):
     transaction_id = request.POST.get("tran_id")
     order = Order.objects.get(transaction_id=transaction_id)
-    #print("deleted in failure")
+    # print("deleted in failure")
     order.delete()
 
     return render(request, "basic/payment_failure.html",)
@@ -329,7 +325,7 @@ def payment_cancel(request):
     transaction_id = request.POST.get("tran_id")
     order = Order.objects.get(transaction_id=transaction_id)
     print("deleted in cancel")
-    #order.delete()
+    # order.delete()
 
     return render(request, "basic/payment_cancel.html",)
 
@@ -414,7 +410,8 @@ def take_order(request):
                               desc="Order has been placed and you will shortly notified of your product delivery date.")
             tracker.save()
 
-            user_order = UserOrder(order=order, user=request.user, order_date=datetime.date.today)
+            user_order = UserOrder(
+                order=order, user=request.user, order_date=datetime.date.today)
             user_order.save()
 
             return redirect(ssl_response["GatewayPageURL"])
@@ -460,15 +457,13 @@ def show_tracker(request):
 
 
 def show_trac(request, order_id):
-    order = Order.objects.get(pk = order_id)
-    tracker = Tracker.objects.get(order = order)
+    order = Order.objects.get(pk=order_id)
+    tracker = Tracker.objects.get(order=order)
     progress = tracker.progress / 3 * 100
     return render(request, "basic/tracker_v2.html", {
         "tracker": tracker,
-        "progress" : progress,
+        "progress": progress,
     })
-
-
 
 
 def search(request):
@@ -790,7 +785,7 @@ def show_order(request, order_id, message=""):
         "user_of_order": user,
         "product_price": product_price,
         "tracker": order_tracker,
-        "message" : message,
+        "message": message,
     })
 
 
@@ -953,7 +948,7 @@ def add_promo(request):
 
 
 def add_notice(request):
-    if request.method=="POST":
+    if request.method == "POST":
 
         notice = request.POST.get("notice", "")
         notice = NoticeBoard(notice=notice)
@@ -1113,30 +1108,30 @@ def change_trac_value(request, value, order_id):
     tracker.progress = int(value)
     if int(value) == 3:
         order.status = "delivered"
-    
+
     tracker.save()
     order.save()
 
     progress = tracker.progress / 3 * 100
-    return JsonResponse({"value": value, "progress" : progress})
-
+    return JsonResponse({"value": value, "progress": progress})
 
 
 def change_delivery_date(request, order_id):
-    order = Order.objects.get(pk = order_id)
+    order = Order.objects.get(pk=order_id)
     tracker = Tracker.objects.get(order=order)
     var = request.POST.get("delivery_date", datetime.date.today)
-    
+
     tracker.delivary_date = var
     tracker.save()
     return HttpResponseRedirect(reverse("show_tracker_user", args=(order_id,)))
 
+
 @csrf_exempt
 def change_user_status(request, user_id, what):
     status = "failed"
-    user = User.objects.get(pk = user_id)
+    user = User.objects.get(pk=user_id)
     if request.user.status == "admin":
-        
+
         user.status = what
         if what == "admin":
             user.is_staff = True
@@ -1149,23 +1144,20 @@ def change_user_status(request, user_id, what):
             user.is_superuser = False
         status = "passed"
     user.save()
-        
+
     return JsonResponse({"status": status, "user_name": user.username, "what": what})
 
 
 @csrf_exempt
 def change_payment_status(request, order_id):
-    order = Order.objects.get(pk = order_id)
+    order = Order.objects.get(pk=order_id)
     status = "failed"
 
     if request.user.status == "admin" or request.user.status == "moderator":
         order.is_paid = not order.is_paid
         status = "success"
     order.save()
-    return JsonResponse({"status" : status, "order_status" : order.is_paid})
-            
-
-
+    return JsonResponse({"status": status, "order_status": order.is_paid})
 
 
 def get_featured_product_info(request):
@@ -1173,5 +1165,5 @@ def get_featured_product_info(request):
     product_1 = Ouds.objects.get(pk=web_contents.featured_product_id_1)
     product_2 = Ouds.objects.get(pk=web_contents.featured_product_id_2)
     product_3 = Ouds.objects.get(pk=web_contents.featured_product_id_3)
-    
-    return JsonResponse({"product_1" : product_1.serialize(), "product_2" : product_2.serialize(), "product_3" : product_3.serialize()})
+
+    return JsonResponse({"product_1": product_1.serialize(), "product_2": product_2.serialize(), "product_3": product_3.serialize()})
